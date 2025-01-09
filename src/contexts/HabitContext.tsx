@@ -41,11 +41,13 @@ export function HabitProvider({ children }: { children: ReactNode }) {
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  const refreshHabits = async () => {
+  const refreshHabits = async (showLoading = true) => {
     if (!accessToken) return;
     
     try {
-      setIsLoading(true);
+      if (showLoading) {
+        setIsLoading(true);
+      }
       const [habitsData, statsData] = await Promise.all([
         HabitService.getHabits(accessToken),
         HabitService.getStats(accessToken),
@@ -57,12 +59,14 @@ export function HabitProvider({ children }: { children: ReactNode }) {
       setError('Failed to fetch habits');
       console.error(err);
     } finally {
-      setIsLoading(false);
+      if (showLoading) {
+        setIsLoading(false);
+      }
     }
   };
 
   useEffect(() => {
-    refreshHabits();
+    refreshHabits(true);
   }, [accessToken]);
 
   const createHabit = async (name: string) => {
@@ -70,7 +74,7 @@ export function HabitProvider({ children }: { children: ReactNode }) {
     
     try {
       await HabitService.createHabit(accessToken, name);
-      await refreshHabits();
+      await refreshHabits(true);
     } catch (err) {
       setError('Failed to create habit');
       throw err;
@@ -82,7 +86,7 @@ export function HabitProvider({ children }: { children: ReactNode }) {
     
     try {
       await HabitService.updateHabit(accessToken, name);
-      await refreshHabits();
+      await refreshHabits(true);
     } catch (err) {
       setError('Failed to update habit');
       throw err;
@@ -94,7 +98,7 @@ export function HabitProvider({ children }: { children: ReactNode }) {
     
     try {
       await HabitService.deleteHabit(accessToken, name);
-      await refreshHabits();
+      await refreshHabits(true);
     } catch (err) {
       setError('Failed to delete habit');
       throw err;
@@ -106,7 +110,7 @@ export function HabitProvider({ children }: { children: ReactNode }) {
     
     try {
       await HabitService.trackHabit(accessToken, habitId, date);
-      await refreshHabits();
+      await refreshHabits(false);
     } catch (err) {
       setError('Failed to track habit');
       throw err;
@@ -118,7 +122,7 @@ export function HabitProvider({ children }: { children: ReactNode }) {
     
     try {
       await HabitService.untrackHabit(accessToken, habitId, date);
-      await refreshHabits();
+      await refreshHabits(false);
     } catch (err) {
       setError('Failed to untrack habit');
       throw err;
@@ -137,7 +141,7 @@ export function HabitProvider({ children }: { children: ReactNode }) {
         deleteHabit,
         trackHabit,
         untrackHabit,
-        refreshHabits,
+        refreshHabits: () => refreshHabits(true),
       }}
     >
       {children}

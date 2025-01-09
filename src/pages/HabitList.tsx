@@ -26,10 +26,37 @@ export function HabitList() {
 
   if (isLoading) {
     return (
-      <div className="space-y-4">
-        {[...Array(3)].map((_, i) => (
-          <Skeleton key={i} className="h-20" />
-        ))}
+      <div className="max-w-[2000px] mx-auto px-8 py-8 space-y-8">
+        <div className="flex justify-between items-center">
+          <h1 className="text-3xl font-bold">minihabits.</h1>
+          <div className="flex gap-4">
+            <Button onClick={() => navigate('/stats')}>View Stats</Button>
+            <Button onClick={() => navigate('/new')}>New Habit</Button>
+          </div>
+        </div>
+
+        <div className="space-y-4">
+          {[...Array(3)].map((_, i) => (
+            <Card key={i}>
+              <CardContent className="p-4">
+                <div className="flex items-center gap-8">
+                  <div className="min-w-[200px]">
+                    <Skeleton className="h-6 w-24 mb-2" />
+                    <Skeleton className="h-4 w-12" />
+                  </div>
+                  <div className="flex gap-6">
+                    {[...Array(5)].map((_, j) => (
+                      <div key={j} className="flex flex-col items-center gap-1">
+                        <Skeleton className="h-4 w-8" />
+                        <Skeleton className="h-8 w-8 rounded-full" />
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+          ))}
+        </div>
       </div>
     );
   }
