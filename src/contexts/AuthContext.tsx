@@ -1,4 +1,4 @@
-import { createContext, useContext, useState, useCallback, ReactNode } from 'react';
+import { createContext, useContext, useState, useCallback, ReactNode, useEffect } from 'react';
 import { AuthService } from '../services/auth';
 
 interface AuthContextType {
@@ -13,11 +13,33 @@ interface AuthContextType {
 const AuthContext = createContext<AuthContextType | null>(null);
 
 export function AuthProvider({ children }: { children: ReactNode }) {
-  const [accessToken, setAccessToken] = useState<string | null>(null);
-  const [refreshToken, setRefreshToken] = useState<string | null>(null);
+  const [accessToken, setAccessToken] = useState<string | null>(() => {
+    return localStorage.getItem('accessToken');
+  });
+  const [refreshToken, setRefreshToken] = useState<string | null>(() => {
+    return localStorage.getItem('refreshToken');
+  });
+
+  useEffect(() => {
+    console.log('accessToken', accessToken);
+    if (accessToken) {
+      localStorage.setItem('accessToken', accessToken);
+    } else {
+      localStorage.removeItem('accessToken');
+    }
+  }, [accessToken]);
+
+  useEffect(() => {
+    if (refreshToken) {
+      localStorage.setItem('refreshToken', refreshToken);
+    } else {
+      localStorage.removeItem('refreshToken');
+    }
+  }, [refreshToken]);
 
   const signIn = useCallback(async (email: string, password: string) => {
     const response = await AuthService.signIn({ email, password });
+    console.log('response', response);
     setAccessToken(response.accessToken);
     setRefreshToken(response.refreshToken);
   }, []);
@@ -31,6 +53,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const signOut = useCallback(() => {
     setAccessToken(null);
     setRefreshToken(null);
+    localStorage.removeItem('accessToken');
+    localStorage.removeItem('refreshToken');
   }, []);
 
   const value = {
