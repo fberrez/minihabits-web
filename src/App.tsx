@@ -10,8 +10,7 @@ import { Routes, Route } from 'react-router-dom'
 import { HabitList } from './pages/HabitList'
 import { StatsPage } from './pages/StatsPage'
 import { NewHabit } from './pages/NewHabit'
-import { cn } from "./lib/utils";
-import { InteractiveGridPattern } from "./components/ui/interactive-grid-pattern";
+import FlickeringGrid from "./components/ui/flickering-grid";
 
 function App() {
   const { isAuthenticated, signIn, signUp } = useAuth();
@@ -66,6 +65,16 @@ function App() {
   if (!showAuth) {
     return (
       <div className="relative flex flex-col items-center justify-center min-h-screen px-4 overflow-hidden">
+        <FlickeringGrid
+          className="absolute z-0 inset-0 [mask-image:radial-gradient(450px_circle_at_center,white,transparent)]"
+          squareSize={4}
+          gridGap={6}
+          color="#000000"
+          maxOpacity={0.2}
+          flickerChance={0.1}
+          height={800}
+          width={1600}
+        />
         <div className="z-10 flex flex-col items-center">
           <h1 className="text-6xl font-bold mb-4 text-center tracking-tighter">
             minihabits.
@@ -81,15 +90,6 @@ function App() {
             Get Started
           </Button>
         </div>
-        <InteractiveGridPattern
-          className={cn(
-            "[mask-image:radial-gradient(600px_circle_at_center,white,transparent)]",
-          )}
-          width={40}
-          height={40}
-          squares={[80, 80]}
-          squaresClassName="hover:fill-primary/30"
-        />
       </div>
     );
   }
