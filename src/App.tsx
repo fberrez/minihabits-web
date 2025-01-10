@@ -72,7 +72,7 @@ function App() {
           color="#000000"
           maxOpacity={0.2}
           flickerChance={0.1}
-          height={800}
+          height={1600}
           width={1600}
         />
         <div className="z-10 flex flex-col items-center">
