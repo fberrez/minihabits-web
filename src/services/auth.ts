@@ -11,7 +11,7 @@ interface AuthResponse {
 }
 
 export class AuthService {
-  private static BASE_URL = 'http://localhost:3000/auth';
+  private static BASE_URL = `${import.meta.env.VITE_API_BASE_URL}/auth`;
 
   static async signIn(credentials: SignInCredentials): Promise<AuthResponse> {
     const response = await fetch(`${this.BASE_URL}/signin`, {

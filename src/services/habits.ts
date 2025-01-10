@@ -16,7 +16,7 @@ interface Stats {
 }
 
 export class HabitService {
-  private static BASE_URL = 'http://localhost:3000';
+  private static BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
   private static getHeaders(accessToken: string): HeadersInit {
     return {
