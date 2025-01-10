@@ -12,6 +12,7 @@ import { StatsPage } from './pages/StatsPage'
 import { NewHabit } from './pages/NewHabit'
 import { cn } from "./lib/utils";
 import { InteractiveGridPattern } from "./components/ui/interactive-grid-pattern";
+import { Star } from 'lucide-react'
 
 function App() {
   const { isAuthenticated, signIn, signUp } = useAuth();
@@ -69,10 +70,10 @@ function App() {
       <div className="relative flex flex-col items-center justify-center min-h-screen px-4 overflow-hidden">
         <div className="z-10 flex flex-col items-center">
           <h1 className="text-6xl font-bold mb-4 text-center tracking-tighter">
-            MiniHabits
+            minihabits.
           </h1>
           <p className="text-lg text-center text-gray-600 mb-8 max-w-md">
-            Build lasting habits with small, manageable steps. Track your progress and achieve your goals.
+            Track your habits and build lasting habits
           </p>
           <Button 
             size="lg" 
