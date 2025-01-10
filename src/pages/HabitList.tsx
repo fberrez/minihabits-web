@@ -1,14 +1,21 @@
-import { useState } from 'react'
+import { useRef, useEffect } from 'react'
 import { useHabits } from '../contexts/HabitContext'
 import { Button } from "../components/ui/button"
 import { Card, CardContent } from "../components/ui/card"
 import { Skeleton } from "../components/ui/skeleton"
 import { useNavigate } from 'react-router-dom'
-import { Flame } from 'lucide-react'
+import { Flame, Trophy } from 'lucide-react'
+import JSConfetti from 'js-confetti'
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "../components/ui/tooltip"
 
 export function HabitList() {
   const { habits, isLoading, trackHabit, untrackHabit } = useHabits();
   const navigate = useNavigate();
+  const jsConfettiRef = useRef<JSConfetti | null>(null);
+
+  useEffect(() => {
+    jsConfettiRef.current = new JSConfetti()
+  }, [])
 
   const getLast5Days = () => {
     const dates = [];
@@ -75,20 +82,44 @@ export function HabitList() {
           return (
             <Card 
               key={habit._id} 
-              className="cursor-pointer"
+              className="cursor-pointer transition-all duration-200 hover:shadow-md hover:translate-x-1 hover:-translate-y-1 hover:bg-accent/50"
               onClick={() => navigate(`/stats/${habit._id}`)}
             >
               <CardContent className="p-4">
                 <div className="flex items-center gap-8">
-                  <div className="min-w-[200px] flex flex-col">
-                    <h3 
-                      className="font-medium hover:text-primary"
-                    >
-                      {habit.name}
-                    </h3>
-                    <div className="flex items-center gap-1 text-sm text-muted-foreground mt-1 self-start">
-                      <Flame className="w-4 h-4 text-orange-500" />
-                      <span>{habit.currentStreak}</span>
+                  <div className="min-w-[200px] flex items-center gap-4">
+                    <div className="flex flex-col gap-2">
+                      <h3 className="font-medium hover:text-primary">
+                        {habit.name}
+                      </h3>
+                      <div className="flex gap-2">
+                        <TooltipProvider>
+                          <Tooltip>
+                            <TooltipTrigger asChild className="flex items-center gap-1 text-sm text-muted-foreground hover:text-foreground">
+                              <span>
+                                <Flame className="w-4 h-4 text-orange-500" />
+                                <span>{habit.currentStreak}</span>
+                              </span>
+                            </TooltipTrigger>
+                            <TooltipContent className="bg-popover text-popover-foreground">
+                              <p>Current Streak</p>
+                            </TooltipContent>
+                          </Tooltip>
+                        </TooltipProvider>
+                        <TooltipProvider>
+                          <Tooltip>
+                            <TooltipTrigger asChild className="flex items-center gap-1 text-sm text-muted-foreground hover:text-foreground">
+                              <span>
+                                <Trophy className="w-4 h-4 text-yellow-500" />
+                                <span>{habit.longestStreak}</span>
+                              </span>
+                            </TooltipTrigger>
+                            <TooltipContent className="bg-popover text-popover-foreground">
+                              <p>Longest Streak</p>
+                            </TooltipContent>
+                          </Tooltip>
+                        </TooltipProvider>
+                      </div>
                     </div>
                   </div>
                   <div className="flex gap-6">
@@ -107,9 +138,14 @@ export function HabitList() {
                                 untrackHabit(habit._id, dateStr);
                               } else {
                                 trackHabit(habit._id, dateStr);
+                                jsConfettiRef.current?.addConfetti({
+                                  emojis: ['✨', '⭐️', '🌟'],
+                                  emojiSize: 20,
+                                  confettiNumber: 30,
+                                });
                               }
                             }}
-                            className={`w-8 h-8 rounded-full border-2 transition-colors ${
+                            className={`w-8 h-8 rounded-full border-2 transition-all duration-200 hover:scale-110 active:scale-90 ${
                               isCompleted 
                                 ? 'bg-primary border-primary hover:bg-primary/90' 
                                 : 'bg-background border-black hover:bg-purple-100 hover:border-purple-500'

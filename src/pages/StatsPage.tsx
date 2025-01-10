@@ -6,10 +6,22 @@ import { DayPicker } from 'react-day-picker'
 import 'react-day-picker/dist/style.css'
 import { format, isAfter, startOfDay } from 'date-fns'
 import { Area, AreaChart, CartesianGrid, XAxis, ResponsiveContainer, Tooltip } from "recharts"
+import { Trash2 } from 'lucide-react'
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "../components/ui/alert-dialog"
 
 export function StatsPage() {
   const { habitId } = useParams();
-  const { habits, trackHabit, untrackHabit } = useHabits();
+  const { habits, trackHabit, untrackHabit, deleteHabit } = useHabits();
   const navigate = useNavigate();
 
   const habit = habits.find(h => h._id === habitId);
@@ -76,7 +88,34 @@ export function StatsPage() {
     <div className="max-w-[1600px] mx-auto px-8 py-8 space-y-8">
       <div className="flex justify-between items-center">
         <h1 className="text-3xl font-bold">{habit.name}</h1>
-        <div className="flex-shrink-0">
+        <div className="flex gap-4">
+          <AlertDialog>
+            <AlertDialogTrigger asChild>
+              <Button variant="destructive" size="lg">
+                <Trash2 className="h-4 w-4" />
+              </Button>
+            </AlertDialogTrigger>
+            <AlertDialogContent>
+              <AlertDialogHeader>
+                <AlertDialogTitle>Delete Habit</AlertDialogTitle>
+                <AlertDialogDescription>
+                  Are you sure you want to delete "{habit.name}"? This action cannot be undone.
+                </AlertDialogDescription>
+              </AlertDialogHeader>
+              <AlertDialogFooter>
+                <AlertDialogCancel>Cancel</AlertDialogCancel>
+                <AlertDialogAction
+                  onClick={async () => {
+                    await deleteHabit(habit._id);
+                    navigate('/');
+                  }}
+                  className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+                >
+                  Delete
+                </AlertDialogAction>
+              </AlertDialogFooter>
+            </AlertDialogContent>
+          </AlertDialog>
           <Button 
             size="lg" 
             onClick={() => navigate('/')}

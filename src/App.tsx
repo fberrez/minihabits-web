@@ -9,6 +9,7 @@ import './App.css'
 import { Routes, Route } from 'react-router-dom'
 import { HabitList } from './pages/HabitList'
 import { StatsPage } from './pages/StatsPage'
+import { NewHabit } from './pages/NewHabit'
 
 function App() {
   const { isAuthenticated, signIn, signUp } = useAuth();
@@ -54,6 +55,7 @@ function App() {
       <Routes>
         <Route path="/" element={<HabitList />} />
         <Route path="/stats/:habitId" element={<StatsPage />} />
+        <Route path="/new" element={<NewHabit />} />
       </Routes>
     );
   }

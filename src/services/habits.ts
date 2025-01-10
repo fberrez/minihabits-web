@@ -54,10 +54,9 @@ export class HabitService {
   }
 
   static async deleteHabit(accessToken: string, name: string): Promise<void> {
-    const response = await fetch(`${this.BASE_URL}/habits`, {
+    const response = await fetch(`${this.BASE_URL}/habits/${name}`, {
       method: 'DELETE',
       headers: this.getHeaders(accessToken),
-      body: JSON.stringify({ name }),
     });
 
     if (!response.ok) {
