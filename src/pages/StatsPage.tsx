@@ -18,6 +18,7 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "../components/ui/alert-dialog"
+import NumberTicker from '../components/ui/number-ticker';
 
 export function StatsPage() {
   const { habitId } = useParams();
@@ -151,7 +152,7 @@ export function StatsPage() {
             <CardTitle className="text-center">Current Streak</CardTitle>
           </CardHeader>
           <CardContent>
-            <p className="text-4xl font-bold text-primary">{habit.currentStreak}</p>
+            <NumberTicker className="text-4xl font-bold text-primary" value={habit.currentStreak} />
             <p className="text-muted-foreground text-center mt-2">days</p>
           </CardContent>
         </Card>
@@ -161,7 +162,7 @@ export function StatsPage() {
             <CardTitle className="text-center">Longest Streak</CardTitle>
           </CardHeader>
           <CardContent>
-            <p className="text-4xl font-bold text-primary">{habit.longestStreak}</p>
+            <NumberTicker className="text-4xl font-bold text-primary" value={habit.longestStreak} />
             <p className="text-muted-foreground text-center mt-2">days</p>
           </CardContent>
         </Card>
