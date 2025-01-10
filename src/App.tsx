@@ -11,6 +11,7 @@ import { HabitList } from './pages/HabitList'
 import { StatsPage } from './pages/StatsPage'
 import { NewHabit } from './pages/NewHabit'
 import FlickeringGrid from "./components/ui/flickering-grid";
+import { useTheme } from './components/theme-provider'
 
 function App() {
   const { isAuthenticated, signIn, signUp } = useAuth();
@@ -20,6 +21,7 @@ function App() {
   const [isLoading, setIsLoading] = useState(false);
   const [showAuth, setShowAuth] = useState(false);
   const { toast } = useToast();
+  const { theme } = useTheme();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -69,7 +71,7 @@ function App() {
           className="absolute z-0 inset-0 [mask-image:radial-gradient(500px_circle_at_center,white,transparent)]"
           squareSize={3}
           gridGap={6}
-          color="#000000"
+          color={theme === "dark" ? "#ffffff" : "#000000"}
           maxOpacity={0.2}
           flickerChance={0.1}
           height={1600}
