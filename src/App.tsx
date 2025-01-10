@@ -66,8 +66,8 @@ function App() {
     return (
       <div className="relative flex flex-col items-center justify-center min-h-screen px-4 overflow-hidden">
         <FlickeringGrid
-          className="absolute z-0 inset-0 [mask-image:radial-gradient(450px_circle_at_center,white,transparent)]"
-          squareSize={4}
+          className="absolute z-0 inset-0 [mask-image:radial-gradient(500px_circle_at_center,white,transparent)]"
+          squareSize={3}
           gridGap={6}
           color="#000000"
           maxOpacity={0.2}
@@ -89,6 +89,9 @@ function App() {
           >
             Get Started
           </Button>
+          <p className="text-sm text-gray-600 mt-4">
+            Free to use. No credit card required
+          </p>
         </div>
       </div>
     );
@@ -112,6 +115,7 @@ function App() {
               <Input
                 id="email"
                 type="email"
+                autoComplete={isSignUp ? 'new-email' : 'email'}
                 placeholder="m@example.com"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
@@ -124,6 +128,7 @@ function App() {
               <Input
                 id="password"
                 type="password"
+                autoComplete={isSignUp ? "new-password" : "current-password"}
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 disabled={isLoading}
@@ -145,7 +150,7 @@ function App() {
             </Button>
           </form>
           <Button
-            variant="link"
+            variant="secondary"
             className="w-full mt-4"
             onClick={() => setIsSignUp(!isSignUp)}
             disabled={isLoading}
