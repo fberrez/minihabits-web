@@ -6,7 +6,7 @@ import { DayPicker } from 'react-day-picker'
 import 'react-day-picker/dist/style.css'
 import { format, isAfter, startOfDay } from 'date-fns'
 import { Area, AreaChart, CartesianGrid, XAxis, ResponsiveContainer, Tooltip } from "recharts"
-import { Trash2 } from 'lucide-react'
+import { Trash2, ArrowLeft } from 'lucide-react'
 import {
   AlertDialog,
   AlertDialogAction,
@@ -87,12 +87,12 @@ export function StatsPage() {
 
   return (
     <div className="max-w-5xl mx-auto px-4 py-8 space-y-8">
-      <div className="flex justify-between items-center">
+      <div className="flex justify-between items-center gap-4">
         <h1 className="text-3xl font-bold">{habit.name}</h1>
         <div className="flex gap-4">
           <AlertDialog>
             <AlertDialogTrigger asChild>
-              <Button variant="destructive" size="lg">
+              <Button variant="destructive" size="icon">
                 <Trash2 className="h-4 w-4" />
               </Button>
             </AlertDialogTrigger>
@@ -118,16 +118,16 @@ export function StatsPage() {
             </AlertDialogContent>
           </AlertDialog>
           <Button 
-            size="lg" 
+            size="icon"
             onClick={() => navigate('/')}
           >
-            Back to Habits
+            <ArrowLeft className="h-4 w-4" />
           </Button>
         </div>
       </div>
 
-      <div className="grid grid-cols-3 gap-8">
-        <Card>
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+        <Card className="col-span-1 md:col-span-1">
           <CardContent>
             <DayPicker
               mode="multiple"
@@ -143,7 +143,7 @@ export function StatsPage() {
               }}
               onDayClick={handleDayClick}
               disabled={[{ after: new Date() }]}
-              className="dark:rdp-day_selected:text-background"
+              className="mx-auto dark:rdp-day_selected:text-background"
             />
           </CardContent>
         </Card>
@@ -181,7 +181,7 @@ export function StatsPage() {
         </Card>
       </div>
 
-      <div className="grid grid-cols-2 gap-8">
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
         <Card>
           <CardHeader>
             <CardTitle>Yearly Overview</CardTitle>
