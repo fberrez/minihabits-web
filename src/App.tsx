@@ -6,13 +6,12 @@ import { Input } from "./components/ui/input"
 import { Label } from "./components/ui/label"
 import { useToast } from "./hooks/use-toast"
 import './App.css'
-import { Routes, Route, useNavigate } from 'react-router-dom'
+import { Routes, Route } from 'react-router-dom'
 import { HabitList } from './pages/HabitList'
 import { StatsPage } from './pages/StatsPage'
 import { NewHabit } from './pages/NewHabit'
 import { cn } from "./lib/utils";
 import { InteractiveGridPattern } from "./components/ui/interactive-grid-pattern";
-import { Star } from 'lucide-react'
 
 function App() {
   const { isAuthenticated, signIn, signUp } = useAuth();
@@ -22,7 +21,6 @@ function App() {
   const [isLoading, setIsLoading] = useState(false);
   const [showAuth, setShowAuth] = useState(false);
   const { toast } = useToast();
-  const navigate = useNavigate();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
