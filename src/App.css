@@ -95,3 +95,11 @@ button:hover {
   background: none;
   color: #535bf2;
 }
+
+.mode-toggle-container {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  z-index: 1000;
+  color: hsl(var(--foreground));
+}

@@ -30,7 +30,6 @@ export function HabitList() {
         <div className="flex justify-between items-center">
           <h1 className="text-3xl font-bold">minihabits.</h1>
           <div className="flex gap-4">
-            <Button onClick={() => navigate('/stats')}>View Stats</Button>
             <Button onClick={() => navigate('/new')}>New Habit</Button>
           </div>
         </div>
@@ -66,7 +65,6 @@ export function HabitList() {
       <div className="flex justify-between items-center">
         <h1 className="text-3xl font-bold">minihabits.</h1>
         <div className="flex gap-4">
-          <Button onClick={() => navigate('/stats')}>View Stats</Button>
           <Button onClick={() => navigate('/new')}>New Habit</Button>
         </div>
       </div>
@@ -75,11 +73,19 @@ export function HabitList() {
         {habits.map((habit) => {
           const last5Days = getLast5Days();
           return (
-            <Card key={habit._id}>
+            <Card 
+              key={habit._id} 
+              className="cursor-pointer"
+              onClick={() => navigate(`/stats/${habit._id}`)}
+            >
               <CardContent className="p-4">
                 <div className="flex items-center gap-8">
                   <div className="min-w-[200px] flex flex-col">
-                    <h3 className="font-medium">{habit.name}</h3>
+                    <h3 
+                      className="font-medium hover:text-primary"
+                    >
+                      {habit.name}
+                    </h3>
                     <div className="flex items-center gap-1 text-sm text-muted-foreground mt-1 self-start">
                       <Flame className="w-4 h-4 text-orange-500" />
                       <span>{habit.currentStreak}</span>
@@ -95,7 +101,14 @@ export function HabitList() {
                             {formatDate(date)}
                           </div>
                           <Button
-                            onClick={() => isCompleted ? untrackHabit(habit._id, dateStr) : trackHabit(habit._id, dateStr)}
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              if (isCompleted) {
+                                untrackHabit(habit._id, dateStr);
+                              } else {
+                                trackHabit(habit._id, dateStr);
+                              }
+                            }}
                             className={`w-8 h-8 rounded-full border-2 transition-colors ${
                               isCompleted 
                                 ? 'bg-primary border-primary hover:bg-primary/90' 

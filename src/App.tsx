@@ -53,7 +53,7 @@ function App() {
     return (
       <Routes>
         <Route path="/" element={<HabitList />} />
-        <Route path="/stats" element={<StatsPage />} />
+        <Route path="/stats/:habitId" element={<StatsPage />} />
       </Routes>
     );
   }

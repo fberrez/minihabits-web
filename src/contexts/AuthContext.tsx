@@ -21,7 +21,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   });
 
   useEffect(() => {
-    console.log('accessToken', accessToken);
     if (accessToken) {
       localStorage.setItem('accessToken', accessToken);
     } else {
@@ -39,7 +38,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   const signIn = useCallback(async (email: string, password: string) => {
     const response = await AuthService.signIn({ email, password });
-    console.log('response', response);
     setAccessToken(response.accessToken);
     setRefreshToken(response.refreshToken);
   }, []);

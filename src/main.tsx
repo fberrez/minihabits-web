@@ -12,7 +12,9 @@ import { Toaster } from "./components/ui/toaster.tsx"
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
     <ThemeProvider>
-      <ModeToggle />
+      <div className="mode-toggle-container">
+        <ModeToggle />
+      </div>
       <BrowserRouter>
         <AuthProvider>
           <HabitProvider>
