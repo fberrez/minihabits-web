@@ -36,6 +36,5 @@ createRoot(document.getElementById('root')!).render(
         </AuthProvider>
       </BrowserRouter>
     </ThemeProvider>
-    <script defer data-domain="minihabits-web-production.up.railway.app" src="https://plausible.io/js/script.js"></script>
   </StrictMode>,
 )
