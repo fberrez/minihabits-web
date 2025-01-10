@@ -137,7 +137,8 @@ export function StatsPage() {
                 completed: {
                   backgroundColor: 'hsl(var(--primary))',
                   color: 'hsl(var(--background))',
-                  fontWeight: '500'
+                  fontWeight: '500',
+                  transform: 'scale(0.75)' // Makes the circle smaller
                 }
               }}
               onDayClick={handleDayClick}
