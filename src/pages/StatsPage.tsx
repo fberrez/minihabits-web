@@ -153,7 +153,13 @@ export function StatsPage() {
             <CardTitle className="text-center">Current Streak</CardTitle>
           </CardHeader>
           <CardContent>
-            <NumberTicker className="text-4xl font-bold text-primary" value={habit.currentStreak} />
+            {
+              habit.currentStreak > 0 ? (
+                <NumberTicker className="text-4xl font-bold text-primary" value={habit.currentStreak} />
+              ) : (
+                <p className="text-4xl font-bold text-primary">0</p>
+              )
+            }
             <p className="text-muted-foreground text-center mt-2">days</p>
           </CardContent>
         </Card>
@@ -163,7 +169,13 @@ export function StatsPage() {
             <CardTitle className="text-center">Longest Streak</CardTitle>
           </CardHeader>
           <CardContent>
-            <NumberTicker className="text-4xl font-bold text-primary" value={habit.longestStreak} />
+            {
+              habit.longestStreak > 0 ? (
+                <NumberTicker className="text-4xl font-bold text-primary" value={habit.longestStreak} />
+              ) : (
+                <p className="text-4xl font-bold text-primary">0</p>
+              )
+            }
             <p className="text-muted-foreground text-center mt-2">days</p>
           </CardContent>
         </Card>

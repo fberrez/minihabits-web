@@ -33,7 +33,7 @@ export function HabitList() {
 
   if (isLoading) {
     return (
-      <div className="max-w-3xl mx-auto px-4 py-8 space-y-8">
+      <div className="min-h-screen flex flex-col justify-center max-w-3xl mx-auto px-4 py-8 space-y-8">
         <div className="flex justify-between items-center">
           <h1 className="text-3xl font-bold">minihabits.</h1>
           <div className="flex gap-4">
@@ -68,7 +68,7 @@ export function HabitList() {
   }
 
   return (
-    <div className="max-w-3xl mx-auto px-4 py-8 space-y-8">
+    <div className="min-h-screen flex flex-col justify-center max-w-3xl mx-auto px-4 py-8 space-y-8">
       <div className="flex justify-between items-center">
         <h1 className="text-3xl font-bold">minihabits.</h1>
         <div className="flex gap-4">
