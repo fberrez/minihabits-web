@@ -19,6 +19,12 @@ import {
   AlertDialogTrigger,
 } from "../components/ui/alert-dialog"
 import NumberTicker from '../components/ui/number-ticker';
+import CalHeatmap from 'cal-heatmap';
+import CalHeatmapTooltip from 'cal-heatmap/plugins/Tooltip';
+import CalHeatmapLabel from 'cal-heatmap/plugins/CalendarLabel';
+import 'cal-heatmap/cal-heatmap.css';
+import { useEffect } from 'react';
+import moment from 'moment';
 
 export function StatsPage() {
   const { habitId } = useParams();
@@ -27,6 +33,63 @@ export function StatsPage() {
 
   const habit = habits.find(h => h._id === habitId);
   
+  useEffect(() => {
+    if (!habit) return;
+
+    const cal = new CalHeatmap();
+    const data = Object.entries(habit.completedDates).map(([date, completed]) => ({
+      date,
+      value: completed ? 1 : 0
+    }));
+
+    cal.paint({
+      data: { source: data, x: 'date', y: 'value' },
+      date: {
+        start: moment().utc().startOf('year').toDate(),
+        end: moment().utc().endOf('year').toDate()
+      },
+      domain: {
+        type:'month',
+        sort:'asc',
+        label: { text: 'MMM', textAlign: 'start', position: 'top' },
+      },
+      subDomain: { type: 'ghDay', radius: 2, width: 12, height: 12, gutter: 4 },
+      scale: {
+        color: { 
+          range: ['gray', 'green'],
+          interpolate: 'hsl',
+          type: 'linear',
+          domain: [0, 1],
+        }
+      }
+    },
+    [
+      [
+        CalHeatmapTooltip,
+        {
+          text: function (date, value, dayjsDate) {
+            return (
+              (value ? 'Completed' : 'No data') + ' on ' + dayjsDate.format('LL')
+            );
+          },
+        },
+      ],
+      [
+        CalHeatmapLabel,
+        {
+          width: 30,
+          textAlign: 'start',
+          text: () => moment.weekdaysShort().map((d, i) => (i % 2 == 0 ? '' : d)),
+          padding: [25, 0, 0, 0],
+        },
+      ],
+    ]);
+
+    return () => {
+      cal.destroy();
+    };
+  }, [habit?.completedDates]);
+
   if (!habit) return null;
 
   const completedDates = Object.keys(habit.completedDates)
@@ -85,8 +148,6 @@ export function StatsPage() {
     return data;
   };
 
-  console.log(habit)
-
   return (
     <div className="max-w-5xl mx-auto px-4 py-8 space-y-8">
       <div className="flex justify-between items-center gap-4">
@@ -128,6 +189,21 @@ export function StatsPage() {
         </div>
       </div>
 
+      <div className="hidden md:block grid grid-cols-1 gap-8">
+        <Card className="w-full">
+          <CardHeader>
+            <CardTitle>Yearly Heatmap</CardTitle>
+            <CardDescription>
+              Your habit completion throughout the year
+            </CardDescription>
+          </CardHeader>
+          <CardContent className="overflow-x-auto">
+            <div id="cal-heatmap" className="w-full flex justify-center"></div>
+          </CardContent>
+        </Card>
+      </div>
+
+      
       <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
         <Card className="col-span-1 md:col-span-1">
           <CardContent>
