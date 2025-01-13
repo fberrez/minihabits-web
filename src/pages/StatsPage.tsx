@@ -67,7 +67,8 @@ export function StatsPage() {
       [
         CalHeatmapTooltip,
         {
-          text: function (date, value, dayjsDate) {
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
+          text: function (date: any, value: any, dayjsDate: { format: (arg0: string) => string }) {
             return (
               (value ? 'Completed' : 'No data') + ' on ' + dayjsDate.format('LL')
             );
