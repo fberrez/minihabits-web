@@ -1,19 +1,4 @@
-interface Habit {
-  _id: string;
-  name: string;
-  createdAt: Date;
-  userId: string;
-  completedDates: Record<string, number>;
-  currentStreak: number;
-  longestStreak: number;
-}
-
-interface Stats {
-  totalHabits: number;
-  completedToday: number;
-  averageCompletion: number;
-  longestStreak: number;
-}
+import { Habit, GlobalStats } from '../types/habit';
 
 export class HabitService {
   private static BASE_URL = import.meta.env.VITE_API_BASE_URL;
@@ -114,7 +99,7 @@ export class HabitService {
     return response.json();
   }
 
-  static async getStats(accessToken: string): Promise<Stats> {
+  static async getStats(accessToken: string): Promise<GlobalStats> {
     const response = await fetch(`${this.BASE_URL}/habits/stats`, {
       method: 'GET',
       headers: this.getHeaders(accessToken),

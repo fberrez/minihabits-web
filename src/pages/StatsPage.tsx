@@ -85,6 +85,8 @@ export function StatsPage() {
     return data;
   };
 
+  console.log(habit)
+
   return (
     <div className="max-w-5xl mx-auto px-4 py-8 space-y-8">
       <div className="flex justify-between items-center gap-4">
@@ -177,6 +179,48 @@ export function StatsPage() {
               )
             }
             <p className="text-muted-foreground text-center mt-2">days</p>
+          </CardContent>
+        </Card>
+
+        <Card className="flex flex-col items-center justify-center">
+          <CardHeader>
+            <CardTitle className="text-center">Completion Rate</CardTitle>
+            <CardDescription className="text-center">Last 7 days</CardDescription>
+          </CardHeader>
+          <CardContent>
+            <NumberTicker 
+              className="text-4xl font-bold text-primary" 
+              value={Math.round(habit.completionRate7Days)} 
+            />
+            <p className="text-muted-foreground text-center mt-2">%</p>
+          </CardContent>
+        </Card>
+
+        <Card className="flex flex-col items-center justify-center">
+          <CardHeader>
+            <CardTitle className="text-center">Monthly Rate</CardTitle>
+            <CardDescription className="text-center">This month</CardDescription>
+          </CardHeader>
+          <CardContent>
+            <NumberTicker 
+              className="text-4xl font-bold text-primary" 
+              value={Math.round(habit.completionRateMonth)} 
+            />
+            <p className="text-muted-foreground text-center mt-2">%</p>
+          </CardContent>
+        </Card>
+
+        <Card className="flex flex-col items-center justify-center">
+          <CardHeader>
+            <CardTitle className="text-center">Yearly Rate</CardTitle>
+            <CardDescription className="text-center">This year</CardDescription>
+          </CardHeader>
+          <CardContent>
+            <NumberTicker 
+              className="text-4xl font-bold text-primary" 
+              value={Math.round(habit.completionRateYear)} 
+            />
+            <p className="text-muted-foreground text-center mt-2">%</p>
           </CardContent>
         </Card>
       </div>

@@ -1,19 +1,9 @@
-interface SignInCredentials {
-  email: string;
-  password: string;
-}
-
-interface SignUpCredentials extends SignInCredentials {}
-
-interface AuthResponse {
-  accessToken: string;
-  refreshToken: string;
-}
+import { Credentials, AuthResponse } from '../types/habit';
 
 export class AuthService {
   private static BASE_URL = `${import.meta.env.VITE_API_BASE_URL}/auth`;
 
-  static async signIn(credentials: SignInCredentials): Promise<AuthResponse> {
+  static async signIn(credentials: Credentials): Promise<AuthResponse> {
     const response = await fetch(`${this.BASE_URL}/signin`, {
       method: 'POST',
       headers: {
@@ -29,7 +19,7 @@ export class AuthService {
     return response.json();
   }
 
-  static async signUp(credentials: SignUpCredentials): Promise<AuthResponse> {
+  static async signUp(credentials: Credentials): Promise<AuthResponse> {
     const response = await fetch(`${this.BASE_URL}/signup`, {
       method: 'POST',
       headers: {
@@ -58,5 +48,34 @@ export class AuthService {
     }
 
     return response.json();
+  }
+
+  static async fetchWithTokenRefresh(
+    url: string,
+    options: RequestInit,
+    refreshToken: string
+  ): Promise<Response> {
+    let response = await fetch(url, options);
+
+    if (response.status === 401) {
+      try {
+        // Get new tokens
+        const newTokens = await this.refreshToken(refreshToken);
+        
+        // Update Authorization header with new access token
+        options.headers = {
+          ...options.headers,
+          'Authorization': `Bearer ${newTokens.accessToken}`,
+        };
+
+        // Retry original request with new token
+        response = await fetch(url, options);
+      } catch {
+        // If refresh fails, throw error to trigger sign out
+        throw new Error('Token refresh failed');
+      }
+    }
+
+    return response;
   }
 } 

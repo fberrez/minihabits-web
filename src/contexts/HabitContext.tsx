@@ -1,27 +1,11 @@
 import { createContext, useContext, useEffect, useState, ReactNode } from 'react';
 import { HabitService } from '../services/habits';
 import { useAuth } from './AuthContext';
-
-interface Habit {
-  _id: string;
-  name: string;
-  createdAt: Date;
-  userId: string;
-  completedDates: Record<string, number>;
-  currentStreak: number;
-  longestStreak: number;
-}
-
-interface Stats {
-  totalHabits: number;
-  completedToday: number;
-  averageCompletion: number;
-  longestStreak: number;
-}
+import { Habit, GlobalStats } from '../types/habit';
 
 interface HabitContextType {
   habits: Habit[];
-  stats: Stats | null;
+  stats: GlobalStats | null;
   isLoading: boolean;
   error: string | null;
   createHabit: (name: string) => Promise<void>;
@@ -37,7 +21,7 @@ const HabitContext = createContext<HabitContextType | undefined>(undefined);
 export function HabitProvider({ children }: { children: ReactNode }) {
   const { accessToken } = useAuth();
   const [habits, setHabits] = useState<Habit[]>([]);
-  const [stats, setStats] = useState<Stats | null>(null);
+  const [stats, setStats] = useState<GlobalStats | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -52,7 +36,19 @@ export function HabitProvider({ children }: { children: ReactNode }) {
         HabitService.getHabits(accessToken),
         HabitService.getStats(accessToken),
       ]);
-      setHabits(habitsData);
+
+      // Merge stats data with habits data
+      const mergedHabits = habitsData.map(habit => {
+        const habitStats = statsData.habits.find(h => h.name === habit.name);
+        return {
+          ...habit,
+          completionRate7Days: habitStats?.completionRate7Days ?? 0,
+          completionRateYear: habitStats?.completionRateYear ?? 0,
+          completionRateMonth: habitStats?.completionRateMonth ?? 0,
+        };
+      });
+
+      setHabits(mergedHabits);
       setStats(statsData);
       setError(null);
     } catch (err) {
