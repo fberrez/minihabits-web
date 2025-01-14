@@ -23,26 +23,36 @@ import CalHeatmap from 'cal-heatmap';
 import CalHeatmapTooltip from 'cal-heatmap/plugins/Tooltip';
 import CalHeatmapLabel from 'cal-heatmap/plugins/CalendarLabel';
 import 'cal-heatmap/cal-heatmap.css';
-import { useEffect } from 'react';
+import { useEffect, useRef } from 'react';
 import moment from 'moment';
 
 export function StatsPage() {
   const { habitId } = useParams();
   const { habits, trackHabit, untrackHabit, deleteHabit } = useHabits();
   const navigate = useNavigate();
+  const calRef = useRef<CalHeatmap | null>(null);
+  const initRef = useRef(false);
 
   const habit = habits.find(h => h._id === habitId);
   
   useEffect(() => {
-    if (!habit) return;
+    if (!habit || initRef.current) return;
 
-    const cal = new CalHeatmap();
+    // Clean up any existing instance
+    if (calRef.current) {
+      calRef.current.destroy();
+    }
+
+    // Create new instance
+    calRef.current = new CalHeatmap();
+    initRef.current = true;
+
     const data = Object.entries(habit.completedDates).map(([date, completed]) => ({
       date,
       value: completed ? 1 : 0
     }));
 
-    cal.paint({
+    calRef.current.paint({
       data: { source: data, x: 'date', y: 'value' },
       date: {
         start: moment().utc().startOf('year').toDate(),
@@ -87,7 +97,7 @@ export function StatsPage() {
     ]);
 
     return () => {
-      cal.destroy();
+      calRef.current?.destroy();
     };
   }, [habit?.completedDates, habit]);
 
