@@ -1,5 +1,4 @@
 import { createContext, useContext, useEffect, useState, ReactNode } from 'react';
-import { HabitService } from '../services/habits';
 import { useAuth } from './AuthContext';
 import { Habit, GlobalStats } from '../types/habit';
 
@@ -19,27 +18,36 @@ interface HabitContextType {
 const HabitContext = createContext<HabitContextType | undefined>(undefined);
 
 export function HabitProvider({ children }: { children: ReactNode }) {
-  const { accessToken } = useAuth();
+  const { isAuthenticated, authenticatedFetch } = useAuth();
   const [habits, setHabits] = useState<Habit[]>([]);
   const [stats, setStats] = useState<GlobalStats | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
   const refreshHabits = async (showLoading = true) => {
-    if (!accessToken) return;
+    if (!isAuthenticated) return;
     
     try {
       if (showLoading) {
         setIsLoading(true);
       }
+      const [habitsResponse, statsResponse] = await Promise.all([
+        authenticatedFetch(`${import.meta.env.VITE_API_BASE_URL}/habits`),
+        authenticatedFetch(`${import.meta.env.VITE_API_BASE_URL}/habits/stats`),
+      ]);
+
+      if (!habitsResponse.ok || !statsResponse.ok) {
+        throw new Error('Failed to fetch data');
+      }
+
       const [habitsData, statsData] = await Promise.all([
-        HabitService.getHabits(accessToken),
-        HabitService.getStats(accessToken),
+        habitsResponse.json(),
+        statsResponse.json(),
       ]);
 
       // Merge stats data with habits data
-      const mergedHabits = habitsData.map(habit => {
-        const habitStats = statsData.habits.find(h => h.name === habit.name);
+      const mergedHabits = habitsData.map((habit: Habit) => {
+        const habitStats = statsData.habits.find((h: { name: string }) => h.name === habit.name);
         return {
           ...habit,
           completionRate7Days: habitStats?.completionRate7Days ?? 0,
@@ -63,13 +71,24 @@ export function HabitProvider({ children }: { children: ReactNode }) {
 
   useEffect(() => {
     refreshHabits(true);
-  }, [accessToken]);
+  }, [isAuthenticated]);
 
   const createHabit = async (name: string) => {
-    if (!accessToken) return;
+    if (!isAuthenticated) return;
     
     try {
-      await HabitService.createHabit(accessToken, name);
+      const response = await authenticatedFetch(`${import.meta.env.VITE_API_BASE_URL}/habits`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ name }),
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to create habit');
+      }
+
       await refreshHabits(true);
     } catch (err) {
       setError('Failed to create habit');
@@ -78,10 +97,21 @@ export function HabitProvider({ children }: { children: ReactNode }) {
   };
 
   const updateHabit = async (name: string) => {
-    if (!accessToken) return;
+    if (!isAuthenticated) return;
     
     try {
-      await HabitService.updateHabit(accessToken, name);
+      const response = await authenticatedFetch(`${import.meta.env.VITE_API_BASE_URL}/habits/${name}`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ name }),
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to update habit');
+      }
+
       await refreshHabits(true);
     } catch (err) {
       setError('Failed to update habit');
@@ -90,10 +120,17 @@ export function HabitProvider({ children }: { children: ReactNode }) {
   };
 
   const deleteHabit = async (name: string) => {
-    if (!accessToken) return;
+    if (!isAuthenticated) return;
     
     try {
-      await HabitService.deleteHabit(accessToken, name);
+      const response = await authenticatedFetch(`${import.meta.env.VITE_API_BASE_URL}/habits/${name}`, {
+        method: 'DELETE',
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to delete habit');
+      }
+
       await refreshHabits(true);
     } catch (err) {
       setError('Failed to delete habit');
@@ -102,10 +139,21 @@ export function HabitProvider({ children }: { children: ReactNode }) {
   };
 
   const trackHabit = async (habitId: string, date: string) => {
-    if (!accessToken) return;
+    if (!isAuthenticated) return;
     
     try {
-      await HabitService.trackHabit(accessToken, habitId, date);
+      const response = await authenticatedFetch(`${import.meta.env.VITE_API_BASE_URL}/habits/${habitId}/track`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ date }),
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to track habit');
+      }
+
       await refreshHabits(false);
     } catch (err) {
       setError('Failed to track habit');
@@ -114,10 +162,17 @@ export function HabitProvider({ children }: { children: ReactNode }) {
   };
 
   const untrackHabit = async (habitId: string, date: string) => {
-    if (!accessToken) return;
+    if (!isAuthenticated) return;
     
     try {
-      await HabitService.untrackHabit(accessToken, habitId, date);
+      const response = await authenticatedFetch(`${import.meta.env.VITE_API_BASE_URL}/habits/${habitId}/track/${date}`, {
+        method: 'DELETE',
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to untrack habit');
+      }
+
       await refreshHabits(false);
     } catch (err) {
       setError('Failed to untrack habit');

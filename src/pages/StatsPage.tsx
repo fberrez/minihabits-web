@@ -207,7 +207,7 @@ export function StatsPage() {
       
       <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
         <Card className="col-span-1 md:col-span-1">
-          <CardContent>
+          <CardContent className="flex justify-center items-center">
             <DayPicker
               mode="multiple"
               selected={completedDates}
@@ -276,7 +276,7 @@ export function StatsPage() {
         <Card className="flex flex-col items-center justify-center">
           <CardHeader>
             <CardTitle className="text-center">Monthly Rate</CardTitle>
-            <CardDescription className="text-center">This month</CardDescription>
+            <CardDescription className="text-center">This month (completed days only)</CardDescription>
           </CardHeader>
           <CardContent>
             <NumberTicker 
@@ -290,7 +290,7 @@ export function StatsPage() {
         <Card className="flex flex-col items-center justify-center">
           <CardHeader>
             <CardTitle className="text-center">Yearly Rate</CardTitle>
-            <CardDescription className="text-center">This year</CardDescription>
+            <CardDescription className="text-center">This year (completed days only)</CardDescription>
           </CardHeader>
           <CardContent>
             <NumberTicker 
