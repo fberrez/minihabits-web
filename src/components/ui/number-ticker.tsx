@@ -27,29 +27,29 @@ export default function NumberTicker({
   const isInView = useInView(ref, { once: true, margin: "0px" });
 
   useEffect(() => {
-    isInView &&
+    if (isInView) {
       setTimeout(() => {
         motionValue.set(direction === "down" ? 0 : value);
       }, delay * 1000);
+    }
   }, [motionValue, isInView, delay, value, direction]);
 
-  useEffect(
-    () =>
-      springValue.on("change", (latest) => {
-        if (ref.current) {
-          ref.current.textContent = Intl.NumberFormat("en-US", {
-            minimumFractionDigits: decimalPlaces,
-            maximumFractionDigits: decimalPlaces,
-          }).format(Number(latest.toFixed(decimalPlaces)));
-        }
-      }),
-    [springValue, decimalPlaces],
-  );
+  useEffect(() => {
+    const unsubscribe = springValue.on("change", (latest) => {
+      if (ref.current) {
+        ref.current.textContent = Intl.NumberFormat("en-US", {
+          minimumFractionDigits: decimalPlaces,
+          maximumFractionDigits: decimalPlaces,
+        }).format(Number(latest.toFixed(decimalPlaces)));
+      }
+    });
+    return unsubscribe;
+  }, [springValue, decimalPlaces]);
 
   return (
     <span
       className={cn(
-        "inline-block tabular-nums tracking-wider text-black dark:text-white",
+        "inline-block tabular-nums tracking-wider",
         className,
       )}
       ref={ref}

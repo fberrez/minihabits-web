@@ -66,7 +66,7 @@ export function StatsPage() {
       subDomain: { type: 'ghDay', radius: 2, width: 12, height: 12, gutter: 4 },
       scale: {
         color: { 
-          range: ['gray', 'green'],
+          range: ['gray', habit.color],
           interpolate: 'hsl',
           type: 'linear',
           domain: [0, 1],
@@ -162,7 +162,10 @@ export function StatsPage() {
   return (
     <div className="max-w-5xl mx-auto px-4 py-8 space-y-8">
       <div className="flex justify-between items-center gap-4">
-        <h1 className="text-3xl font-bold">{habit.name}</h1>
+        <div className="flex items-center gap-4">
+          <div className="w-6 h-6 rounded-full" style={{ backgroundColor: habit.color }} />
+          <h1 className="text-3xl font-bold">{habit.name}</h1>
+        </div>
         <div className="flex gap-4">
           <AlertDialog>
             <AlertDialogTrigger asChild>
@@ -224,10 +227,10 @@ export function StatsPage() {
               modifiers={{ completed: completedDates }}
               modifiersStyles={{
                 completed: {
-                  backgroundColor: 'hsl(var(--primary))',
-                  color: 'hsl(var(--background))',
+                  backgroundColor: habit.color,
+                  color: 'white',
                   fontWeight: '500',
-                  transform: 'scale(0.75)' // Makes the circle smaller
+                  transform: 'scale(0.75)'
                 }
               }}
               onDayClick={handleDayClick}
@@ -242,13 +245,13 @@ export function StatsPage() {
             <CardTitle className="text-center">Current Streak</CardTitle>
           </CardHeader>
           <CardContent>
-            {
-              habit.currentStreak > 0 ? (
-                <NumberTicker className="text-4xl font-bold text-primary" value={habit.currentStreak} />
+            <div style={{ color: habit.color }}>
+              {habit.currentStreak > 0 ? (
+                <NumberTicker className="text-4xl font-bold" value={habit.currentStreak} />
               ) : (
-                <p className="text-4xl font-bold text-primary">0</p>
-              )
-            }
+                <p className="text-4xl font-bold">0</p>
+              )}
+            </div>
             <p className="text-muted-foreground text-center mt-2">days</p>
           </CardContent>
         </Card>
@@ -258,13 +261,13 @@ export function StatsPage() {
             <CardTitle className="text-center">Longest Streak</CardTitle>
           </CardHeader>
           <CardContent>
-            {
-              habit.longestStreak > 0 ? (
-                <NumberTicker className="text-4xl font-bold text-primary" value={habit.longestStreak} />
+            <div style={{ color: habit.color }}>
+              {habit.longestStreak > 0 ? (
+                <NumberTicker className="text-4xl font-bold" value={habit.longestStreak} />
               ) : (
-                <p className="text-4xl font-bold text-primary">0</p>
-              )
-            }
+                <p className="text-4xl font-bold">0</p>
+              )}
+            </div>
             <p className="text-muted-foreground text-center mt-2">days</p>
           </CardContent>
         </Card>
@@ -275,10 +278,12 @@ export function StatsPage() {
             <CardDescription className="text-center">Last 7 days</CardDescription>
           </CardHeader>
           <CardContent>
-            <NumberTicker 
-              className="text-4xl font-bold text-primary" 
-              value={Math.round(habit.completionRate7Days)} 
-            />
+            <div style={{ color: habit.color }}>
+              <NumberTicker 
+                className="text-4xl font-bold"
+                value={Math.round(habit.completionRate7Days)} 
+              />
+            </div>
             <p className="text-muted-foreground text-center mt-2">%</p>
           </CardContent>
         </Card>
@@ -289,10 +294,12 @@ export function StatsPage() {
             <CardDescription className="text-center">This month (completed days only)</CardDescription>
           </CardHeader>
           <CardContent>
-            <NumberTicker 
-              className="text-4xl font-bold text-primary" 
-              value={Math.round(habit.completionRateMonth)} 
-            />
+            <div style={{ color: habit.color }}>
+              <NumberTicker 
+                className="text-4xl font-bold"
+                value={Math.round(habit.completionRateMonth)} 
+              />
+            </div>
             <p className="text-muted-foreground text-center mt-2">%</p>
           </CardContent>
         </Card>
@@ -303,10 +310,12 @@ export function StatsPage() {
             <CardDescription className="text-center">This year (completed days only)</CardDescription>
           </CardHeader>
           <CardContent>
-            <NumberTicker 
-              className="text-4xl font-bold text-primary" 
-              value={Math.round(habit.completionRateYear)} 
-            />
+            <div style={{ color: habit.color }}>
+              <NumberTicker 
+                className="text-4xl font-bold"
+                value={Math.round(habit.completionRateYear)} 
+              />
+            </div>
             <p className="text-muted-foreground text-center mt-2">%</p>
           </CardContent>
         </Card>
@@ -357,8 +366,8 @@ export function StatsPage() {
                   <Area
                     type="monotone"
                     dataKey="completions"
-                    stroke="hsl(var(--primary))"
-                    fill="hsl(var(--primary))"
+                    stroke={habit.color}
+                    fill={habit.color}
                     fillOpacity={0.2}
                   />
                 </AreaChart>
@@ -419,8 +428,8 @@ export function StatsPage() {
                   <Area
                     type="step"
                     dataKey="completed"
-                    stroke="hsl(var(--primary))"
-                    fill="hsl(var(--primary))"
+                    stroke={habit.color}
+                    fill={habit.color}
                     fillOpacity={0.2}
                   />
                 </AreaChart>

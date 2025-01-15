@@ -1,4 +1,4 @@
-import { Habit, GlobalStats } from '../types/habit';
+import { Habit, GlobalStats, HabitColor } from '../types/habit';
 
 export class HabitService {
   private static BASE_URL = import.meta.env.VITE_API_BASE_URL;
@@ -10,11 +10,11 @@ export class HabitService {
     };
   }
 
-  static async createHabit(accessToken: string, name: string): Promise<Habit> {
+  static async createHabit(accessToken: string, name: string, color?: HabitColor): Promise<Habit> {
     const response = await fetch(`${this.BASE_URL}/habits`, {
       method: 'POST',
       headers: this.getHeaders(accessToken),
-      body: JSON.stringify({ name }),
+      body: JSON.stringify({ name, color }),
     });
 
     if (!response.ok) {
@@ -24,11 +24,11 @@ export class HabitService {
     return response.json();
   }
 
-  static async updateHabit(accessToken: string, name: string): Promise<Habit> {
-    const response = await fetch(`${this.BASE_URL}/habits`, {
+  static async updateHabit(accessToken: string, habitId: string, data: { name?: string; color?: HabitColor }): Promise<Habit> {
+    const response = await fetch(`${this.BASE_URL}/habits/${habitId}`, {
       method: 'PUT',
       headers: this.getHeaders(accessToken),
-      body: JSON.stringify({ name }),
+      body: JSON.stringify(data),
     });
 
     if (!response.ok) {

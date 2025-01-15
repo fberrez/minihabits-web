@@ -1,15 +1,15 @@
 import { createContext, useContext, useEffect, useState, ReactNode } from 'react';
 import { useAuth } from './AuthContext';
-import { Habit, GlobalStats } from '../types/habit';
+import { Habit, GlobalStats, HabitColor } from '../types/habit';
 
 interface HabitContextType {
   habits: Habit[];
   stats: GlobalStats | null;
   isLoading: boolean;
   error: string | null;
-  createHabit: (name: string) => Promise<void>;
-  updateHabit: (name: string) => Promise<void>;
-  deleteHabit: (name: string) => Promise<void>;
+  createHabit: (name: string, color?: HabitColor) => Promise<void>;
+  updateHabit: (habitId: string, data: { name?: string; color?: HabitColor }) => Promise<void>;
+  deleteHabit: (habitId: string) => Promise<void>;
   trackHabit: (habitId: string, date: string) => Promise<void>;
   untrackHabit: (habitId: string, date: string) => Promise<void>;
   refreshHabits: () => Promise<void>;
@@ -73,7 +73,7 @@ export function HabitProvider({ children }: { children: ReactNode }) {
     refreshHabits(true);
   }, [isAuthenticated]);
 
-  const createHabit = async (name: string) => {
+  const createHabit = async (name: string, color?: HabitColor) => {
     if (!isAuthenticated) return;
     
     try {
@@ -82,7 +82,7 @@ export function HabitProvider({ children }: { children: ReactNode }) {
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ name }),
+        body: JSON.stringify({ name, color }),
       });
 
       if (!response.ok) {
@@ -96,16 +96,16 @@ export function HabitProvider({ children }: { children: ReactNode }) {
     }
   };
 
-  const updateHabit = async (name: string) => {
+  const updateHabit = async (habitId: string, data: { name?: string; color?: HabitColor }) => {
     if (!isAuthenticated) return;
     
     try {
-      const response = await authenticatedFetch(`${import.meta.env.VITE_API_BASE_URL}/habits/${name}`, {
+      const response = await authenticatedFetch(`${import.meta.env.VITE_API_BASE_URL}/habits/${habitId}`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ name }),
+        body: JSON.stringify(data),
       });
 
       if (!response.ok) {

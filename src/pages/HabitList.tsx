@@ -95,6 +95,7 @@ export function HabitList() {
               <CardContent className="p-4">
                 <div className="flex items-center justify-between gap-4">
                   <div className="flex items-center gap-4">
+                    <div className="w-4 h-4 rounded-full" style={{ backgroundColor: habit.color }} />
                     <div className="flex flex-col gap-2">
                       <h3 className="font-medium hover:text-primary">
                         {habit.name}
