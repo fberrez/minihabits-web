@@ -37,15 +37,24 @@ import CalHeatmap from 'cal-heatmap';
 import CalHeatmapTooltip from 'cal-heatmap/plugins/Tooltip';
 import CalHeatmapLabel from 'cal-heatmap/plugins/CalendarLabel';
 import 'cal-heatmap/cal-heatmap.css';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import moment from 'moment';
 
 export function StatsPage() {
   const { habitId } = useParams();
   const { habits, trackHabit, untrackHabit, deleteHabit } = useHabits();
   const navigate = useNavigate();
+  const [localCompletionStatus, setLocalCompletionStatus] = useState<
+    Record<string, number>
+  >({});
 
   const habit = habits.find(h => h._id === habitId);
+
+  useEffect(() => {
+    if (habit) {
+      setLocalCompletionStatus(habit.completedDates);
+    }
+  }, [habit?._id]);
 
   useEffect(() => {
     if (!habit) return;
@@ -123,22 +132,37 @@ export function StatsPage() {
 
   if (!habit) return null;
 
-  const completedDates = Object.keys(habit.completedDates)
-    .filter(date => habit.completedDates[date])
+  const completedDates = Object.keys(localCompletionStatus)
+    .filter(date => localCompletionStatus[date])
     .map(date => new Date(date));
 
-  const handleDayClick = async (day: Date) => {
+  const handleDayClick = (day: Date) => {
     if (isAfter(startOfDay(day), startOfDay(new Date()))) {
       return;
     }
 
     const formattedDate = format(day, 'yyyy-MM-dd');
-    const isCompleted = habit.completedDates[formattedDate];
+    const isCompleted = localCompletionStatus[formattedDate];
+
+    setLocalCompletionStatus(prev => ({
+      ...prev,
+      [formattedDate]: isCompleted ? 0 : 1,
+    }));
 
     if (isCompleted) {
-      await untrackHabit(habit._id, formattedDate);
+      untrackHabit(habit._id, formattedDate).catch(() => {
+        setLocalCompletionStatus(prev => ({
+          ...prev,
+          [formattedDate]: 1,
+        }));
+      });
     } else {
-      await trackHabit(habit._id, formattedDate);
+      trackHabit(habit._id, formattedDate).catch(() => {
+        setLocalCompletionStatus(prev => ({
+          ...prev,
+          [formattedDate]: 0,
+        }));
+      });
     }
   };
 

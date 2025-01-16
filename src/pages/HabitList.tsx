@@ -18,7 +18,7 @@ export function HabitList() {
   const navigate = useNavigate();
   const jsConfettiRef = useRef<JSConfetti | null>(null);
   const [localCompletionStatus, setLocalCompletionStatus] = useState<
-    Record<string, Record<string, boolean>>
+    Record<string, Record<string, number>>
   >({});
 
   useEffect(() => {
@@ -98,7 +98,7 @@ export function HabitList() {
             if (!localCompletionStatus[habit._id]) {
               setLocalCompletionStatus(prev => ({
                 ...prev,
-                [habit._id]: habit.completedDates,
+                [habit._id]: { ...habit.completedDates },
               }));
             }
 
@@ -176,7 +176,7 @@ export function HabitList() {
                                         ...prev,
                                         [habit._id]: {
                                           ...prev[habit._id],
-                                          [formattedDate]: !isCompleted,
+                                          [formattedDate]: isCompleted ? 0 : 1,
                                         },
                                       }));
 
@@ -189,7 +189,7 @@ export function HabitList() {
                                             ...prev,
                                             [habit._id]: {
                                               ...prev[habit._id],
-                                              [formattedDate]: true,
+                                              [formattedDate]: 0,
                                             },
                                           }));
                                         });
@@ -202,7 +202,7 @@ export function HabitList() {
                                             ...prev,
                                             [habit._id]: {
                                               ...prev[habit._id],
-                                              [formattedDate]: false,
+                                              [formattedDate]: 0,
                                             },
                                           }));
                                         });
