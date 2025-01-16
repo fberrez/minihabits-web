@@ -16,7 +16,7 @@ import { useToast } from '../hooks/use-toast';
 import { HabitColor } from '../types/habit.ts';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { Alert, AlertDescription } from '../components/ui/alert';
-import { Lightbulb } from 'lucide-react';
+import { Lightbulb, Check } from 'lucide-react';
 
 const habitSuggestions = [
   'Read for 1 minute',
@@ -27,9 +27,14 @@ const habitSuggestions = [
   'Walk for 1 minute',
 ];
 
+const getRandomColor = () => {
+  const colors = Object.values(HabitColor);
+  return colors[Math.floor(Math.random() * colors.length)];
+};
+
 export function NewHabit() {
   const [name, setName] = useState('');
-  const [color, setColor] = useState<HabitColor>(HabitColor.BLUE);
+  const [color, setColor] = useState<HabitColor>(getRandomColor());
   const [isLoading, setIsLoading] = useState(false);
   const { createHabit } = useHabits();
   const navigate = useNavigate();
@@ -37,6 +42,16 @@ export function NewHabit() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+
+    if (!name.trim() || !color) {
+      toast({
+        title: 'Missing required fields',
+        description: 'Please provide both a habit name and select a color.',
+        variant: 'destructive',
+      });
+      return;
+    }
+
     setIsLoading(true);
 
     try {
@@ -139,7 +154,7 @@ export function NewHabit() {
                       />
                       <Label
                         htmlFor={option.value}
-                        className="w-8 h-8 rounded-full cursor-pointer ring-offset-background transition-all hover:scale-110 focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 relative"
+                        className="w-8 h-8 rounded-full cursor-pointer ring-offset-background transition-all hover:scale-110 focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 relative flex items-center justify-center"
                         style={{ backgroundColor: option.value }}
                       >
                         <div
@@ -148,6 +163,9 @@ export function NewHabit() {
                             { '--color': option.value } as React.CSSProperties
                           }
                         />
+                        {color === option.value && (
+                          <Check className="h-4 w-4 text-white" />
+                        )}
                       </Label>
                     </div>
                     <span className="text-xs">{option.label}</span>
