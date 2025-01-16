@@ -1,4 +1,10 @@
-import { createContext, useContext, useEffect, useState, ReactNode } from 'react';
+import {
+  createContext,
+  useContext,
+  useEffect,
+  useState,
+  ReactNode,
+} from 'react';
 import { useAuth } from './AuthContext';
 import { Habit, GlobalStats, HabitColor } from '../types/habit';
 
@@ -8,7 +14,10 @@ interface HabitContextType {
   isLoading: boolean;
   error: string | null;
   createHabit: (name: string, color?: HabitColor) => Promise<void>;
-  updateHabit: (habitId: string, data: { name?: string; color?: HabitColor }) => Promise<void>;
+  updateHabit: (
+    habitId: string,
+    data: { name?: string; color?: HabitColor },
+  ) => Promise<void>;
   deleteHabit: (habitId: string) => Promise<void>;
   trackHabit: (habitId: string, date: string) => Promise<void>;
   untrackHabit: (habitId: string, date: string) => Promise<void>;
@@ -26,7 +35,7 @@ export function HabitProvider({ children }: { children: ReactNode }) {
 
   const refreshHabits = async (showLoading = true) => {
     if (!isAuthenticated) return;
-    
+
     try {
       if (showLoading) {
         setIsLoading(true);
@@ -47,7 +56,9 @@ export function HabitProvider({ children }: { children: ReactNode }) {
 
       // Merge stats data with habits data
       const mergedHabits = habitsData.map((habit: Habit) => {
-        const habitStats = statsData.habits.find((h: { name: string }) => h.name === habit.name);
+        const habitStats = statsData.habits.find(
+          (h: { name: string }) => h.name === habit.name,
+        );
         return {
           ...habit,
           completionRate7Days: habitStats?.completionRate7Days ?? 0,
@@ -75,15 +86,18 @@ export function HabitProvider({ children }: { children: ReactNode }) {
 
   const createHabit = async (name: string, color?: HabitColor) => {
     if (!isAuthenticated) return;
-    
+
     try {
-      const response = await authenticatedFetch(`${import.meta.env.VITE_API_BASE_URL}/habits`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
+      const response = await authenticatedFetch(
+        `${import.meta.env.VITE_API_BASE_URL}/habits`,
+        {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ name, color }),
         },
-        body: JSON.stringify({ name, color }),
-      });
+      );
 
       if (!response.ok) {
         throw new Error('Failed to create habit');
@@ -96,17 +110,23 @@ export function HabitProvider({ children }: { children: ReactNode }) {
     }
   };
 
-  const updateHabit = async (habitId: string, data: { name?: string; color?: HabitColor }) => {
+  const updateHabit = async (
+    habitId: string,
+    data: { name?: string; color?: HabitColor },
+  ) => {
     if (!isAuthenticated) return;
-    
+
     try {
-      const response = await authenticatedFetch(`${import.meta.env.VITE_API_BASE_URL}/habits/${habitId}`, {
-        method: 'PUT',
-        headers: {
-          'Content-Type': 'application/json',
+      const response = await authenticatedFetch(
+        `${import.meta.env.VITE_API_BASE_URL}/habits/${habitId}`,
+        {
+          method: 'PUT',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(data),
         },
-        body: JSON.stringify(data),
-      });
+      );
 
       if (!response.ok) {
         throw new Error('Failed to update habit');
@@ -121,11 +141,14 @@ export function HabitProvider({ children }: { children: ReactNode }) {
 
   const deleteHabit = async (name: string) => {
     if (!isAuthenticated) return;
-    
+
     try {
-      const response = await authenticatedFetch(`${import.meta.env.VITE_API_BASE_URL}/habits/${name}`, {
-        method: 'DELETE',
-      });
+      const response = await authenticatedFetch(
+        `${import.meta.env.VITE_API_BASE_URL}/habits/${name}`,
+        {
+          method: 'DELETE',
+        },
+      );
 
       if (!response.ok) {
         throw new Error('Failed to delete habit');
@@ -140,15 +163,18 @@ export function HabitProvider({ children }: { children: ReactNode }) {
 
   const trackHabit = async (habitId: string, date: string) => {
     if (!isAuthenticated) return;
-    
+
     try {
-      const response = await authenticatedFetch(`${import.meta.env.VITE_API_BASE_URL}/habits/${habitId}/track`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
+      const response = await authenticatedFetch(
+        `${import.meta.env.VITE_API_BASE_URL}/habits/${habitId}/track`,
+        {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ date }),
         },
-        body: JSON.stringify({ date }),
-      });
+      );
 
       if (!response.ok) {
         throw new Error('Failed to track habit');
@@ -163,11 +189,18 @@ export function HabitProvider({ children }: { children: ReactNode }) {
 
   const untrackHabit = async (habitId: string, date: string) => {
     if (!isAuthenticated) return;
-    
+
     try {
-      const response = await authenticatedFetch(`${import.meta.env.VITE_API_BASE_URL}/habits/${habitId}/track/${date}`, {
-        method: 'DELETE',
-      });
+      const response = await authenticatedFetch(
+        `${import.meta.env.VITE_API_BASE_URL}/habits/${habitId}/track`,
+        {
+          method: 'DELETE',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ date }),
+        },
+      );
 
       if (!response.ok) {
         throw new Error('Failed to untrack habit');
@@ -206,4 +239,4 @@ export function useHabits() {
     throw new Error('useHabits must be used within a HabitProvider');
   }
   return context;
-} 
+}
