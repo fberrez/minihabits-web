@@ -39,6 +39,7 @@ import CalHeatmapLabel from 'cal-heatmap/plugins/CalendarLabel';
 import 'cal-heatmap/cal-heatmap.css';
 import { useEffect, useState } from 'react';
 import moment from 'moment';
+import './StatsPage.css';
 
 export function StatsPage() {
   const { habitId } = useParams();
@@ -100,7 +101,9 @@ export function StatsPage() {
           CalHeatmapTooltip,
           {
             text: function (
+              // eslint-disable-next-line @typescript-eslint/no-explicit-any
               _: any,
+              // eslint-disable-next-line @typescript-eslint/no-explicit-any
               value: any,
               dayjsDate: { format: (arg0: string) => string },
             ) {
