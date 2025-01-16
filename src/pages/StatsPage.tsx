@@ -264,7 +264,7 @@ export function StatsPage() {
               modifiersStyles={{
                 completed: {
                   backgroundColor: habit.color,
-                  color: 'white',
+                  color: 'black',
                   fontWeight: '500',
                   transform: 'scale(0.75)',
                 },
