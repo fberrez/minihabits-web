@@ -282,13 +282,13 @@ export function StatsPage() {
           </CardHeader>
           <CardContent>
             <div style={{ color: habit.color }}>
-              {habit.currentStreak > 0 ? (
+              {habit.currentStreak === 0 ? (
+                <p className="text-4xl font-bold">0</p>
+              ) : (
                 <NumberTicker
                   className="text-4xl font-bold"
                   value={habit.currentStreak}
                 />
-              ) : (
-                <p className="text-4xl font-bold">0</p>
               )}
             </div>
             <p className="text-muted-foreground text-center mt-2">days</p>
@@ -301,13 +301,13 @@ export function StatsPage() {
           </CardHeader>
           <CardContent>
             <div style={{ color: habit.color }}>
-              {habit.longestStreak > 0 ? (
+              {habit.longestStreak === 0 ? (
+                <p className="text-4xl font-bold">0</p>
+              ) : (
                 <NumberTicker
                   className="text-4xl font-bold"
                   value={habit.longestStreak}
                 />
-              ) : (
-                <p className="text-4xl font-bold">0</p>
               )}
             </div>
             <p className="text-muted-foreground text-center mt-2">days</p>
@@ -323,10 +323,14 @@ export function StatsPage() {
           </CardHeader>
           <CardContent>
             <div style={{ color: habit.color }}>
-              <NumberTicker
-                className="text-4xl font-bold"
-                value={Math.round(habit.completionRate7Days)}
-              />
+              {habit.completionRate7Days === 0 ? (
+                <p className="text-4xl font-bold">0</p>
+              ) : (
+                <NumberTicker
+                  className="text-4xl font-bold"
+                  value={Math.round(habit.completionRate7Days)}
+                />
+              )}
             </div>
             <p className="text-muted-foreground text-center mt-2">%</p>
           </CardContent>
@@ -341,10 +345,14 @@ export function StatsPage() {
           </CardHeader>
           <CardContent>
             <div style={{ color: habit.color }}>
-              <NumberTicker
-                className="text-4xl font-bold"
-                value={Math.round(habit.completionRateMonth)}
-              />
+              {habit.completionRateMonth === 0 ? (
+                <p className="text-4xl font-bold">0</p>
+              ) : (
+                <NumberTicker
+                  className="text-4xl font-bold"
+                  value={Math.round(habit.completionRateMonth)}
+                />
+              )}
             </div>
             <p className="text-muted-foreground text-center mt-2">%</p>
           </CardContent>
@@ -359,10 +367,14 @@ export function StatsPage() {
           </CardHeader>
           <CardContent>
             <div style={{ color: habit.color }}>
-              <NumberTicker
-                className="text-4xl font-bold"
-                value={Math.round(habit.completionRateYear)}
-              />
+              {habit.completionRateYear === 0 ? (
+                <p className="text-4xl font-bold">0</p>
+              ) : (
+                <NumberTicker
+                  className="text-4xl font-bold"
+                  value={Math.round(habit.completionRateYear)}
+                />
+              )}
             </div>
             <p className="text-muted-foreground text-center mt-2">%</p>
           </CardContent>
