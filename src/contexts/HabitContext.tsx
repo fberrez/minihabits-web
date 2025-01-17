@@ -6,14 +6,20 @@ import {
   ReactNode,
 } from 'react';
 import { useAuth } from './AuthContext';
-import { Habit, GlobalStats, HabitColor } from '../types/habit';
+import { Habit, GlobalStats, HabitColor, HabitType } from '../types/habit';
+import { HabitService } from '../services/habits';
 
 interface HabitContextType {
   habits: Habit[];
   stats: GlobalStats | null;
   isLoading: boolean;
   error: string | null;
-  createHabit: (name: string, color?: HabitColor) => Promise<void>;
+  createHabit: (
+    name: string,
+    color?: HabitColor,
+    type?: HabitType,
+    targetCounter?: number,
+  ) => Promise<void>;
   updateHabit: (
     habitId: string,
     data: { name?: string; color?: HabitColor },
@@ -21,13 +27,15 @@ interface HabitContextType {
   deleteHabit: (habitId: string) => Promise<void>;
   trackHabit: (habitId: string, date: string) => Promise<void>;
   untrackHabit: (habitId: string, date: string) => Promise<void>;
+  incrementHabit: (habitId: string, date: string) => Promise<void>;
+  decrementHabit: (habitId: string, date: string) => Promise<void>;
   refreshHabits: () => Promise<void>;
 }
 
 const HabitContext = createContext<HabitContextType | undefined>(undefined);
 
 export function HabitProvider({ children }: { children: ReactNode }) {
-  const { isAuthenticated, authenticatedFetch } = useAuth();
+  const { isAuthenticated, accessToken, authenticatedFetch } = useAuth();
   const [habits, setHabits] = useState<Habit[]>([]);
   const [stats, setStats] = useState<GlobalStats | null>(null);
   const [isLoading, setIsLoading] = useState(true);
@@ -84,25 +92,22 @@ export function HabitProvider({ children }: { children: ReactNode }) {
     refreshHabits(true);
   }, [isAuthenticated]);
 
-  const createHabit = async (name: string, color?: HabitColor) => {
-    if (!isAuthenticated) return;
+  const createHabit = async (
+    name: string,
+    color?: HabitColor,
+    type: HabitType = HabitType.BOOLEAN,
+    targetCounter?: number,
+  ) => {
+    if (!isAuthenticated || !accessToken) return;
 
     try {
-      const response = await authenticatedFetch(
-        `${import.meta.env.VITE_API_BASE_URL}/habits`,
-        {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({ name, color }),
-        },
+      await HabitService.createHabit(
+        accessToken,
+        name,
+        color,
+        type,
+        targetCounter,
       );
-
-      if (!response.ok) {
-        throw new Error('Failed to create habit');
-      }
-
       await refreshHabits(true);
     } catch (err) {
       setError('Failed to create habit');
@@ -213,6 +218,30 @@ export function HabitProvider({ children }: { children: ReactNode }) {
     }
   };
 
+  const incrementHabit = async (habitId: string, date: string) => {
+    if (!isAuthenticated || !accessToken) return;
+
+    try {
+      await HabitService.incrementHabit(accessToken, habitId, date);
+      await refreshHabits(false);
+    } catch (err) {
+      setError('Failed to increment habit');
+      throw err;
+    }
+  };
+
+  const decrementHabit = async (habitId: string, date: string) => {
+    if (!isAuthenticated || !accessToken) return;
+
+    try {
+      await HabitService.decrementHabit(accessToken, habitId, date);
+      await refreshHabits(false);
+    } catch (err) {
+      setError('Failed to decrement habit');
+      throw err;
+    }
+  };
+
   return (
     <HabitContext.Provider
       value={{
@@ -225,6 +254,8 @@ export function HabitProvider({ children }: { children: ReactNode }) {
         deleteHabit,
         trackHabit,
         untrackHabit,
+        incrementHabit,
+        decrementHabit,
         refreshHabits: () => refreshHabits(true),
       }}
     >

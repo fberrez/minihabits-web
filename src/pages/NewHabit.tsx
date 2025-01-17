@@ -13,18 +13,18 @@ import {
 import { Input } from '../components/ui/input';
 import { Label } from '../components/ui/label';
 import { useToast } from '../hooks/use-toast';
-import { HabitColor } from '../types/habit.ts';
+import { HabitColor, HabitType } from '../types/habit.ts';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { Alert, AlertDescription } from '../components/ui/alert';
 import { Lightbulb, Check } from 'lucide-react';
 
 const habitSuggestions = [
-  'Read for 1 minute',
-  'Meditate for 1 minute',
-  'Do 1 pushup',
-  'Write 1 sentence',
-  'Drink 1 glass of water',
-  'Walk for 1 minute',
+  'Read for 10 minutes',
+  'Meditate for 10 minutes',
+  'Do 10 pushups',
+  'Write 10 sentences',
+  'Drink 10 glasses of water',
+  'Walk for 10 minutes',
 ];
 
 const getRandomColor = () => {
@@ -35,6 +35,8 @@ const getRandomColor = () => {
 export function NewHabit() {
   const [name, setName] = useState('');
   const [color, setColor] = useState<HabitColor>(getRandomColor());
+  const [type, setType] = useState<HabitType>(HabitType.BOOLEAN);
+  const [targetCounter, setTargetCounter] = useState<number>(1);
   const [isLoading, setIsLoading] = useState(false);
   const { createHabit } = useHabits();
   const navigate = useNavigate();
@@ -52,10 +54,25 @@ export function NewHabit() {
       return;
     }
 
+    if (type === HabitType.COUNTER && (!targetCounter || targetCounter <= 0)) {
+      toast({
+        title: 'Invalid target counter',
+        description:
+          'Please provide a target counter greater than 0 for counter type habits.',
+        variant: 'destructive',
+      });
+      return;
+    }
+
     setIsLoading(true);
 
     try {
-      await createHabit(name, color);
+      await createHabit(
+        name,
+        color,
+        type,
+        type === HabitType.COUNTER ? targetCounter : undefined,
+      );
       toast({
         title: 'Habit created',
         description: 'Your new habit has been created successfully.',
@@ -133,6 +150,40 @@ export function NewHabit() {
                 </div>
               </div>
             </div>
+
+            <div className="space-y-2 flex flex-col items-center">
+              <Label>Type</Label>
+              <RadioGroup
+                value={type}
+                onValueChange={(value: HabitType) => setType(value)}
+                className="grid grid-cols-2 gap-4"
+              >
+                <div className="flex items-center space-x-2">
+                  <RadioGroupItem value={HabitType.BOOLEAN} id="boolean" />
+                  <Label htmlFor="boolean">Daily Check</Label>
+                </div>
+                <div className="flex items-center space-x-2">
+                  <RadioGroupItem value={HabitType.COUNTER} id="counter" />
+                  <Label htmlFor="counter">Counter</Label>
+                </div>
+              </RadioGroup>
+            </div>
+
+            {type === HabitType.COUNTER && (
+              <div className="space-y-2">
+                <Label htmlFor="targetCounter">Daily Target</Label>
+                <Input
+                  id="targetCounter"
+                  type="number"
+                  min="1"
+                  value={targetCounter}
+                  onChange={e => setTargetCounter(parseInt(e.target.value))}
+                  placeholder="e.g., 8 glasses of water"
+                  disabled={isLoading}
+                  required
+                />
+              </div>
+            )}
 
             <div className="space-y-2">
               <Label>Color</Label>

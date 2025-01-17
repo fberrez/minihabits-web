@@ -40,6 +40,7 @@ import 'cal-heatmap/cal-heatmap.css';
 import { useEffect, useState } from 'react';
 import moment from 'moment';
 import './StatsPage.css';
+import { getColorRange, HabitType } from '@/types/habit';
 
 export function StatsPage() {
   const { habitId } = useParams();
@@ -64,13 +65,61 @@ export function StatsPage() {
     const data = Object.entries(habit.completedDates).map(
       ([date, completed]) => ({
         date,
-        value: completed ? 1 : 0,
+        value: habit.type === HabitType.COUNTER ? completed : completed ? 1 : 0,
       }),
     );
 
+    const getData = () => {
+      switch (habit.type) {
+        case HabitType.COUNTER:
+          return { source: data, x: 'date', y: 'value', groupBy: 'max' };
+        case HabitType.BOOLEAN:
+          return { source: data, x: 'date', y: 'value' };
+        default:
+          return { source: data, x: 'date', y: 'value' };
+      }
+    };
+
+    const getScaleColor = () => {
+      switch (habit.type) {
+        case HabitType.COUNTER:
+          return {
+            range: getColorRange[habit.color],
+            type: 'threshold',
+            domain: [
+              0.25 * habit.targetCounter,
+              0.5 * habit.targetCounter,
+              0.75 * habit.targetCounter,
+              habit.targetCounter,
+            ],
+          };
+        case HabitType.BOOLEAN:
+          return {
+            range: ['gray', habit.color],
+            interpolate: 'hsl',
+            type: 'linear',
+            domain: [0, 1],
+          };
+      }
+    };
+
+    const getTooltipText = (
+      value: number | null,
+      date: { format: (format: string) => string },
+    ) => {
+      if (habit.type === HabitType.COUNTER) {
+        const status =
+          value !== null ? `${value} / ${habit.targetCounter}` : 'No data';
+        return `${status} on ${date.format('LL')}`;
+      }
+
+      const status = value ? 'Completed' : 'No data';
+      return `${status} on ${date.format('LL')}`;
+    };
+
     cal.paint(
       {
-        data: { source: data, x: 'date', y: 'value' },
+        data: getData(),
         date: {
           start: moment().utc().startOf('year').toDate(),
           end: moment().utc().endOf('year').toDate(),
@@ -88,31 +137,14 @@ export function StatsPage() {
           gutter: 4,
         },
         scale: {
-          color: {
-            range: ['gray', habit.color],
-            interpolate: 'hsl',
-            type: 'linear',
-            domain: [0, 1],
-          },
+          color: getScaleColor(),
         },
       },
       [
         [
           CalHeatmapTooltip,
           {
-            text: function (
-              // eslint-disable-next-line @typescript-eslint/no-explicit-any
-              _: any,
-              // eslint-disable-next-line @typescript-eslint/no-explicit-any
-              value: any,
-              dayjsDate: { format: (arg0: string) => string },
-            ) {
-              return (
-                (value ? 'Completed' : 'No data') +
-                ' on ' +
-                dayjsDate.format('LL')
-              );
-            },
+            text: (_, value, dayjsDate) => getTooltipText(value, dayjsDate),
           },
         ],
         [
@@ -140,13 +172,16 @@ export function StatsPage() {
     .map(date => new Date(date));
 
   const handleDayClick = (day: Date) => {
+    if (habit.type === HabitType.COUNTER) {
+      return;
+    }
+
     if (isAfter(startOfDay(day), startOfDay(new Date()))) {
       return;
     }
 
     const formattedDate = format(day, 'yyyy-MM-dd');
     const isCompleted = localCompletionStatus[formattedDate];
-
     setLocalCompletionStatus(prev => ({
       ...prev,
       [formattedDate]: isCompleted ? 0 : 1,

@@ -4,7 +4,7 @@ import { Button } from '../components/ui/button';
 import { Card, CardContent } from '../components/ui/card';
 import { Skeleton } from '../components/ui/skeleton';
 import { useNavigate } from 'react-router-dom';
-import { Flame, Trophy, Check, Plus } from 'lucide-react';
+import { Flame, Trophy, Check, Plus, Minus } from 'lucide-react';
 import JSConfetti from 'js-confetti';
 import {
   Tooltip,
@@ -12,9 +12,17 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from '../components/ui/tooltip';
+import { HabitType } from '../types/habit';
 
 export function HabitList() {
-  const { habits, isLoading, trackHabit, untrackHabit } = useHabits();
+  const {
+    habits,
+    isLoading,
+    trackHabit,
+    untrackHabit,
+    incrementHabit,
+    decrementHabit,
+  } = useHabits();
   const navigate = useNavigate();
   const jsConfettiRef = useRef<JSConfetti | null>(null);
   const [localCompletionStatus, setLocalCompletionStatus] = useState<
@@ -146,9 +154,15 @@ export function HabitList() {
                     <div className="flex gap-6 flex-grow justify-end">
                       {getLast5Days().map(date => {
                         const formattedDate = date.toISOString().split('T')[0];
-                        const isCompleted =
+                        const completionValue =
                           localCompletionStatus[habit._id]?.[formattedDate] ??
-                          habit.completedDates[formattedDate];
+                          habit.completedDates[formattedDate] ??
+                          0;
+
+                        const isCompleted =
+                          habit.type === HabitType.BOOLEAN
+                            ? completionValue > 0
+                            : completionValue >= habit.targetCounter;
 
                         return (
                           <TooltipProvider key={date.toISOString()}>
@@ -158,66 +172,171 @@ export function HabitList() {
                                   <span className="text-xs text-muted-foreground">
                                     {formatDate(date)}
                                   </span>
-                                  <Button
-                                    size="icon"
-                                    variant={
-                                      isCompleted ? 'default' : 'outline'
-                                    }
-                                    className="rounded-full w-8 h-8 p-0"
-                                    style={{
-                                      backgroundColor: isCompleted
-                                        ? habit.color
-                                        : undefined,
-                                      borderColor: habit.color,
-                                    }}
-                                    onClick={e => {
-                                      e.stopPropagation();
-                                      setLocalCompletionStatus(prev => ({
-                                        ...prev,
-                                        [habit._id]: {
-                                          ...prev[habit._id],
-                                          [formattedDate]: isCompleted ? 0 : 1,
-                                        },
-                                      }));
-
-                                      if (isCompleted) {
-                                        untrackHabit(
-                                          habit._id,
-                                          formattedDate,
-                                        ).catch(() => {
-                                          setLocalCompletionStatus(prev => ({
-                                            ...prev,
-                                            [habit._id]: {
-                                              ...prev[habit._id],
-                                              [formattedDate]: 0,
-                                            },
-                                          }));
-                                        });
-                                      } else {
-                                        trackHabit(
-                                          habit._id,
-                                          formattedDate,
-                                        ).catch(() => {
-                                          setLocalCompletionStatus(prev => ({
-                                            ...prev,
-                                            [habit._id]: {
-                                              ...prev[habit._id],
-                                              [formattedDate]: 0,
-                                            },
-                                          }));
-                                        });
-                                        jsConfettiRef.current?.addConfetti({
-                                          confettiColors: [habit.color],
-                                        });
+                                  {habit.type === HabitType.BOOLEAN ? (
+                                    <Button
+                                      size="icon"
+                                      variant={
+                                        isCompleted ? 'default' : 'outline'
                                       }
-                                    }}
-                                  >
-                                    <Check className="h-4 w-4" />
-                                  </Button>
+                                      className="rounded-full w-8 h-8 p-0"
+                                      style={{
+                                        backgroundColor: isCompleted
+                                          ? habit.color
+                                          : undefined,
+                                        borderColor: habit.color,
+                                      }}
+                                      onClick={e => {
+                                        e.stopPropagation();
+                                        setLocalCompletionStatus(prev => ({
+                                          ...prev,
+                                          [habit._id]: {
+                                            ...prev[habit._id],
+                                            [formattedDate]: isCompleted
+                                              ? 0
+                                              : 1,
+                                          },
+                                        }));
+
+                                        if (isCompleted) {
+                                          untrackHabit(
+                                            habit._id,
+                                            formattedDate,
+                                          ).catch(() => {
+                                            setLocalCompletionStatus(prev => ({
+                                              ...prev,
+                                              [habit._id]: {
+                                                ...prev[habit._id],
+                                                [formattedDate]: 1,
+                                              },
+                                            }));
+                                          });
+                                        } else {
+                                          trackHabit(
+                                            habit._id,
+                                            formattedDate,
+                                          ).catch(() => {
+                                            setLocalCompletionStatus(prev => ({
+                                              ...prev,
+                                              [habit._id]: {
+                                                ...prev[habit._id],
+                                                [formattedDate]: 0,
+                                              },
+                                            }));
+                                          });
+                                          jsConfettiRef.current?.addConfetti({
+                                            confettiColors: [habit.color],
+                                          });
+                                        }
+                                      }}
+                                    >
+                                      <Check className="h-4 w-4" />
+                                    </Button>
+                                  ) : (
+                                    <div className="flex flex-col items-center gap-1">
+                                      <div
+                                        className="text-sm font-medium"
+                                        style={{ color: habit.color }}
+                                      >
+                                        {completionValue}/{habit.targetCounter}
+                                      </div>
+                                      <div className="flex gap-1">
+                                        <Button
+                                          size="icon"
+                                          variant="outline"
+                                          className="rounded-full w-6 h-6 p-0"
+                                          style={{ borderColor: habit.color }}
+                                          onClick={e => {
+                                            e.stopPropagation();
+                                            const newValue = Math.max(
+                                              0,
+                                              completionValue - 1,
+                                            );
+                                            setLocalCompletionStatus(prev => ({
+                                              ...prev,
+                                              [habit._id]: {
+                                                ...prev[habit._id],
+                                                [formattedDate]: newValue,
+                                              },
+                                            }));
+                                            decrementHabit(
+                                              habit._id,
+                                              formattedDate,
+                                            ).catch(() => {
+                                              setLocalCompletionStatus(
+                                                prev => ({
+                                                  ...prev,
+                                                  [habit._id]: {
+                                                    ...prev[habit._id],
+                                                    [formattedDate]:
+                                                      completionValue,
+                                                  },
+                                                }),
+                                              );
+                                            });
+                                          }}
+                                        >
+                                          <Minus className="h-3 w-3" />
+                                        </Button>
+                                        <Button
+                                          size="icon"
+                                          variant="outline"
+                                          className="rounded-full w-6 h-6 p-0"
+                                          style={{
+                                            backgroundColor: isCompleted
+                                              ? habit.color
+                                              : undefined,
+                                            borderColor: habit.color,
+                                          }}
+                                          onClick={e => {
+                                            e.stopPropagation();
+                                            const newValue =
+                                              completionValue + 1;
+                                            setLocalCompletionStatus(prev => ({
+                                              ...prev,
+                                              [habit._id]: {
+                                                ...prev[habit._id],
+                                                [formattedDate]: newValue,
+                                              },
+                                            }));
+                                            incrementHabit(
+                                              habit._id,
+                                              formattedDate,
+                                            ).catch(() => {
+                                              setLocalCompletionStatus(
+                                                prev => ({
+                                                  ...prev,
+                                                  [habit._id]: {
+                                                    ...prev[habit._id],
+                                                    [formattedDate]:
+                                                      completionValue,
+                                                  },
+                                                }),
+                                              );
+                                            });
+                                            if (
+                                              newValue >= habit.targetCounter
+                                            ) {
+                                              jsConfettiRef.current?.addConfetti(
+                                                {
+                                                  confettiColors: [habit.color],
+                                                },
+                                              );
+                                            }
+                                          }}
+                                        >
+                                          <Plus className="h-3 w-3" />
+                                        </Button>
+                                      </div>
+                                    </div>
+                                  )}
                                 </div>
                               </TooltipTrigger>
                               <TooltipContent>
-                                {isCompleted ? 'Completed' : 'Not completed'}
+                                {habit.type === HabitType.BOOLEAN
+                                  ? isCompleted
+                                    ? 'Completed'
+                                    : 'Not completed'
+                                  : `${completionValue}/${habit.targetCounter} completed`}
                               </TooltipContent>
                             </Tooltip>
                           </TooltipProvider>
