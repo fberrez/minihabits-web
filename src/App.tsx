@@ -93,11 +93,7 @@ function App() {
           <Button
             size="lg"
             onClick={() => setShowAuth(true)}
-            className={`relative z-10 plausible-event-name=signup ${
-              isSignUp
-                ? 'plausible-event-name=signup'
-                : 'plausible-event-name=signin'
-            }`}
+            className="relative z-10"
           >
             Get Started
           </Button>
@@ -149,7 +145,15 @@ function App() {
                 required
               />
             </div>
-            <Button type="submit" className="w-full" disabled={isLoading}>
+            <Button
+              type="submit"
+              className={`w-full ${
+                isSignUp
+                  ? 'plausible-event-name=signup'
+                  : 'plausible-event-name=signin'
+              }`}
+              disabled={isLoading}
+            >
               {isLoading ? (
                 <span className="flex items-center gap-2">
                   <svg className="animate-spin h-4 w-4" viewBox="0 0 24 24">
