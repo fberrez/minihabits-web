@@ -144,7 +144,14 @@ export function StatsPage() {
         [
           CalHeatmapTooltip,
           {
-            text: (_, value, dayjsDate) => getTooltipText(value, dayjsDate),
+            text: (
+              // eslint-disable-next-line @typescript-eslint/no-explicit-any
+              _: any,
+              // eslint-disable-next-line @typescript-eslint/no-explicit-any
+              value: any,
+              // eslint-disable-next-line @typescript-eslint/no-explicit-any
+              dayjsDate: any,
+            ) => getTooltipText(value, dayjsDate),
           },
         ],
         [
