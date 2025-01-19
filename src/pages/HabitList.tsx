@@ -25,17 +25,26 @@ export function HabitList() {
   } = useHabits();
   const navigate = useNavigate();
   const jsConfettiRef = useRef<JSConfetti | null>(null);
+  const [isMobile, setIsMobile] = useState(window.innerWidth < 768);
   const [localCompletionStatus, setLocalCompletionStatus] = useState<
     Record<string, Record<string, number>>
   >({});
 
   useEffect(() => {
     jsConfettiRef.current = new JSConfetti();
+
+    const handleResize = () => {
+      setIsMobile(window.innerWidth < 768);
+    };
+
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
   }, []);
 
   const getLast5Days = () => {
     const dates = [];
-    for (let i = 4; i >= 0; i--) {
+    const maxDays = isMobile ? 1 : 5;
+    for (let i = maxDays - 1; i >= 0; i--) {
       const date = new Date();
       date.setDate(date.getDate() - i);
       dates.push(date);
@@ -69,7 +78,7 @@ export function HabitList() {
                     <Skeleton className="h-4 w-12" />
                   </div>
                   <div className="flex gap-6">
-                    {[...Array(5)].map((_, j) => (
+                    {[...Array(isMobile ? 1 : 5)].map((_, j) => (
                       <div key={j} className="flex flex-col items-center gap-1">
                         <Skeleton className="h-4 w-8" />
                         <Skeleton className="h-8 w-8 rounded-full" />
