@@ -35,13 +35,13 @@ function App() {
 
     try {
       if (isSignUp) {
-        await signUp(email, password);
         // @ts-expect-error plausible is added by the script tag
         window.plausible('signup');
+        await signUp(email, password);
       } else {
-        await signIn(email, password);
         // @ts-expect-error plausible is added by the script tag
         window.plausible('signin');
+        await signIn(email, password);
       }
 
       toast({
