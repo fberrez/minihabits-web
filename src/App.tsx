@@ -36,8 +36,12 @@ function App() {
     try {
       if (isSignUp) {
         await signUp(email, password);
+        // @ts-expect-error plausible is added by the script tag
+        window.plausible('signup');
       } else {
         await signIn(email, password);
+        // @ts-expect-error plausible is added by the script tag
+        window.plausible('signin');
       }
 
       toast({
@@ -145,15 +149,7 @@ function App() {
                 required
               />
             </div>
-            <Button
-              type="submit"
-              className={`w-full ${
-                isSignUp
-                  ? 'plausible-event-name=signup'
-                  : 'plausible-event-name=signin'
-              }`}
-              disabled={isLoading}
-            >
+            <Button type="submit" className="w-full" disabled={isLoading}>
               {isLoading ? (
                 <span className="flex items-center gap-2">
                   <svg className="animate-spin h-4 w-4" viewBox="0 0 24 24">
