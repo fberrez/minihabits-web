@@ -18,6 +18,7 @@ import { StatsPage } from './pages/StatsPage';
 import { NewHabit } from './pages/NewHabit';
 import FlickeringGrid from './components/ui/flickering-grid';
 import { useTheme } from './components/theme-provider';
+import { HomeStats } from './components/home-stats';
 
 function App() {
   const { isAuthenticated, signIn, signUp } = useAuth();
@@ -88,6 +89,7 @@ function App() {
           width={1600}
         />
         <div className="z-10 flex flex-col items-center">
+          <HomeStats />
           <h1 className="text-6xl font-bold mb-4 text-center tracking-tighter">
             minihabits.
           </h1>
