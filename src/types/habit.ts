@@ -104,6 +104,7 @@ export interface GlobalStats {
   totalCompletions: number;
   totalHabits: number;
   averageCompletionRate: number;
+  habitsCompletedToday: number;
 }
 
 export interface AuthResponse {

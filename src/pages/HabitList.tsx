@@ -58,16 +58,7 @@ export function HabitList() {
 
   if (isLoading) {
     return (
-      <div className="max-w-3xl mx-auto px-4 py-8 space-y-8">
-        <div className="flex justify-between items-center">
-          <h1 className="text-3xl font-bold">minihabits.</h1>
-          <div className="flex gap-4">
-            <Button size="icon" onClick={() => navigate('/new')}>
-              <Plus className="inline h-4 w-4" />
-            </Button>
-          </div>
-        </div>
-
+      <div className="max-w-5xl mx-auto px-4 py-8 space-y-8">
         <div className="space-y-4">
           {[...Array(3)].map((_, i) => (
             <Card key={i}>
@@ -96,20 +87,7 @@ export function HabitList() {
 
   return (
     <>
-      <div className="max-w-3xl mx-auto px-4 py-8 space-y-8">
-        <div className="flex justify-between items-center">
-          <h1 className="text-3xl font-bold">minihabits.</h1>
-          <div className="flex gap-4">
-            <Button
-              size="icon"
-              onClick={() => navigate('/new')}
-              className="add-habit-button"
-            >
-              <Plus className="inline h-4 w-4" />
-            </Button>
-          </div>
-        </div>
-
+      <div className="max-w-5xl mx-auto px-4 py-8 space-y-8">
         <div className="space-y-4 habit-list">
           {habits.map(habit => {
             if (!localCompletionStatus[habit._id]) {
@@ -357,6 +335,18 @@ export function HabitList() {
               </Card>
             );
           })}
+
+          <Card
+            className="cursor-pointer transition-all hover:shadow-md border-dashed hover:translate-x-1 hover:-translate-y-1"
+            onClick={() => navigate('/new')}
+          >
+            <CardContent className="p-4">
+              <div className="flex items-center justify-center gap-2 text-muted-foreground">
+                <Plus className="h-5 w-5" />
+                <span className="text-lg">Add new habit</span>
+              </div>
+            </CardContent>
+          </Card>
         </div>
       </div>
     </>

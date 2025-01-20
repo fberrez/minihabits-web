@@ -1,4 +1,4 @@
-import { Mail } from 'lucide-react';
+import { MessageSquare } from 'lucide-react';
 import { Button } from './ui/button';
 
 export function FeedbackButton() {
@@ -8,8 +8,13 @@ export function FeedbackButton() {
   };
 
   return (
-    <Button onClick={handleClick} title="Send feedback">
-      <Mail className="h-[1.2rem] w-[1.2rem]" /> Give me feedback!
+    <Button
+      variant="outline"
+      className="bg-yellow-400 text-black hover:bg-yellow-400/80"
+      onClick={handleClick}
+      title="Send feedback"
+    >
+      <MessageSquare className="mr-2 h-4 w-4" /> Send feedback
     </Button>
   );
 }

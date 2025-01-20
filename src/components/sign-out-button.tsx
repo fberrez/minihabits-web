@@ -6,13 +6,8 @@ export function SignOutButton() {
   const { signOut } = useAuth();
 
   return (
-    <Button
-      size="icon"
-      variant="destructive"
-      onClick={signOut}
-      title="Sign out"
-    >
-      <LogOut className="h-[1.2rem] w-[1.2rem]" />
+    <Button variant="outline" onClick={signOut} title="Sign out">
+      <LogOut className="mr-2 h-4 w-4" /> Sign out
     </Button>
   );
 }

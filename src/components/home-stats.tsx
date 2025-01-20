@@ -16,7 +16,7 @@ export function HomeStats() {
         const response = await StatsService.getHomeStats();
         setHomeStats(response);
         setIsLoading(false);
-      } catch (error) {
+      } catch {
         setError('Error fetching home stats');
         setIsLoading(false);
       }
