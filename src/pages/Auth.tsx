@@ -107,7 +107,7 @@ export function Auth() {
 
   return (
     <>
-      <div className="flex items-center justify-center min-h-[calc(100vh-3.5rem)] w-full p-4">
+      <div className="flex items-center justify-center w-full p-4">
         <Card className="w-full max-w-[400px]">
           <CardHeader>
             <CardTitle>

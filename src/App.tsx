@@ -8,6 +8,8 @@ import { Home } from './pages/Home';
 import { Auth } from './pages/Auth';
 import Account from './pages/Account';
 import ResetPassword from './pages/ResetPassword';
+import PrivacyPolicy from './pages/PrivacyPolicy';
+import TermsOfUse from './pages/TermsOfUse';
 
 function App() {
   const { isAuthenticated } = useAuth();
@@ -20,6 +22,8 @@ function App() {
         <Route path="/new" element={<NewHabit />} />
         <Route path="/account" element={<Account />} />
         <Route path="*" element={<Navigate to="/" replace />} />
+        <Route path="/privacy" element={<PrivacyPolicy />} />
+        <Route path="/terms" element={<TermsOfUse />} />
       </Routes>
     );
   }
@@ -30,6 +34,8 @@ function App() {
       <Route path="/auth" element={<Auth />} />
       <Route path="/reset-password" element={<ResetPassword />} />
       <Route path="*" element={<Navigate to="/" replace />} />
+      <Route path="/privacy" element={<PrivacyPolicy />} />
+      <Route path="/terms-of-use" element={<TermsOfUse />} />
     </Routes>
   );
 }

@@ -418,7 +418,7 @@ export default function Account() {
 
   if (state.isLoading || isPageLoading) {
     return (
-      <div className="flex items-center justify-center min-h-[calc(100vh-3.5rem)]">
+      <div className="flex items-center justify-center">
         <div className="w-full max-w-5xl p-4">
           <Card>
             <CardHeader>
@@ -451,7 +451,7 @@ export default function Account() {
   }
 
   return (
-    <div className="flex items-center justify-center min-h-[calc(100vh-3.5rem)]">
+    <div className="flex items-center justify-center">
       <div className="w-full max-w-2xl p-4">
         <Card>
           <CardHeader>

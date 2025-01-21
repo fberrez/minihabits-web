@@ -87,7 +87,7 @@ export default function ResetPassword() {
   }
 
   return (
-    <div className="flex items-center justify-center min-h-[calc(100vh-3.5rem)]">
+    <div className="flex items-center justify-center">
       <div className="w-full max-w-md p-4">
         <Card>
           <CardHeader>

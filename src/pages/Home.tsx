@@ -9,7 +9,7 @@ export function Home() {
   const navigate = useNavigate();
 
   return (
-    <div className="relative flex flex-col items-center justify-center min-h-[calc(100vh-3.5rem)] px-4 overflow-hidden">
+    <div className="relative flex flex-col items-center justify-center px-4 overflow-hidden">
       <FlickeringGrid
         className="absolute z-0 inset-0 [mask-image:radial-gradient(500px_circle_at_center,white,transparent)]"
         squareSize={3}
