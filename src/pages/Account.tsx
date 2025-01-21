@@ -245,6 +245,7 @@ export default function Account() {
               <Input
                 id="new-email"
                 type="email"
+                autoComplete="new-email"
                 placeholder="new@example.com"
                 value={state.newEmail}
                 onChange={e =>
@@ -260,6 +261,7 @@ export default function Account() {
               <Input
                 id="current-password-email"
                 type="password"
+                autoComplete="current-password"
                 value={state.currentPassword}
                 onChange={e =>
                   setState(prev => ({
@@ -315,6 +317,7 @@ export default function Account() {
               <Input
                 id="current-password"
                 type="password"
+                autoComplete="current-password"
                 value={state.currentPassword}
                 onChange={e =>
                   setState(prev => ({
@@ -332,6 +335,7 @@ export default function Account() {
               <Input
                 id="new-password"
                 type="password"
+                autoComplete="new-password"
                 value={state.newPassword}
                 onChange={e =>
                   setState(prev => ({ ...prev, newPassword: e.target.value }))
@@ -391,6 +395,7 @@ export default function Account() {
               disabled={state.isLoading}
               required
               tabIndex={1}
+              autoComplete="current-password"
             />
           </div>
         </div>
