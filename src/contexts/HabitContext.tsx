@@ -222,7 +222,7 @@ export function HabitProvider({ children }: { children: ReactNode }) {
     if (!isAuthenticated || !accessToken) return;
 
     try {
-      await HabitService.incrementHabit(accessToken, habitId, date);
+      await HabitService.trackHabit(accessToken, habitId, date);
       await refreshHabits(false);
     } catch (err) {
       setError('Failed to increment habit');
@@ -234,7 +234,7 @@ export function HabitProvider({ children }: { children: ReactNode }) {
     if (!isAuthenticated || !accessToken) return;
 
     try {
-      await HabitService.decrementHabit(accessToken, habitId, date);
+      await HabitService.untrackHabit(accessToken, habitId, date);
       await refreshHabits(false);
     } catch (err) {
       setError('Failed to decrement habit');

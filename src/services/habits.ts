@@ -133,44 +133,6 @@ export class HabitService {
     return response.json();
   }
 
-  static async incrementHabit(
-    accessToken: string,
-    habitId: string,
-    date: string,
-  ): Promise<void> {
-    const response = await fetch(
-      `${this.BASE_URL}/habits/${habitId}/increment`,
-      {
-        method: 'POST',
-        headers: this.getHeaders(accessToken),
-        body: JSON.stringify({ date }),
-      },
-    );
-
-    if (!response.ok) {
-      throw new Error('Failed to increment habit');
-    }
-  }
-
-  static async decrementHabit(
-    accessToken: string,
-    habitId: string,
-    date: string,
-  ): Promise<void> {
-    const response = await fetch(
-      `${this.BASE_URL}/habits/${habitId}/decrement`,
-      {
-        method: 'POST',
-        headers: this.getHeaders(accessToken),
-        body: JSON.stringify({ date }),
-      },
-    );
-
-    if (!response.ok) {
-      throw new Error('Failed to decrement habit');
-    }
-  }
-
   static async getHabitTypes(accessToken: string): Promise<HabitType[]> {
     const response = await fetch(`${this.BASE_URL}/habits/types`, {
       method: 'GET',
