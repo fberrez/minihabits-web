@@ -6,6 +6,8 @@ import { StatsPage } from './pages/StatsPage';
 import { NewHabit } from './pages/NewHabit';
 import { Home } from './pages/Home';
 import { Auth } from './pages/Auth';
+import Account from './pages/Account';
+import ResetPassword from './pages/ResetPassword';
 
 function App() {
   const { isAuthenticated } = useAuth();
@@ -16,6 +18,7 @@ function App() {
         <Route path="/" element={<HabitList />} />
         <Route path="/stats/:habitId" element={<StatsPage />} />
         <Route path="/new" element={<NewHabit />} />
+        <Route path="/account" element={<Account />} />
         <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>
     );
@@ -25,6 +28,7 @@ function App() {
     <Routes>
       <Route path="/" element={<Home />} />
       <Route path="/auth" element={<Auth />} />
+      <Route path="/reset-password" element={<ResetPassword />} />
       <Route path="*" element={<Navigate to="/" replace />} />
     </Routes>
   );

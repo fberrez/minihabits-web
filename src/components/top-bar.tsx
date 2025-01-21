@@ -17,13 +17,17 @@ import {
   CardDescription,
 } from './ui/card';
 import NumberTicker from './ui/number-ticker';
-import { SignOutButton } from './sign-out-button';
 import { ModeToggle } from './mode-toggle';
 import { FeedbackButton } from './feedback-button';
+import { useState } from 'react';
+import { SignOutButton } from './sign-out-button';
+import { AccountSettingsButton } from './account-settings-button';
+import { Link } from 'react-router-dom';
 
 export function TopBar() {
   const { isAuthenticated } = useAuth();
   const { stats } = useHabits();
+  const [open, setOpen] = useState(false);
 
   const menuItems = (
     <div className="flex flex-col gap-4 mt-4">
@@ -56,9 +60,12 @@ export function TopBar() {
         </CardContent>
       </Card>
       <div className="flex flex-col gap-2">
-        {isAuthenticated && <SignOutButton />}
+        {isAuthenticated && (
+          <AccountSettingsButton onSelect={() => setOpen(false)} />
+        )}
         <ModeToggle />
         {isAuthenticated && <FeedbackButton />}
+        {isAuthenticated && <SignOutButton onSelect={() => setOpen(false)} />}
       </div>
     </div>
   );
@@ -66,8 +73,10 @@ export function TopBar() {
   return (
     <header className="fixed top-0 left-0 right-0 z-50 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 border-b">
       <div className="flex items-center justify-between h-14 px-4 max-w-5xl mx-auto">
-        <h1 className="text-xl font-bold">minihabits.</h1>
-        <Sheet>
+        <h1 className="text-xl font-bold">
+          <Link to="/">minihabits.</Link>
+        </h1>
+        <Sheet open={open} onOpenChange={setOpen}>
           <SheetTrigger asChild>
             <Button variant="ghost" size="icon">
               <Menu className="h-5 w-5" />
