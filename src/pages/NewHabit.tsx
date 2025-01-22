@@ -13,10 +13,11 @@ import {
 import { Input } from '../components/ui/input';
 import { Label } from '../components/ui/label';
 import { useToast } from '../hooks/use-toast';
-import { HabitColor, HabitType } from '../types/habit.ts';
-import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
+import { HabitColor, HabitType } from '../types/habit';
+import { RadioGroup, RadioGroupItem } from '../components/ui/radio-group';
 import { Alert, AlertDescription } from '../components/ui/alert';
-import { Lightbulb, Check } from 'lucide-react';
+import { Lightbulb } from 'lucide-react';
+import { ColorPicker } from '../components/color-picker';
 
 const habitSuggestions = [
   'Read for 10 minutes',
@@ -37,6 +38,8 @@ export function NewHabit() {
   const [color, setColor] = useState<HabitColor>(getRandomColor());
   const [type, setType] = useState<HabitType>(HabitType.BOOLEAN);
   const [targetCounter, setTargetCounter] = useState<number>(1);
+  const [description, setDescription] = useState('');
+  const [deadline, setDeadline] = useState<string>('');
   const [isLoading, setIsLoading] = useState(false);
   const { createHabit } = useHabits();
   const navigate = useNavigate();
@@ -72,6 +75,8 @@ export function NewHabit() {
         color,
         type,
         type === HabitType.COUNTER ? targetCounter : undefined,
+        type === HabitType.TASK ? description : undefined,
+        type === HabitType.TASK && deadline ? new Date(deadline) : undefined,
       );
       toast({
         title: 'Habit created',
@@ -156,7 +161,7 @@ export function NewHabit() {
               <RadioGroup
                 value={type}
                 onValueChange={(value: HabitType) => setType(value)}
-                className="grid grid-cols-2 gap-4"
+                className="grid grid-cols-3 gap-4"
               >
                 <div className="flex items-center space-x-2">
                   <RadioGroupItem value={HabitType.BOOLEAN} id="boolean" />
@@ -165,6 +170,10 @@ export function NewHabit() {
                 <div className="flex items-center space-x-2">
                   <RadioGroupItem value={HabitType.COUNTER} id="counter" />
                   <Label htmlFor="counter">Counter</Label>
+                </div>
+                <div className="flex items-center space-x-2">
+                  <RadioGroupItem value={HabitType.TASK} id="task" />
+                  <Label htmlFor="task">Task</Label>
                 </div>
               </RadioGroup>
             </div>
@@ -185,45 +194,36 @@ export function NewHabit() {
               </div>
             )}
 
-            <div className="space-y-2">
-              <Label>Color</Label>
-              <RadioGroup
-                value={color}
-                onValueChange={(value: HabitColor) => setColor(value)}
-                className="grid grid-cols-4 gap-4"
-              >
-                {colorOptions.map(option => (
-                  <div
-                    key={option.value}
-                    className="flex flex-col items-center space-y-2"
-                  >
-                    <div className="flex items-center justify-center relative">
-                      <RadioGroupItem
-                        value={option.value}
-                        id={option.value}
-                        className="sr-only peer"
-                      />
-                      <Label
-                        htmlFor={option.value}
-                        className="w-8 h-8 rounded-full cursor-pointer ring-offset-background transition-all hover:scale-110 focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 relative flex items-center justify-center"
-                        style={{ backgroundColor: option.value }}
-                      >
-                        <div
-                          className="absolute inset-0"
-                          style={
-                            { '--color': option.value } as React.CSSProperties
-                          }
-                        />
-                        {color === option.value && (
-                          <Check className="h-4 w-4 text-white" />
-                        )}
-                      </Label>
-                    </div>
-                    <span className="text-xs">{option.label}</span>
-                  </div>
-                ))}
-              </RadioGroup>
-            </div>
+            {type === HabitType.TASK && (
+              <>
+                <div className="space-y-2">
+                  <Label htmlFor="description">Description</Label>
+                  <Input
+                    id="description"
+                    value={description}
+                    onChange={e => setDescription(e.target.value)}
+                    placeholder="Describe your task..."
+                    disabled={isLoading}
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="deadline">Deadline (optional)</Label>
+                  <Input
+                    id="deadline"
+                    type="datetime-local"
+                    value={deadline}
+                    onChange={e => setDeadline(e.target.value)}
+                    disabled={isLoading}
+                  />
+                </div>
+              </>
+            )}
+
+            <ColorPicker
+              value={color}
+              onChange={(value: HabitColor) => setColor(value)}
+              disabled={isLoading}
+            />
           </form>
         </CardContent>
         <CardFooter className="flex justify-between">

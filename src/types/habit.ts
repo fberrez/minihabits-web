@@ -66,6 +66,7 @@ export const getColorRange = {
 export enum HabitType {
   BOOLEAN = 'boolean',
   COUNTER = 'counter',
+  TASK = 'task',
 }
 
 export interface Habit {
@@ -82,6 +83,8 @@ export interface Habit {
   completionRate7Days: number;
   completionRateMonth: number;
   completionRateYear: number;
+  description?: string;
+  deadline?: Date;
 }
 
 export interface HabitStats {

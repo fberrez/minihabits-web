@@ -19,6 +19,8 @@ interface HabitContextType {
     color?: HabitColor,
     type?: HabitType,
     targetCounter?: number,
+    description?: string,
+    deadline?: Date,
   ) => Promise<void>;
   updateHabit: (
     habitId: string,
@@ -97,6 +99,8 @@ export function HabitProvider({ children }: { children: ReactNode }) {
     color?: HabitColor,
     type: HabitType = HabitType.BOOLEAN,
     targetCounter?: number,
+    description?: string,
+    deadline?: Date,
   ) => {
     if (!isAuthenticated || !accessToken) return;
 
@@ -107,6 +111,8 @@ export function HabitProvider({ children }: { children: ReactNode }) {
         color,
         type,
         targetCounter,
+        description,
+        deadline,
       );
       await refreshHabits(true);
     } catch (err) {

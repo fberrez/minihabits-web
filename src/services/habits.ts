@@ -16,11 +16,20 @@ export class HabitService {
     color?: HabitColor,
     type: HabitType = HabitType.BOOLEAN,
     targetCounter?: number,
+    description?: string,
+    deadline?: Date,
   ): Promise<Habit> {
     const response = await fetch(`${this.BASE_URL}/habits`, {
       method: 'POST',
       headers: this.getHeaders(accessToken),
-      body: JSON.stringify({ name, color, type, targetCounter }),
+      body: JSON.stringify({
+        name,
+        color,
+        type,
+        targetCounter,
+        description,
+        deadline,
+      }),
     });
 
     if (!response.ok) {
