@@ -22,14 +22,13 @@ import { FeedbackButton } from './feedback-button';
 import { useState } from 'react';
 import { SignOutButton } from './sign-out-button';
 import { AccountSettingsButton } from './account-settings-button';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import { ArchivedTasksButton } from './archived-tasks-button';
 
 export function TopBar() {
   const { isAuthenticated } = useAuth();
   const { stats } = useHabits();
   const [open, setOpen] = useState(false);
-  const navigate = useNavigate();
 
   const menuItems = (
     <div className="flex flex-col gap-4 mt-4">

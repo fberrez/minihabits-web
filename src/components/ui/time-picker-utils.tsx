@@ -147,6 +147,7 @@ export function isValidHour(value: string) {
       case "hours":
         return getValidHour(String(date.getHours()));
       case "12hours":
+        // eslint-disable-next-line no-case-declarations
         const hours = display12HourValue(date.getHours());
         return getValid12Hour(String(hours));
       default:

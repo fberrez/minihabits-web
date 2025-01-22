@@ -12,7 +12,6 @@ import ResetPassword from './pages/ResetPassword';
 import PrivacyPolicy from './pages/PrivacyPolicy';
 import TermsOfUse from './pages/TermsOfUse';
 import { ArchivedTasks } from './pages/ArchivedTasks';
-import { Toaster } from "./components/Toaster"
 
 function App() {
   const { isAuthenticated } = useAuth();

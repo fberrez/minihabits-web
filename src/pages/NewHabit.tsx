@@ -95,11 +95,6 @@ export function NewHabit() {
     }
   };
 
-  const colorOptions = Object.entries(HabitColor).map(([key, value]) => ({
-    value: value,
-    label: key.charAt(0).toUpperCase() + key.slice(1).toLowerCase(),
-  }));
-
   const handleSuggestionClick = (suggestion: string) => {
     setName(suggestion);
   };
