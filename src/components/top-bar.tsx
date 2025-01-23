@@ -1,4 +1,5 @@
 import { Menu } from 'lucide-react';
+import { SiGithub, SiReddit } from '@icons-pack/react-simple-icons';
 import { Button } from './ui/button';
 import {
   Sheet,
@@ -91,6 +92,24 @@ export function TopBar() {
               <SheetTitle>Menu</SheetTitle>
             </SheetHeader>
             {menuItems}
+            <div className="flex items-center justify-center gap-2 mt-8">
+              <Button
+                variant="outline"
+                size="icon"
+                className="rounded-full h-10 w-10"
+                onClick={() => window.open('https://github.com/fberrez/minihabits-web', '_blank')}
+              >
+                <SiGithub size={20} />
+              </Button>
+              <Button
+                variant="outline"
+                size="icon"
+                className="rounded-full h-10 w-10"
+                onClick={() => window.open('https://reddit.com/r/minihabits', '_blank')}
+              >
+                <SiReddit size={20} />
+              </Button>
+            </div>
           </SheetContent>
         </Sheet>
       </div>

@@ -4,7 +4,10 @@ A minimalist habit tracking application built with React that helps users build 
 
 ## Features
 
-- 🎯 Track daily habits with a simple click
+- �� Track daily habits and tasks
+  - One-time tasks with deadlines
+  - Task descriptions and color coding
+  - Quick task completion with undo option
 - ✨ Celebratory confetti animations for completed habits
 - 📊 Detailed statistics and visualizations
   - Current and longest streaks
@@ -22,29 +25,35 @@ A minimalist habit tracking application built with React that helps users build 
 - **Styling**: Tailwind CSS
 - **UI Components**: Shadcn/ui
 - **Charts**: Recharts
-- **Date Handling**: date-fns
+- **Date Handling**: date-fns, moment
 - **Calendar**: react-day-picker
 - **Animations**: js-confetti
 
 ## Getting Started
 
 ```bash
-git clone https://github.com/fberrez/minihabits.git
+git clone https://github.com/fberrez/minihabits-web.git
 cd minihabits
 pnpm install
 pnpm run dev
 ```
+
+API available at https://github.com/fberrez/minihabits
 
 ## Project Structure
 
 ```
 src/
 ├── components/ # Reusable UI components
+│ ├── habits/ # Habit-specific components
+│ │ ├── task-habit-card.tsx
+│ │ └── ...
 ├── contexts/ # React context providers
 │ ├── AuthContext.tsx
 │ └── HabitContext.tsx
 ├── pages/ # Main application pages
 │ ├── HabitList.tsx
+│ ├── NewTask.tsx
 │ └── StatsPage.tsx
 └── services/ # API service layer
 └── habits.ts

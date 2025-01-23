@@ -23,6 +23,15 @@ export function Footer() {
           >
             GitHub
           </a>
+          <span>·</span>
+          <a
+            href="https://reddit.com/r/minihabits"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="hover:underline"
+          >
+            Reddit
+          </a>
         </div>
       </div>
     </footer>
