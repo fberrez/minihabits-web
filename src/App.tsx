@@ -12,6 +12,7 @@ import ResetPassword from './pages/ResetPassword';
 import PrivacyPolicy from './pages/PrivacyPolicy';
 import TermsOfUse from './pages/TermsOfUse';
 import { ArchivedTasks } from './pages/ArchivedTasks';
+import { EditTask } from './pages/EditTask';
 
 function App() {
   const { isAuthenticated } = useAuth();
@@ -25,6 +26,7 @@ function App() {
         <Route path="/new-task" element={<NewTask />} />
         <Route path="/account" element={<Account />} />
         <Route path="/archived" element={<ArchivedTasks />} />
+        <Route path="/edit-task/:habitId" element={<EditTask />} />
         <Route path="*" element={<Navigate to="/" replace />} />
         <Route path="/privacy" element={<PrivacyPolicy />} />
         <Route path="/terms" element={<TermsOfUse />} />

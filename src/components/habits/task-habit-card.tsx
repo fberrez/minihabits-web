@@ -1,12 +1,21 @@
 import { Button } from '../ui/button';
 import { Card, CardContent } from '../ui/card';
-import { Calendar, Check } from 'lucide-react';
+import { Calendar, Check, MoreHorizontal } from 'lucide-react';
 import { Habit } from '../../types/habit';
 import { cn } from '../../lib/utils';
 import { format } from 'date-fns';
 import JSConfetti from 'js-confetti';
 import { useToast } from '../../hooks/use-toast';
 import { ToastAction } from '../ui/toast';
+import { useNavigate } from 'react-router-dom';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+  DropdownMenuSeparator,
+} from "../ui/dropdown-menu";
+import { useHabits } from '../../contexts/HabitContext';
 
 interface TaskHabitCardProps {
   habit: Habit;
@@ -17,7 +26,6 @@ interface TaskHabitCardProps {
   onTrack: (habitId: string, date: string) => Promise<void>;
   onUntrack: (habitId: string, date: string) => Promise<void>;
   jsConfettiRef: React.RefObject<JSConfetti>;
-  onClick: () => void;
   style?: React.CSSProperties;
   titleStyle?: React.CSSProperties;
 }
@@ -29,13 +37,14 @@ export function TaskHabitCard({
   onTrack,
   onUntrack,
   jsConfettiRef,
-  onClick,
   style,
   titleStyle,
 }: TaskHabitCardProps) {
   const today = new Date().toISOString().split('T')[0];
   const isCompleted = localCompletionStatus[habit._id]?.[today] > 0;
   const { toast } = useToast();
+  const navigate = useNavigate();
+  const { deleteHabit } = useHabits();
 
   const handleTrack = async (e: React.MouseEvent) => {
     e.stopPropagation();
@@ -97,18 +106,61 @@ export function TaskHabitCard({
     }
   };
 
+  const handleDelete = async () => {
+    try {
+      await deleteHabit(habit._id);
+      toast({
+        title: "Task deleted",
+        description: `${habit.name} has been deleted successfully`,
+      });
+    } catch {
+      toast({
+        title: "Error",
+        description: "Failed to delete task. Please try again.",
+        variant: "destructive",
+      });
+    }
+  };
+
   return (
     <Card
       className="transition-all hover:shadow-md hover:translate-x-1 hover:-translate-y-1"
-      onClick={onClick}
-      style={style}
+      style={{
+        ...style,
+        backgroundColor: isCompleted ? `${habit.color}20` : undefined,
+      }}
     >
       <CardContent className="p-4">
         <div className="flex items-center gap-8">
           <div className="min-w-[200px] text-left">
-            <h2 className="text-xl font-semibold mb-1" style={titleStyle}>
-              {habit.name}
-            </h2>
+            <div className="flex items-center gap-2">
+              <h2 className="text-xl font-semibold mb-1" style={titleStyle}>
+                {habit.name}
+              </h2>
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    className="h-8 w-8 p-0 hover:bg-transparent"
+                  >
+                    <MoreHorizontal className="h-4 w-4" />
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="end">
+                  <DropdownMenuItem onClick={() => navigate(`/edit-task/${habit._id}`)}>
+                    Edit task
+                  </DropdownMenuItem>
+                  <DropdownMenuSeparator />
+                  <DropdownMenuItem
+                    onClick={handleDelete}
+                    className="text-destructive focus:text-destructive"
+                  >
+                    Delete task
+                  </DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
+            </div>
             <div className="flex flex-col gap-1 text-sm text-muted-foreground">
               {habit.description && (
                 <p className="truncate">{habit.description}</p>
@@ -122,7 +174,8 @@ export function TaskHabitCard({
                       : 'text-muted-foreground',
                   )}
                 >
-                  <Calendar className="h-4 w-4" />{format(new Date(habit.deadline), 'MMM d, h:mm a')}
+                  <Calendar className="h-4 w-4" />
+                  {format(new Date(habit.deadline), 'MMM d, h:mm a')}
                 </span>
               )}
             </div>

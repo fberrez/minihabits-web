@@ -1,6 +1,6 @@
 import { Button } from '../ui/button';
 import { Card, CardContent } from '../ui/card';
-import { Check } from 'lucide-react';
+import { Check, MoreHorizontal } from 'lucide-react';
 import { Habit } from '../../types/habit';
 import {
   Tooltip,
@@ -8,7 +8,14 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from '../ui/tooltip';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "../ui/dropdown-menu";
 import JSConfetti from 'js-confetti';
+import { useNavigate } from 'react-router-dom';
 
 interface BooleanHabitCardProps {
   habit: Habit;
@@ -21,7 +28,6 @@ interface BooleanHabitCardProps {
   onTrack: (habitId: string, date: string) => Promise<void>;
   onUntrack: (habitId: string, date: string) => Promise<void>;
   jsConfettiRef: React.RefObject<JSConfetti>;
-  onClick: () => void;
   style?: React.CSSProperties;
 }
 
@@ -34,21 +40,44 @@ export function BooleanHabitCard({
   onTrack,
   onUntrack,
   jsConfettiRef,
-  onClick,
   style,
 }: BooleanHabitCardProps) {
+  const navigate = useNavigate();
+  const today = new Date().toISOString().split('T')[0];
+  const isCompleted = localCompletionStatus[habit._id]?.[today] > 0;
+
   return (
     <Card
-      className="cursor-pointer transition-all hover:shadow-md hover:translate-x-1 hover:-translate-y-1 group"
-      onClick={onClick}
-      style={style}
+      className="transition-all hover:shadow-md hover:translate-x-1 hover:-translate-y-1"
+      style={{
+        ...style,
+        backgroundColor: isCompleted ? `${habit.color}20` : undefined,
+      }}
     >
       <CardContent className="p-4">
         <div className="flex items-center gap-8">
           <div className="min-w-[200px] text-left">
-            <h2 className="text-xl font-semibold mb-1 group-hover:underline decoration-2">
-              {habit.name}
-            </h2>
+            <div className="flex items-center gap-2">
+              <h2 className="text-xl font-semibold mb-1">
+                {habit.name}
+              </h2>
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    className="h-8 w-8 p-0 hover:bg-transparent"
+                  >
+                    <MoreHorizontal className="h-4 w-4" />
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="end">
+                  <DropdownMenuItem onClick={() => navigate(`/stats/${habit._id}`)}>
+                    View stats
+                  </DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
+            </div>
             <div className="flex items-center gap-2 text-sm text-muted-foreground">
               {habit.description && (
                 <p className="truncate">{habit.description}</p>

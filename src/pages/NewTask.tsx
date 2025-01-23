@@ -13,7 +13,7 @@ import {
 import { Input } from "../components/ui/input";
 import { Label } from "../components/ui/label";
 import { useToast } from "../hooks/use-toast";
-import { HabitColor, HabitType } from "../types/habit";
+import { HabitColor, HabitType, Habit } from "../types/habit";
 import { Alert, AlertDescription } from "../components/ui/alert";
 import { Lightbulb, CalendarIcon } from "lucide-react";
 import { format, add } from "date-fns";
@@ -26,19 +26,28 @@ import {
 } from "../components/ui/popover";
 import { ColorPicker } from "../components/color-picker";
 import { TimePicker } from "@/components/ui/time-picker";
+import moment from "moment";
 
 const getRandomColor = () => {
   const colors = Object.values(HabitColor);
   return colors[Math.floor(Math.random() * colors.length)];
 };
 
-export function NewTask() {
-  const [name, setName] = useState("");
-  const [color, setColor] = useState<HabitColor>(getRandomColor());
-  const [description, setDescription] = useState("");
-  const [deadline, setDeadline] = useState<Date>();
+interface NewTaskProps {
+  initialData?: Habit;
+}
+
+export function NewTask({ initialData }: NewTaskProps) {
   const [isLoading, setIsLoading] = useState(false);
-  const { createHabit } = useHabits();
+  const [name, setName] = useState(initialData?.name || "");
+  const [color, setColor] = useState<HabitColor>(initialData?.color || getRandomColor());
+  const [description, setDescription] = useState(initialData?.description || "");
+  const [deadline, setDeadline] = useState<Date | null>(
+    initialData 
+      ? (initialData.deadline ? new Date(initialData.deadline) : null)
+      : moment().add(1, 'day').hour(12).minute(0).second(0).toDate()
+  );
+  const { createHabit, updateHabit } = useHabits();
   const navigate = useNavigate();
   const { toast } = useToast();
 
@@ -57,24 +66,41 @@ export function NewTask() {
     setIsLoading(true);
 
     try {
-      await createHabit(
-        name,
-        color,
-        HabitType.TASK,
-        undefined,
-        description,
-        deadline
-      );
-      toast({
-        title: "Task created",
-        description: "Your new task has been created successfully.",
-      });
+      if (initialData) {
+        console.log(initialData.description, description);
+        await updateHabit(
+          initialData._id,
+          {
+            name,
+            color,
+            description,
+            deadline,
+          }
+        );
+        toast({
+          title: "Task updated",
+          description: "Your task has been updated successfully.",
+        });
+      } else {
+        await createHabit(
+          name,
+          color,
+          HabitType.TASK,
+          undefined,
+          description,
+          deadline
+        );
+        toast({
+          title: "Task created",
+          description: "Your new task has been created successfully.",
+        });
+      }
       navigate("/");
     } catch (error) {
       console.error("Failed to create task:", error);
       toast({
         title: "Error",
-        description: "Failed to create task. Please try again.",
+        description: `Failed to ${initialData ? 'update' : 'create'} task. Please try again.`,
         variant: "destructive",
       });
     } finally {
@@ -98,9 +124,11 @@ export function NewTask() {
     <div className="max-w-[2000px] mx-auto px-8 py-8">
       <Card className="max-w-[600px] mx-auto">
         <CardHeader>
-          <CardTitle>Create a new task</CardTitle>
+          <CardTitle>{initialData ? 'Edit task' : 'Create a new task'}</CardTitle>
           <CardDescription>
-            Add a one-time task with an optional deadline and description.
+            {initialData 
+              ? 'Update your task details, deadline, or description.'
+              : 'Add a one-time task with an optional deadline and description.'}
           </CardDescription>
         </CardHeader>
         <CardContent>
@@ -137,7 +165,18 @@ export function NewTask() {
             </div>
 
             <div className="space-y-2">
-              <Label>Deadline (optional)</Label>
+              <div className="flex items-center justify-between">
+                <Label className="h-6">Deadline (optional)</Label>
+                {deadline && (
+                  <Button
+                    variant="ghost"
+                    onClick={() => setDeadline(null)}
+                    className="h-6 w-6 p-0 hover:bg-transparent"
+                  >
+                    Clear
+                  </Button>
+                )}
+              </div>
               <div className="flex gap-2">
                 <Popover>
                   <PopoverTrigger asChild>
@@ -159,7 +198,7 @@ export function NewTask() {
                   <PopoverContent className="w-auto p-0">
                     <Calendar
                       mode="single"
-                      selected={deadline}
+                      selected={deadline || moment().hour(12).minute(0).second(0).toDate()}
                       onSelect={(d) => handleSelectDateTime(d)}
                       classNames={{
                         day_outside: "text-muted-foreground opacity-50",
@@ -167,7 +206,7 @@ export function NewTask() {
                       initialFocus
                     />
                     <div className="p-3 border-t border-border">
-                      <TimePicker setDate={setDeadline} date={deadline} />
+                      <TimePicker setDate={setDeadline} date={deadline || moment().hour(12).minute(0).second(0).toDate()} />
                     </div>
                   </PopoverContent>
                 </Popover>
@@ -191,7 +230,9 @@ export function NewTask() {
             Cancel
           </Button>
           <Button type="submit" disabled={isLoading} onClick={handleSubmit}>
-            {isLoading ? "Creating..." : "Create Task"}
+            {isLoading 
+              ? (initialData ? "Updating..." : "Creating...") 
+              : (initialData ? "Update Task" : "Create Task")}
           </Button>
         </CardFooter>
       </Card>

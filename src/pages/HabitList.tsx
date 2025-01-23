@@ -125,11 +125,6 @@ export function HabitList() {
                     formatDate={formatDate}
                     onTrack={trackHabit}
                     onUntrack={untrackHabit}
-                    style={{
-                      backgroundColor: habit.completedDates[new Date().toISOString().split('T')[0]] 
-                        ? `${habit.color}20` 
-                        : undefined
-                    }}
                   />
                 );
               case HabitType.COUNTER:
@@ -141,11 +136,6 @@ export function HabitList() {
                     formatDate={formatDate}
                     onIncrement={incrementHabit}
                     onDecrement={decrementHabit}
-                    style={{
-                      backgroundColor: habit.completedDates[new Date().toISOString().split('T')[0]] 
-                        ? `${habit.color}20` 
-                        : undefined
-                    }}
                   />
                 );
               default:
@@ -183,11 +173,6 @@ export function HabitList() {
                 {...commonProps}
                 onTrack={trackHabit}
                 onUntrack={untrackHabit}
-                style={{
-                  backgroundColor: habit.completedDates[new Date().toISOString().split('T')[0]] 
-                    ? `${habit.color}20` 
-                    : undefined
-                }}
                 titleStyle={{
                   textDecoration: habit.completedDates[new Date().toISOString().split('T')[0]]
                     ? 'line-through'
@@ -198,7 +183,7 @@ export function HabitList() {
           })}
 
           {/* Add New Buttons */}
-          <div className="grid grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <Card
               className="cursor-pointer transition-all hover:shadow-md border-dashed hover:translate-x-1 hover:-translate-y-1"
               onClick={() => navigate('/new')}
