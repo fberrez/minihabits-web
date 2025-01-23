@@ -50,11 +50,11 @@ export function TaskHabitCard({
     e.stopPropagation();
     if (isCompleted) {
       try {
-        await onUntrack(habit._id, today);
         setLocalCompletionStatus(prev => ({
           ...prev,
           [habit._id]: { ...prev[habit._id], [today]: 0 },
         }));
+        await onUntrack(habit._id, today);
       } catch {
         setLocalCompletionStatus(prev => ({
           ...prev,
@@ -63,7 +63,6 @@ export function TaskHabitCard({
       }
     } else {
       try {
-        await onTrack(habit._id, today);
         setLocalCompletionStatus(prev => ({
           ...prev,
           [habit._id]: { ...prev[habit._id], [today]: 1 },
@@ -71,6 +70,7 @@ export function TaskHabitCard({
         jsConfettiRef.current?.addConfetti({
           confettiColors: [habit.color],
         });
+        await onTrack(habit._id, today);
         
         toast({
           title: "Task completed!",
