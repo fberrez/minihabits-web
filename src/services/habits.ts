@@ -17,7 +17,7 @@ export class HabitService {
     type: HabitType = HabitType.BOOLEAN,
     targetCounter?: number,
     description?: string,
-    deadline?: Date,
+    deadline?: Date | null,
   ): Promise<Habit> {
     const response = await fetch(`${this.BASE_URL}/habits`, {
       method: 'POST',
