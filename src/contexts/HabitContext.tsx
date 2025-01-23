@@ -20,7 +20,7 @@ interface HabitContextType {
     type?: HabitType,
     targetCounter?: number,
     description?: string,
-    deadline?: Date,
+    deadline?: Date | null,
   ) => Promise<void>;
   updateHabit: (
     habitId: string,
@@ -104,7 +104,7 @@ export function HabitProvider({ children }: { children: ReactNode }) {
     type: HabitType = HabitType.BOOLEAN,
     targetCounter?: number,
     description?: string,
-    deadline?: Date,
+    deadline?: Date | null,
   ) => {
     if (!isAuthenticated || !accessToken) return;
 

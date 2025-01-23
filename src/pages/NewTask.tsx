@@ -206,7 +206,10 @@ export function NewTask({ initialData }: NewTaskProps) {
                       initialFocus
                     />
                     <div className="p-3 border-t border-border">
-                      <TimePicker setDate={setDeadline} date={deadline || moment().hour(12).minute(0).second(0).toDate()} />
+                      <TimePicker 
+                        setDate={(date) => setDeadline(date || null)} 
+                        date={deadline || moment().hour(12).minute(0).second(0).toDate()} 
+                      />
                     </div>
                   </PopoverContent>
                 </Popover>
