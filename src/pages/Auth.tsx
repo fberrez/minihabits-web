@@ -1,6 +1,6 @@
-import { useState } from 'react';
-import { useAuth } from '@/contexts/AuthContext';
-import { Button } from '@/components/ui/button';
+import { useState } from "react";
+import { useAuth } from "@/contexts/AuthContext";
+import { Button } from "@/components/ui/button";
 import {
   Card,
   CardContent,
@@ -8,10 +8,10 @@ import {
   CardHeader,
   CardTitle,
   CardFooter,
-} from '@/components/ui/card';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { useToast } from '@/hooks/use-toast';
+} from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { useToast } from "@/hooks/use-toast";
 import {
   Dialog,
   DialogContent,
@@ -19,16 +19,16 @@ import {
   DialogHeader,
   DialogTitle,
   DialogFooter,
-} from '@/components/ui/dialog';
+} from "@/components/ui/dialog";
 
 export function Auth() {
   const { signIn, signUp } = useAuth();
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
   const [isSignUp, setIsSignUp] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [showForgotPassword, setShowForgotPassword] = useState(false);
-  const [forgotPasswordEmail, setForgotPasswordEmail] = useState('');
+  const [forgotPasswordEmail, setForgotPasswordEmail] = useState("");
   const [isForgotPasswordLoading, setIsForgotPasswordLoading] = useState(false);
   const { toast } = useToast();
 
@@ -39,28 +39,27 @@ export function Auth() {
     try {
       if (isSignUp) {
         // @ts-expect-error plausible is added by the script tag
-        window.plausible('signup');
+        window.plausible("signup");
         await signUp(email, password);
       } else {
         // @ts-expect-error plausible is added by the script tag
-        window.plausible('signin');
+        window.plausible("signin");
         await signIn(email, password);
       }
 
       toast({
-        title: isSignUp ? 'Account created' : 'Welcome back',
+        title: isSignUp ? "Account created" : "Welcome back",
         description: isSignUp
-          ? 'You have been successfully signed up and logged in.'
-          : 'You have been successfully logged in.',
+          ? "You have been successfully signed up and logged in."
+          : "You have been successfully logged in.",
       });
-      setEmail('');
-      setPassword('');
-    } catch (error) {
-      console.error('Authentication error:', error);
+      setEmail("");
+      setPassword("");
+    } catch {
       toast({
-        title: 'Authentication failed',
-        description: 'Please check your credentials and try again.',
-        variant: 'destructive',
+        title: "Authentication failed",
+        description: "Please check your credentials and try again.",
+        variant: "destructive",
       });
     } finally {
       setIsLoading(false);
@@ -75,30 +74,29 @@ export function Auth() {
       const response = await fetch(
         `${import.meta.env.VITE_API_BASE_URL}/users/forgot-password`,
         {
-          method: 'POST',
+          method: "POST",
           headers: {
-            'Content-Type': 'application/json',
+            "Content-Type": "application/json",
           },
           body: JSON.stringify({ email: forgotPasswordEmail }),
-        },
+        }
       );
 
       if (!response.ok) {
-        throw new Error('Failed to send reset email');
+        throw new Error("Failed to send reset email");
       }
 
       toast({
-        title: 'Reset email sent',
-        description: 'Check your email for password reset instructions.',
+        title: "Reset email sent",
+        description: "Check your email for password reset instructions.",
       });
       setShowForgotPassword(false);
-      setForgotPasswordEmail('');
-    } catch (error) {
-      console.error('Forgot password error:', error);
+      setForgotPasswordEmail("");
+    } catch {
       toast({
-        title: 'Error',
-        description: 'Failed to send reset email. Please try again.',
-        variant: 'destructive',
+        title: "Error",
+        description: "Failed to send reset email. Please try again.",
+        variant: "destructive",
       });
     } finally {
       setIsForgotPasswordLoading(false);
@@ -111,12 +109,12 @@ export function Auth() {
         <Card className="w-full max-w-[400px]">
           <CardHeader>
             <CardTitle>
-              {isSignUp ? 'Create an account' : 'Welcome back'}
+              {isSignUp ? "Create an account" : "Welcome back"}
             </CardTitle>
             <CardDescription>
               {isSignUp
-                ? 'Enter your email below to create your account'
-                : 'Enter your email below to sign in to your account'}
+                ? "Enter your email below to create your account"
+                : "Enter your email below to sign in to your account"}
             </CardDescription>
           </CardHeader>
           <CardContent>
@@ -126,10 +124,10 @@ export function Auth() {
                 <Input
                   id="email"
                   type="email"
-                  autoComplete={isSignUp ? 'new-email' : 'email'}
+                  autoComplete={isSignUp ? "new-email" : "email"}
                   placeholder="m@example.com"
                   value={email}
-                  onChange={e => setEmail(e.target.value)}
+                  onChange={(e) => setEmail(e.target.value)}
                   disabled={isLoading}
                   required
                 />
@@ -139,9 +137,9 @@ export function Auth() {
                 <Input
                   id="password"
                   type="password"
-                  autoComplete={isSignUp ? 'new-password' : 'current-password'}
+                  autoComplete={isSignUp ? "new-password" : "current-password"}
                   value={password}
-                  onChange={e => setPassword(e.target.value)}
+                  onChange={(e) => setPassword(e.target.value)}
                   disabled={isLoading}
                   required
                 />
@@ -165,12 +163,12 @@ export function Auth() {
                         d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
                       />
                     </svg>
-                    {isSignUp ? 'Creating account...' : 'Signing in...'}
+                    {isSignUp ? "Creating account..." : "Signing in..."}
                   </span>
                 ) : isSignUp ? (
-                  'Sign Up'
+                  "Sign Up"
                 ) : (
-                  'Sign In'
+                  "Sign In"
                 )}
               </Button>
             </form>
@@ -183,7 +181,7 @@ export function Auth() {
               disabled={isLoading}
             >
               {isSignUp
-                ? 'Already have an account? Sign In'
+                ? "Already have an account? Sign In"
                 : "Don't have an account? Sign Up"}
             </Button>
             {!isSignUp && (
@@ -218,7 +216,7 @@ export function Auth() {
                   type="email"
                   placeholder="m@example.com"
                   value={forgotPasswordEmail}
-                  onChange={e => setForgotPasswordEmail(e.target.value)}
+                  onChange={(e) => setForgotPasswordEmail(e.target.value)}
                   disabled={isForgotPasswordLoading}
                   required
                 />
@@ -255,7 +253,7 @@ export function Auth() {
                     Sending...
                   </span>
                 ) : (
-                  'Send reset link'
+                  "Send reset link"
                 )}
               </Button>
             </DialogFooter>

@@ -1,17 +1,17 @@
-import { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { useAuth } from '@/contexts/AuthContext';
-import { Button } from '@/components/ui/button';
+import { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
+import { useAuth } from "@/contexts/AuthContext";
+import { Button } from "@/components/ui/button";
 import {
   Card,
   CardContent,
   CardDescription,
   CardHeader,
   CardTitle,
-} from '@/components/ui/card';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { useToast } from '@/hooks/use-toast';
+} from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { useToast } from "@/hooks/use-toast";
 import {
   Dialog,
   DialogContent,
@@ -19,7 +19,7 @@ import {
   DialogHeader,
   DialogTitle,
   DialogFooter,
-} from '@/components/ui/dialog';
+} from "@/components/ui/dialog";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -29,8 +29,8 @@ import {
   AlertDialogFooter,
   AlertDialogHeader,
   AlertDialogTitle,
-} from '@/components/ui/alert-dialog';
-import { Skeleton } from '@/components/ui/skeleton';
+} from "@/components/ui/alert-dialog";
+import { Skeleton } from "@/components/ui/skeleton";
 
 interface AccountState {
   showEmailDialog: boolean;
@@ -57,30 +57,29 @@ export default function Account() {
     showPasswordDialog: false,
     showDeleteDialog: false,
     isLoading: false,
-    newEmail: '',
-    currentPassword: '',
-    newPassword: '',
+    newEmail: "",
+    currentPassword: "",
+    newPassword: "",
   });
 
   useEffect(() => {
     const fetchUserData = async () => {
       try {
         const response = await authenticatedFetch(
-          `${import.meta.env.VITE_API_BASE_URL}/users/me`,
+          `${import.meta.env.VITE_API_BASE_URL}/users/me`
         );
 
         if (!response.ok) {
-          throw new Error('Failed to fetch user data');
+          throw new Error("Failed to fetch user data");
         }
 
         const data = await response.json();
         setUserData(data);
-      } catch (error) {
-        console.error('Fetch user data error:', error);
+      } catch {
         toast({
-          title: 'Error',
-          description: 'Failed to load user data. Please try again.',
-          variant: 'destructive',
+          title: "Error",
+          description: "Failed to load user data. Please try again.",
+          variant: "destructive",
         });
       } finally {
         setIsPageLoading(false);
@@ -91,132 +90,129 @@ export default function Account() {
   }, [authenticatedFetch, toast]);
 
   const resetState = () => {
-    setState(prev => ({
+    setState((prev) => ({
       ...prev,
       showEmailDialog: false,
       showPasswordDialog: false,
       showDeleteDialog: false,
       isLoading: false,
-      newEmail: '',
-      currentPassword: '',
-      newPassword: '',
+      newEmail: "",
+      currentPassword: "",
+      newPassword: "",
     }));
   };
 
   const handleUpdateEmail = async (e: React.FormEvent) => {
     e.preventDefault();
-    setState(prev => ({ ...prev, isLoading: true }));
+    setState((prev) => ({ ...prev, isLoading: true }));
 
     try {
       const response = await authenticatedFetch(
         `${import.meta.env.VITE_API_BASE_URL}/users/email`,
         {
-          method: 'PATCH',
+          method: "PATCH",
           headers: {
-            'Content-Type': 'application/json',
+            "Content-Type": "application/json",
           },
           body: JSON.stringify({
             newEmail: state.newEmail,
             password: state.currentPassword,
           }),
-        },
+        }
       );
 
       if (!response.ok) {
-        throw new Error('Failed to update email');
+        throw new Error("Failed to update email");
       }
 
       const data = await response.json();
       setUserData(data);
       toast({
-        title: 'Email updated',
-        description: 'Your email has been successfully updated.',
+        title: "Email updated",
+        description: "Your email has been successfully updated.",
       });
       resetState();
-    } catch (error) {
-      console.error('Update email error:', error);
+    } catch {
       toast({
-        title: 'Error',
+        title: "Error",
         description:
-          'Failed to update email. Please check your password and try again.',
-        variant: 'destructive',
+          "Failed to update email. Please check your password and try again.",
+        variant: "destructive",
       });
-      setState(prev => ({ ...prev, isLoading: false }));
+      setState((prev) => ({ ...prev, isLoading: false }));
     }
   };
 
   const handleUpdatePassword = async (e: React.FormEvent) => {
     e.preventDefault();
-    setState(prev => ({ ...prev, isLoading: true }));
+    setState((prev) => ({ ...prev, isLoading: true }));
 
     try {
       const response = await authenticatedFetch(
         `${import.meta.env.VITE_API_BASE_URL}/users/password`,
         {
-          method: 'PATCH',
+          method: "PATCH",
           headers: {
-            'Content-Type': 'application/json',
+            "Content-Type": "application/json",
           },
           body: JSON.stringify({
             currentPassword: state.currentPassword,
             newPassword: state.newPassword,
           }),
-        },
+        }
       );
 
       if (!response.ok) {
-        throw new Error('Failed to update password');
+        throw new Error("Failed to update password");
       }
 
       toast({
-        title: 'Password updated',
-        description: 'Your password has been successfully updated.',
+        title: "Password updated",
+        description: "Your password has been successfully updated.",
       });
       resetState();
-    } catch (error) {
-      console.error('Update password error:', error);
+    } catch {
       toast({
-        title: 'Error',
+        title: "Error",
         description:
-          'Failed to update password. Please check your current password and try again.',
-        variant: 'destructive',
+          "Failed to update password. Please check your current password and try again.",
+        variant: "destructive",
       });
-      setState(prev => ({ ...prev, isLoading: false }));
+      setState((prev) => ({ ...prev, isLoading: false }));
     }
   };
 
   const handleDeleteAccount = async () => {
-    setState(prev => ({ ...prev, isLoading: true }));
+    setState((prev) => ({ ...prev, isLoading: true }));
 
     try {
       const response = await authenticatedFetch(
         `${import.meta.env.VITE_API_BASE_URL}/users`,
         {
-          method: 'DELETE',
+          method: "DELETE",
           headers: {
-            'Content-Type': 'application/json',
+            "Content-Type": "application/json",
           },
           body: JSON.stringify({ password: state.currentPassword }),
-        },
+        }
       );
 
       if (!response.ok) {
-        throw new Error('Failed to delete account');
+        throw new Error("Failed to delete account");
       }
 
       await signOut();
-      navigate('/auth');
+      navigate("/auth");
       toast({
-        title: 'Account deleted',
-        description: 'Your account has been permanently deleted.',
+        title: "Account deleted",
+        description: "Your account has been permanently deleted.",
       });
-    } catch (error) {
-      console.error('Delete account error:', error);
+    } catch {
       toast({
-        title: 'Error',
+        title: "Error",
         description:
-          'Failed to delete account. Please check your password and try again.',
-        variant: 'destructive',
+          "Failed to delete account. Please check your password and try again.",
+        variant: "destructive",
       });
     } finally {
       resetState();
@@ -226,8 +222,8 @@ export default function Account() {
   const renderEmailDialog = () => (
     <Dialog
       open={state.showEmailDialog}
-      onOpenChange={open =>
-        setState(prev => ({ ...prev, showEmailDialog: open }))
+      onOpenChange={(open) =>
+        setState((prev) => ({ ...prev, showEmailDialog: open }))
       }
     >
       <DialogContent>
@@ -248,8 +244,8 @@ export default function Account() {
                 autoComplete="new-email"
                 placeholder="new@example.com"
                 value={state.newEmail}
-                onChange={e =>
-                  setState(prev => ({ ...prev, newEmail: e.target.value }))
+                onChange={(e) =>
+                  setState((prev) => ({ ...prev, newEmail: e.target.value }))
                 }
                 disabled={state.isLoading}
                 required
@@ -263,8 +259,8 @@ export default function Account() {
                 type="password"
                 autoComplete="current-password"
                 value={state.currentPassword}
-                onChange={e =>
-                  setState(prev => ({
+                onChange={(e) =>
+                  setState((prev) => ({
                     ...prev,
                     currentPassword: e.target.value,
                   }))
@@ -280,7 +276,7 @@ export default function Account() {
               type="button"
               variant="secondary"
               onClick={() =>
-                setState(prev => ({ ...prev, showEmailDialog: false }))
+                setState((prev) => ({ ...prev, showEmailDialog: false }))
               }
               disabled={state.isLoading}
               tabIndex={4}
@@ -288,7 +284,7 @@ export default function Account() {
               Cancel
             </Button>
             <Button type="submit" disabled={state.isLoading} tabIndex={3}>
-              {state.isLoading ? 'Updating...' : 'Update Email'}
+              {state.isLoading ? "Updating..." : "Update Email"}
             </Button>
           </DialogFooter>
         </form>
@@ -299,8 +295,8 @@ export default function Account() {
   const renderPasswordDialog = () => (
     <Dialog
       open={state.showPasswordDialog}
-      onOpenChange={open =>
-        setState(prev => ({ ...prev, showPasswordDialog: open }))
+      onOpenChange={(open) =>
+        setState((prev) => ({ ...prev, showPasswordDialog: open }))
       }
     >
       <DialogContent>
@@ -319,8 +315,8 @@ export default function Account() {
                 type="password"
                 autoComplete="current-password"
                 value={state.currentPassword}
-                onChange={e =>
-                  setState(prev => ({
+                onChange={(e) =>
+                  setState((prev) => ({
                     ...prev,
                     currentPassword: e.target.value,
                   }))
@@ -337,8 +333,8 @@ export default function Account() {
                 type="password"
                 autoComplete="new-password"
                 value={state.newPassword}
-                onChange={e =>
-                  setState(prev => ({ ...prev, newPassword: e.target.value }))
+                onChange={(e) =>
+                  setState((prev) => ({ ...prev, newPassword: e.target.value }))
                 }
                 disabled={state.isLoading}
                 required
@@ -351,7 +347,7 @@ export default function Account() {
               type="button"
               variant="secondary"
               onClick={() =>
-                setState(prev => ({ ...prev, showPasswordDialog: false }))
+                setState((prev) => ({ ...prev, showPasswordDialog: false }))
               }
               disabled={state.isLoading}
               tabIndex={4}
@@ -359,7 +355,7 @@ export default function Account() {
               Cancel
             </Button>
             <Button type="submit" disabled={state.isLoading} tabIndex={3}>
-              {state.isLoading ? 'Updating...' : 'Update Password'}
+              {state.isLoading ? "Updating..." : "Update Password"}
             </Button>
           </DialogFooter>
         </form>
@@ -370,8 +366,8 @@ export default function Account() {
   const renderDeleteDialog = () => (
     <AlertDialog
       open={state.showDeleteDialog}
-      onOpenChange={open =>
-        setState(prev => ({ ...prev, showDeleteDialog: open }))
+      onOpenChange={(open) =>
+        setState((prev) => ({ ...prev, showDeleteDialog: open }))
       }
     >
       <AlertDialogContent>
@@ -389,8 +385,11 @@ export default function Account() {
               id="delete-password"
               type="password"
               value={state.currentPassword}
-              onChange={e =>
-                setState(prev => ({ ...prev, currentPassword: e.target.value }))
+              onChange={(e) =>
+                setState((prev) => ({
+                  ...prev,
+                  currentPassword: e.target.value,
+                }))
               }
               disabled={state.isLoading}
               required
@@ -409,7 +408,7 @@ export default function Account() {
             className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
             tabIndex={2}
           >
-            {state.isLoading ? 'Deleting...' : 'Delete Account'}
+            {state.isLoading ? "Deleting..." : "Delete Account"}
           </AlertDialogAction>
         </AlertDialogFooter>
       </AlertDialogContent>
@@ -465,7 +464,7 @@ export default function Account() {
               <Label>Email</Label>
               <div className="flex items-center gap-4">
                 <Input
-                  value={userData?.email || ''}
+                  value={userData?.email || ""}
                   disabled
                   className="flex-1"
                   tabIndex={-1}
@@ -473,7 +472,7 @@ export default function Account() {
                 <Button
                   variant="outline"
                   onClick={() =>
-                    setState(prev => ({ ...prev, showEmailDialog: true }))
+                    setState((prev) => ({ ...prev, showEmailDialog: true }))
                   }
                   disabled={state.isLoading}
                   tabIndex={1}
@@ -496,7 +495,7 @@ export default function Account() {
                 <Button
                   variant="outline"
                   onClick={() =>
-                    setState(prev => ({ ...prev, showPasswordDialog: true }))
+                    setState((prev) => ({ ...prev, showPasswordDialog: true }))
                   }
                   disabled={state.isLoading}
                   tabIndex={2}
@@ -510,7 +509,7 @@ export default function Account() {
               <Button
                 variant="destructive"
                 onClick={() =>
-                  setState(prev => ({ ...prev, showDeleteDialog: true }))
+                  setState((prev) => ({ ...prev, showDeleteDialog: true }))
                 }
                 disabled={state.isLoading}
                 tabIndex={3}

@@ -1,45 +1,45 @@
-import { useState } from 'react';
-import { useNavigate, useSearchParams } from 'react-router-dom';
-import { Button } from '@/components/ui/button';
+import { useState } from "react";
+import { useNavigate, useSearchParams } from "react-router-dom";
+import { Button } from "@/components/ui/button";
 import {
   Card,
   CardContent,
   CardDescription,
   CardHeader,
   CardTitle,
-} from '@/components/ui/card';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { useToast } from '@/hooks/use-toast';
+} from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { useToast } from "@/hooks/use-toast";
 
 export default function ResetPassword() {
   const [searchParams] = useSearchParams();
-  const token = searchParams.get('token');
+  const token = searchParams.get("token");
   const navigate = useNavigate();
   const { toast } = useToast();
   const [isLoading, setIsLoading] = useState(false);
-  const [newPassword, setNewPassword] = useState('');
-  const [confirmPassword, setConfirmPassword] = useState('');
+  const [newPassword, setNewPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
     if (newPassword !== confirmPassword) {
       toast({
-        title: 'Error',
-        description: 'Passwords do not match.',
-        variant: 'destructive',
+        title: "Error",
+        description: "Passwords do not match.",
+        variant: "destructive",
       });
       return;
     }
 
     if (!token) {
       toast({
-        title: 'Error',
-        description: 'Invalid reset token.',
-        variant: 'destructive',
+        title: "Error",
+        description: "Invalid reset token.",
+        variant: "destructive",
       });
-      navigate('/auth');
+      navigate("/auth");
       return;
     }
 
@@ -49,32 +49,31 @@ export default function ResetPassword() {
       const response = await fetch(
         `${import.meta.env.VITE_API_BASE_URL}/users/reset-password`,
         {
-          method: 'POST',
+          method: "POST",
           headers: {
-            'Content-Type': 'application/json',
+            "Content-Type": "application/json",
           },
           body: JSON.stringify({
             token,
             newPassword,
           }),
-        },
+        }
       );
 
       if (!response.ok) {
-        throw new Error('Failed to reset password');
+        throw new Error("Failed to reset password");
       }
 
       toast({
-        title: 'Password reset successful',
-        description: 'You can now sign in with your new password.',
+        title: "Password reset successful",
+        description: "You can now sign in with your new password.",
       });
-      navigate('/auth');
-    } catch (error) {
-      console.error('Reset password error:', error);
+      navigate("/auth");
+    } catch {
       toast({
-        title: 'Error',
-        description: 'Failed to reset password. The link may have expired.',
-        variant: 'destructive',
+        title: "Error",
+        description: "Failed to reset password. The link may have expired.",
+        variant: "destructive",
       });
     } finally {
       setIsLoading(false);
@@ -82,7 +81,7 @@ export default function ResetPassword() {
   };
 
   if (!token) {
-    navigate('/auth');
+    navigate("/auth");
     return null;
   }
 
@@ -102,7 +101,7 @@ export default function ResetPassword() {
                   id="new-password"
                   type="password"
                   value={newPassword}
-                  onChange={e => setNewPassword(e.target.value)}
+                  onChange={(e) => setNewPassword(e.target.value)}
                   disabled={isLoading}
                   required
                   tabIndex={1}
@@ -116,7 +115,7 @@ export default function ResetPassword() {
                   id="confirm-password"
                   type="password"
                   value={confirmPassword}
-                  onChange={e => setConfirmPassword(e.target.value)}
+                  onChange={(e) => setConfirmPassword(e.target.value)}
                   disabled={isLoading}
                   required
                   tabIndex={2}
@@ -151,7 +150,7 @@ export default function ResetPassword() {
                     Resetting password...
                   </span>
                 ) : (
-                  'Reset Password'
+                  "Reset Password"
                 )}
               </Button>
             </form>
