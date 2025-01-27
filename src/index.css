@@ -2,6 +2,36 @@
 @tailwind components;
 @tailwind utilities;
 
+@layer utilities {
+  .animate-glow {
+    animation: glow 1s ease-in-out infinite alternate;
+  }
+
+  .animate-fade-in {
+    animation: fadeIn 0.5s ease-out forwards;
+  }
+}
+
+@keyframes glow {
+  from {
+    box-shadow: 0 0 2px var(--habit-color), 0 0 4px var(--habit-color), 0 0 6px var(--habit-color);
+  }
+  to {
+    box-shadow: 0 0 6px var(--habit-color), 0 0 12px var(--habit-color), 0 0 16px var(--habit-color);
+  }
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
 :root {
   font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
   line-height: 1.5;

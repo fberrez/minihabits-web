@@ -31,7 +31,7 @@
     "js-confetti": "^0.12.0",
     "lucide-react": "^0.469.0",
     "moment": "^2.30.1",
-    "motion": "^11.16.4",
+    "motion": "^11.18.0",
     "react": "^18.3.1",
     "react-day-picker": "8.10.1",
     "react-dom": "^18.3.1",

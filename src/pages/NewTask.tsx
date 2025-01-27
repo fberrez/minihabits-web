@@ -40,12 +40,18 @@ interface NewTaskProps {
 export function NewTask({ initialData }: NewTaskProps) {
   const [isLoading, setIsLoading] = useState(false);
   const [name, setName] = useState(initialData?.name || "");
-  const [color, setColor] = useState<HabitColor>(initialData?.color || getRandomColor());
-  const [description, setDescription] = useState(initialData?.description || "");
+  const [color, setColor] = useState<HabitColor>(
+    initialData?.color || getRandomColor()
+  );
+  const [description, setDescription] = useState(
+    initialData?.description || ""
+  );
   const [deadline, setDeadline] = useState<Date | null>(
-    initialData 
-      ? (initialData.deadline ? new Date(initialData.deadline) : null)
-      : moment().add(1, 'day').hour(12).minute(0).second(0).toDate()
+    initialData
+      ? initialData.deadline
+        ? new Date(initialData.deadline)
+        : null
+      : moment().add(1, "day").hour(12).minute(0).second(0).toDate()
   );
   const { createHabit, updateHabit } = useHabits();
   const navigate = useNavigate();
@@ -67,16 +73,12 @@ export function NewTask({ initialData }: NewTaskProps) {
 
     try {
       if (initialData) {
-        console.log(initialData.description, description);
-        await updateHabit(
-          initialData._id,
-          {
-            name,
-            color,
-            description,
-            deadline,
-          }
-        );
+        await updateHabit(initialData._id, {
+          name,
+          color,
+          description,
+          deadline,
+        });
         toast({
           title: "Task updated",
           description: "Your task has been updated successfully.",
@@ -96,11 +98,12 @@ export function NewTask({ initialData }: NewTaskProps) {
         });
       }
       navigate("/");
-    } catch (error) {
-      console.error("Failed to create task:", error);
+    } catch {
       toast({
         title: "Error",
-        description: `Failed to ${initialData ? 'update' : 'create'} task. Please try again.`,
+        description: `Failed to ${
+          initialData ? "update" : "create"
+        } task. Please try again.`,
         variant: "destructive",
       });
     } finally {
@@ -124,11 +127,13 @@ export function NewTask({ initialData }: NewTaskProps) {
     <div className="max-w-[2000px] mx-auto px-8 py-8">
       <Card className="max-w-[600px] mx-auto">
         <CardHeader>
-          <CardTitle>{initialData ? 'Edit task' : 'Create a new task'}</CardTitle>
+          <CardTitle>
+            {initialData ? "Edit task" : "Create a new task"}
+          </CardTitle>
           <CardDescription>
-            {initialData 
-              ? 'Update your task details, deadline, or description.'
-              : 'Add a one-time task with an optional deadline and description.'}
+            {initialData
+              ? "Update your task details, deadline, or description."
+              : "Add a one-time task with an optional deadline and description."}
           </CardDescription>
         </CardHeader>
         <CardContent>
@@ -198,7 +203,10 @@ export function NewTask({ initialData }: NewTaskProps) {
                   <PopoverContent className="w-auto p-0">
                     <Calendar
                       mode="single"
-                      selected={deadline || moment().hour(12).minute(0).second(0).toDate()}
+                      selected={
+                        deadline ||
+                        moment().hour(12).minute(0).second(0).toDate()
+                      }
                       onSelect={(d) => handleSelectDateTime(d)}
                       classNames={{
                         day_outside: "text-muted-foreground opacity-50",
@@ -206,9 +214,12 @@ export function NewTask({ initialData }: NewTaskProps) {
                       initialFocus
                     />
                     <div className="p-3 border-t border-border">
-                      <TimePicker 
-                        setDate={(date) => setDeadline(date || null)} 
-                        date={deadline || moment().hour(12).minute(0).second(0).toDate()} 
+                      <TimePicker
+                        setDate={(date) => setDeadline(date || null)}
+                        date={
+                          deadline ||
+                          moment().hour(12).minute(0).second(0).toDate()
+                        }
                       />
                     </div>
                   </PopoverContent>
@@ -233,9 +244,13 @@ export function NewTask({ initialData }: NewTaskProps) {
             Cancel
           </Button>
           <Button type="submit" disabled={isLoading} onClick={handleSubmit}>
-            {isLoading 
-              ? (initialData ? "Updating..." : "Creating...") 
-              : (initialData ? "Update Task" : "Create Task")}
+            {isLoading
+              ? initialData
+                ? "Updating..."
+                : "Creating..."
+              : initialData
+              ? "Update Task"
+              : "Create Task"}
           </Button>
         </CardFooter>
       </Card>

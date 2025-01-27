@@ -1,21 +1,22 @@
-import { Button } from '../ui/button';
-import { Card, CardContent } from '../ui/card';
-import { Plus, Minus, MoreHorizontal } from 'lucide-react';
-import { Habit } from '../../types/habit';
+import { Button } from "../ui/button";
+import { Card, CardContent } from "../ui/card";
+import { Plus, Minus, MoreHorizontal } from "lucide-react";
+import { Habit } from "../../types/habit";
 import {
   Tooltip,
   TooltipContent,
   TooltipProvider,
   TooltipTrigger,
-} from '../ui/tooltip';
+} from "../ui/tooltip";
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "../ui/dropdown-menu";
-import JSConfetti from 'js-confetti';
-import { useNavigate } from 'react-router-dom';
+import JSConfetti from "js-confetti";
+import { useNavigate } from "react-router-dom";
+import { cn } from "../../lib/utils";
 
 interface CounterHabitCardProps {
   habit: Habit;
@@ -23,12 +24,15 @@ interface CounterHabitCardProps {
   formatDate: (date: Date) => string;
   localCompletionStatus: Record<string, Record<string, number>>;
   setLocalCompletionStatus: (
-    value: React.SetStateAction<Record<string, Record<string, number>>>,
+    value: React.SetStateAction<Record<string, Record<string, number>>>
   ) => void;
   onIncrement: (habitId: string, date: string) => Promise<void>;
   onDecrement: (habitId: string, date: string) => Promise<void>;
   jsConfettiRef: React.RefObject<JSConfetti>;
   style?: React.CSSProperties;
+  isHomePage?: boolean;
+  showOptions?: boolean;
+  glowEffect?: boolean;
 }
 
 export function CounterHabitCard({
@@ -41,10 +45,16 @@ export function CounterHabitCard({
   onDecrement,
   jsConfettiRef,
   style,
+  isHomePage = false,
+  showOptions = true,
+  glowEffect = false,
 }: CounterHabitCardProps) {
   const navigate = useNavigate();
-  const today = new Date().toISOString().split('T')[0];
-  const completionValue = localCompletionStatus[habit._id]?.[today] ?? habit.completedDates[today] ?? 0;
+  const today = new Date().toISOString().split("T")[0];
+  const completionValue =
+    localCompletionStatus[habit._id]?.[today] ??
+    habit.completedDates[today] ??
+    0;
   const isCompleted = completionValue >= habit.targetCounter;
 
   return (
@@ -59,25 +69,27 @@ export function CounterHabitCard({
         <div className="flex items-center gap-8">
           <div className="min-w-[200px] text-left">
             <div className="flex items-center gap-2">
-              <h2 className="text-xl font-semibold mb-1">
-                {habit.name}
-              </h2>
-              <DropdownMenu>
-                <DropdownMenuTrigger asChild>
-                  <Button
-                    variant="ghost"
-                    size="icon"
-                    className="h-8 w-8 p-0 hover:bg-transparent"
-                  >
-                    <MoreHorizontal className="h-4 w-4" />
-                  </Button>
-                </DropdownMenuTrigger>
-                <DropdownMenuContent align="end">
-                  <DropdownMenuItem onClick={() => navigate(`/stats/${habit._id}`)}>
-                    View stats
-                  </DropdownMenuItem>
-                </DropdownMenuContent>
-              </DropdownMenu>
+              <h2 className="text-xl font-semibold mb-1">{habit.name}</h2>
+              {showOptions && (
+                <DropdownMenu>
+                  <DropdownMenuTrigger asChild>
+                    <Button
+                      variant="ghost"
+                      size="icon"
+                      className="h-8 w-8 p-0 hover:bg-transparent"
+                    >
+                      <MoreHorizontal className="h-4 w-4" />
+                    </Button>
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent align="end">
+                    <DropdownMenuItem
+                      onClick={() => navigate(`/stats/${habit._id}`)}
+                    >
+                      View stats
+                    </DropdownMenuItem>
+                  </DropdownMenuContent>
+                </DropdownMenu>
+              )}
             </div>
             <div className="flex items-center gap-2 text-sm text-muted-foreground">
               {habit.description && (
@@ -86,14 +98,13 @@ export function CounterHabitCard({
             </div>
           </div>
           <div className="flex gap-6 flex-grow justify-end">
-            {dates.map(date => {
-              const formattedDate = date.toISOString().split('T')[0];
+            {dates.map((date) => {
+              const formattedDate = date.toISOString().split("T")[0];
               const completionValue =
                 localCompletionStatus[habit._id]?.[formattedDate] ??
                 habit.completedDates[formattedDate] ??
                 0;
               const isCompleted = completionValue >= habit.targetCounter;
-              console.log(completionValue, habit.targetCounter ,isCompleted);
 
               return (
                 <TooltipProvider key={date.toISOString()}>
@@ -114,15 +125,35 @@ export function CounterHabitCard({
                             <Button
                               size="icon"
                               variant="outline"
-                              className="rounded-full w-6 h-6 p-0"
-                              style={{ borderColor: habit.color }}
-                              onClick={e => {
+                              className={cn(
+                                "rounded-full w-6 h-6 p-0",
+                                glowEffect && !isCompleted && "animate-glow"
+                              )}
+                              style={{
+                                borderColor: habit.color,
+                                ...(glowEffect &&
+                                  !isCompleted &&
+                                  ({
+                                    "--habit-color": habit.color,
+                                  } as React.CSSProperties)),
+                              }}
+                              onClick={(e) => {
                                 e.stopPropagation();
                                 const newValue = Math.max(
                                   0,
-                                  completionValue - 1,
+                                  completionValue - 1
                                 );
-                                setLocalCompletionStatus(prev => ({
+
+                                if (isHomePage) {
+                                  setLocalCompletionStatus({
+                                    [habit._id]: {
+                                      [formattedDate]: newValue,
+                                    },
+                                  });
+                                  return;
+                                }
+
+                                setLocalCompletionStatus((prev) => ({
                                   ...prev,
                                   [habit._id]: {
                                     ...prev[habit._id],
@@ -131,14 +162,14 @@ export function CounterHabitCard({
                                 }));
                                 onDecrement(habit._id, formattedDate).catch(
                                   () => {
-                                    setLocalCompletionStatus(prev => ({
+                                    setLocalCompletionStatus((prev) => ({
                                       ...prev,
                                       [habit._id]: {
                                         ...prev[habit._id],
                                         [formattedDate]: completionValue,
                                       },
                                     }));
-                                  },
+                                  }
                                 );
                               }}
                             >
@@ -147,17 +178,40 @@ export function CounterHabitCard({
                             <Button
                               size="icon"
                               variant="outline"
-                              className="rounded-full w-6 h-6 p-0"
+                              className={cn(
+                                "rounded-full w-6 h-6 p-0",
+                                glowEffect && !isCompleted && "animate-glow"
+                              )}
                               style={{
                                 backgroundColor: isCompleted
                                   ? habit.color
                                   : undefined,
                                 borderColor: habit.color,
+                                ...(glowEffect &&
+                                  !isCompleted &&
+                                  ({
+                                    "--habit-color": habit.color,
+                                  } as React.CSSProperties)),
                               }}
-                              onClick={e => {
+                              onClick={(e) => {
                                 e.stopPropagation();
                                 const newValue = completionValue + 1;
-                                setLocalCompletionStatus(prev => ({
+
+                                if (isHomePage) {
+                                  setLocalCompletionStatus({
+                                    [habit._id]: {
+                                      [formattedDate]: newValue,
+                                    },
+                                  });
+                                  if (newValue == habit.targetCounter) {
+                                    jsConfettiRef.current?.addConfetti({
+                                      confettiColors: [habit.color],
+                                    });
+                                  }
+                                  return;
+                                }
+
+                                setLocalCompletionStatus((prev) => ({
                                   ...prev,
                                   [habit._id]: {
                                     ...prev[habit._id],
@@ -166,14 +220,14 @@ export function CounterHabitCard({
                                 }));
                                 onIncrement(habit._id, formattedDate).catch(
                                   () => {
-                                    setLocalCompletionStatus(prev => ({
+                                    setLocalCompletionStatus((prev) => ({
                                       ...prev,
                                       [habit._id]: {
                                         ...prev[habit._id],
                                         [formattedDate]: completionValue,
                                       },
                                     }));
-                                  },
+                                  }
                                 );
                                 if (newValue >= habit.targetCounter) {
                                   jsConfettiRef.current?.addConfetti({

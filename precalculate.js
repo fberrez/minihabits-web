@@ -33,7 +33,3 @@ const getColorRange = (baseColor) => {
     `rgba(${rgb.r}, ${rgb.g}, ${rgb.b}, 1)`,
   ];
 };
-
-for (const color of Object.values(HabitColor)) {
-  console.log(getColorRange(color));
-}

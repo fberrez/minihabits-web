@@ -1,15 +1,15 @@
-import { useRef, useEffect, useState } from 'react';
-import { useHabits } from '../contexts/HabitContext';
-import { Card, CardContent } from '../components/ui/card';
-import { Skeleton } from '../components/ui/skeleton';
-import { useNavigate } from 'react-router-dom';
-import { Plus } from 'lucide-react';
-import JSConfetti from 'js-confetti';
-import { HabitType } from '../types/habit';
-import { BooleanHabitCard } from '../components/habits/boolean-habit-card';
-import { CounterHabitCard } from '../components/habits/counter-habit-card';
-import { TaskHabitCard } from '../components/habits/task-habit-card';
-import { Separator } from '../components/ui/separator';
+import { useRef, useEffect, useState } from "react";
+import { useHabits } from "../contexts/HabitContext";
+import { Card, CardContent } from "../components/ui/card";
+import { Skeleton } from "../components/ui/skeleton";
+import { useNavigate } from "react-router-dom";
+import JSConfetti from "js-confetti";
+import { HabitType } from "../types/habit";
+import { BooleanHabitCard } from "../components/habits/boolean-habit-card";
+import { CounterHabitCard } from "../components/habits/counter-habit-card";
+import { TaskHabitCard } from "../components/habits/task-habit-card";
+import { Separator } from "../components/ui/separator";
+import { AddNewButtons } from "../components/add-new-buttons";
 
 export function HabitList() {
   const {
@@ -34,8 +34,8 @@ export function HabitList() {
       setIsMobile(window.innerWidth < 768);
     };
 
-    window.addEventListener('resize', handleResize);
-    return () => window.removeEventListener('resize', handleResize);
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
   }, []);
 
   const getLast5Days = () => {
@@ -50,20 +50,20 @@ export function HabitList() {
   };
 
   const formatDate = (date: Date) => {
-    return date.toLocaleDateString('en-US', { weekday: 'short' });
+    return date.toLocaleDateString("en-US", { weekday: "short" });
   };
 
   const visibleHabits = habits.filter(
-    habit =>
+    (habit) =>
       habit.type !== HabitType.TASK ||
-      !habit.completedDates[new Date().toISOString().split('T')[0]]
+      !habit.completedDates[new Date().toISOString().split("T")[0]]
   );
 
   // Separate habits and tasks
   const regularHabits = visibleHabits.filter(
-    habit => habit.type !== HabitType.TASK
+    (habit) => habit.type !== HabitType.TASK
   );
-  const tasks = visibleHabits.filter(habit => habit.type === HabitType.TASK);
+  const tasks = visibleHabits.filter((habit) => habit.type === HabitType.TASK);
 
   if (isLoading) {
     return (
@@ -99,9 +99,9 @@ export function HabitList() {
       <div className="max-w-5xl mx-auto px-4 py-8 space-y-8">
         <div className="space-y-4 habit-list">
           {/* Regular Habits Section */}
-          {regularHabits.map(habit => {
+          {regularHabits.map((habit) => {
             if (!localCompletionStatus[habit._id]) {
-              setLocalCompletionStatus(prev => ({
+              setLocalCompletionStatus((prev) => ({
                 ...prev,
                 [habit._id]: { ...habit.completedDates },
               }));
@@ -151,9 +151,9 @@ export function HabitList() {
           )}
 
           {/* Tasks Section */}
-          {tasks.map(habit => {
+          {tasks.map((habit) => {
             if (!localCompletionStatus[habit._id]) {
-              setLocalCompletionStatus(prev => ({
+              setLocalCompletionStatus((prev) => ({
                 ...prev,
                 [habit._id]: { ...habit.completedDates },
               }));
@@ -174,40 +174,18 @@ export function HabitList() {
                 onTrack={trackHabit}
                 onUntrack={untrackHabit}
                 titleStyle={{
-                  textDecoration: habit.completedDates[new Date().toISOString().split('T')[0]]
-                    ? 'line-through'
-                    : 'none'
+                  textDecoration: habit.completedDates[
+                    new Date().toISOString().split("T")[0]
+                  ]
+                    ? "line-through"
+                    : "none",
                 }}
               />
             );
           })}
 
           {/* Add New Buttons */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <Card
-              className="cursor-pointer transition-all hover:shadow-md border-dashed hover:translate-x-1 hover:-translate-y-1"
-              onClick={() => navigate('/new')}
-            >
-              <CardContent className="p-4">
-                <div className="flex items-center justify-center gap-2 text-muted-foreground">
-                  <Plus className="h-5 w-5" />
-                  <span className="text-lg">Add new habit</span>
-                </div>
-              </CardContent>
-            </Card>
-
-            <Card
-              className="cursor-pointer transition-all hover:shadow-md border-dashed hover:translate-x-1 hover:-translate-y-1"
-              onClick={() => navigate('/new-task')}
-            >
-              <CardContent className="p-4">
-                <div className="flex items-center justify-center gap-2 text-muted-foreground">
-                  <Plus className="h-5 w-5" />
-                  <span className="text-lg">Add new task</span>
-                </div>
-              </CardContent>
-            </Card>
-          </div>
+          <AddNewButtons />
         </div>
       </div>
     </>

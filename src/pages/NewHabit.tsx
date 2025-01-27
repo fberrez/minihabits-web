@@ -1,7 +1,7 @@
-import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { useHabits } from '../contexts/HabitContext';
-import { Button } from '../components/ui/button';
+import { useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { useHabits } from "../contexts/HabitContext";
+import { Button } from "../components/ui/button";
 import {
   Card,
   CardContent,
@@ -9,23 +9,23 @@ import {
   CardHeader,
   CardTitle,
   CardFooter,
-} from '../components/ui/card';
-import { Input } from '../components/ui/input';
-import { Label } from '../components/ui/label';
-import { useToast } from '../hooks/use-toast';
-import { HabitColor, HabitType } from '../types/habit';
-import { RadioGroup, RadioGroupItem } from '../components/ui/radio-group';
-import { Alert, AlertDescription } from '../components/ui/alert';
-import { Lightbulb } from 'lucide-react';
-import { ColorPicker } from '../components/color-picker';
+} from "../components/ui/card";
+import { Input } from "../components/ui/input";
+import { Label } from "../components/ui/label";
+import { useToast } from "../hooks/use-toast";
+import { HabitColor, HabitType } from "../types/habit";
+import { RadioGroup, RadioGroupItem } from "../components/ui/radio-group";
+import { Alert, AlertDescription } from "../components/ui/alert";
+import { Lightbulb } from "lucide-react";
+import { ColorPicker } from "../components/color-picker";
 
 const habitSuggestions = [
-  'Read for 10 minutes',
-  'Meditate for 10 minutes',
-  'Do 10 pushups',
-  'Write 10 sentences',
-  'Drink 10 glasses of water',
-  'Walk for 10 minutes',
+  "Read for 10 minutes",
+  "Meditate for 10 minutes",
+  "Do 10 pushups",
+  "Write 10 sentences",
+  "Drink 10 glasses of water",
+  "Walk for 10 minutes",
 ];
 
 const getRandomColor = () => {
@@ -34,12 +34,12 @@ const getRandomColor = () => {
 };
 
 export function NewHabit() {
-  const [name, setName] = useState('');
+  const [name, setName] = useState("");
   const [color, setColor] = useState<HabitColor>(getRandomColor());
   const [type, setType] = useState<HabitType>(HabitType.BOOLEAN);
   const [targetCounter, setTargetCounter] = useState<number>(1);
-  const [description, setDescription] = useState('');
-  const [deadline, setDeadline] = useState<string>('');
+  const [description, setDescription] = useState("");
+  const [deadline, setDeadline] = useState<string>("");
   const [isLoading, setIsLoading] = useState(false);
   const { createHabit } = useHabits();
   const navigate = useNavigate();
@@ -50,19 +50,19 @@ export function NewHabit() {
 
     if (!name.trim() || !color) {
       toast({
-        title: 'Missing required fields',
-        description: 'Please provide both a habit name and select a color.',
-        variant: 'destructive',
+        title: "Missing required fields",
+        description: "Please provide both a habit name and select a color.",
+        variant: "destructive",
       });
       return;
     }
 
     if (type === HabitType.COUNTER && (!targetCounter || targetCounter <= 0)) {
       toast({
-        title: 'Invalid target counter',
+        title: "Invalid target counter",
         description:
-          'Please provide a target counter greater than 0 for counter type habits.',
-        variant: 'destructive',
+          "Please provide a target counter greater than 0 for counter type habits.",
+        variant: "destructive",
       });
       return;
     }
@@ -76,19 +76,18 @@ export function NewHabit() {
         type,
         type === HabitType.COUNTER ? targetCounter : undefined,
         type === HabitType.TASK ? description : undefined,
-        type === HabitType.TASK && deadline ? new Date(deadline) : undefined,
+        type === HabitType.TASK && deadline ? new Date(deadline) : undefined
       );
       toast({
-        title: 'Habit created',
-        description: 'Your new habit has been created successfully.',
+        title: "Habit created",
+        description: "Your new habit has been created successfully.",
       });
-      navigate('/');
-    } catch (error) {
-      console.error('Failed to create habit:', error);
+      navigate("/");
+    } catch {
       toast({
-        title: 'Error',
-        description: 'Failed to create habit. Please try again.',
-        variant: 'destructive',
+        title: "Error",
+        description: "Failed to create habit. Please try again.",
+        variant: "destructive",
       });
     } finally {
       setIsLoading(false);
@@ -125,7 +124,7 @@ export function NewHabit() {
               <Input
                 id="name"
                 value={name}
-                onChange={e => setName(e.target.value)}
+                onChange={(e) => setName(e.target.value)}
                 placeholder="e.g., Read for 10 minute"
                 disabled={isLoading}
                 required
@@ -135,7 +134,7 @@ export function NewHabit() {
                   Suggestions (click to use):
                 </Label>
                 <div className="flex flex-wrap gap-2 justify-center">
-                  {habitSuggestions.map(suggestion => (
+                  {habitSuggestions.map((suggestion) => (
                     <Button
                       key={suggestion}
                       type="button"
@@ -181,7 +180,7 @@ export function NewHabit() {
                   type="number"
                   min="1"
                   value={targetCounter}
-                  onChange={e => setTargetCounter(parseInt(e.target.value))}
+                  onChange={(e) => setTargetCounter(parseInt(e.target.value))}
                   placeholder="e.g., 8 glasses of water"
                   disabled={isLoading}
                   required
@@ -196,7 +195,7 @@ export function NewHabit() {
                   <Input
                     id="description"
                     value={description}
-                    onChange={e => setDescription(e.target.value)}
+                    onChange={(e) => setDescription(e.target.value)}
                     placeholder="Describe your task..."
                     disabled={isLoading}
                   />
@@ -207,7 +206,7 @@ export function NewHabit() {
                     id="deadline"
                     type="datetime-local"
                     value={deadline}
-                    onChange={e => setDeadline(e.target.value)}
+                    onChange={(e) => setDeadline(e.target.value)}
                     disabled={isLoading}
                   />
                 </div>
@@ -225,13 +224,13 @@ export function NewHabit() {
           <Button
             type="button"
             variant="outline"
-            onClick={() => navigate('/')}
+            onClick={() => navigate("/")}
             disabled={isLoading}
           >
             Cancel
           </Button>
           <Button type="submit" disabled={isLoading} onClick={handleSubmit}>
-            {isLoading ? 'Creating...' : 'Create Habit'}
+            {isLoading ? "Creating..." : "Create Habit"}
           </Button>
         </CardFooter>
       </Card>
