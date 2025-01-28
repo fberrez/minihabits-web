@@ -77,10 +77,10 @@ export function Home() {
 
   return (
     <div className="relative flex items-center justify-center px-4 overflow-hidden min-h-[calc(100vh-3.5rem)]">
-      <div className="container mx-auto">
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-12 md:items-center mt-8">
+      <div className="container mx-auto py-12">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-12 md:items-center">
           {/* Left Column */}
-          <div className="flex flex-col justify-center space-y-8 text-center md:text-left min-h-[calc(100vh-12rem)]">
+          <div className="flex flex-col justify-center space-y-8 text-center md:text-left">
             <div>
               <HomeStats />
               <h1 className="text-6xl font-bold mb-4 tracking-tighter">
@@ -105,7 +105,7 @@ export function Home() {
           </div>
 
           {/* Right Column */}
-          <div className="flex justify-center pb-24">
+          <div className="flex justify-center">
             <div className="w-full max-w-md transition-all duration-500 ease-in-out">
               <div className="space-y-4 transition-all duration-500 ease-in-out">
                 {currentCard === "boolean" && (
