@@ -119,35 +119,56 @@ export function Home() {
             <div className="flex justify-center">
               <div className="w-full max-w-md transition-all duration-500 ease-in-out">
                 <div className="space-y-4 transition-all duration-500 ease-in-out">
+                  {/* Arrow and text */}
+                  <div className="hidden md:flex justify-end mb-2">
+                    <div className="flex items-center gap-1 rounded-full bg-muted px-3 py-1">
+                      <p className="text-sm font-medium">Try it!</p>
+                      <svg
+                        className="w-4 h-4 text-primary transform rotate-90 animated-bounce"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                        stroke="currentColor"
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth={2}
+                          d="M14 5l7 7m0 0l-7 7m7-7H3"
+                        />
+                      </svg>
+                    </div>
+                  </div>
                   {currentCard === "boolean" && (
-                    <BooleanHabitCard
-                      habit={booleanHabit}
-                      dates={dates}
-                      formatDate={(date) =>
-                        date.toLocaleDateString("en-US", { weekday: "short" })
-                      }
-                      localCompletionStatus={localCompletionStatus}
-                      setLocalCompletionStatus={(value) => {
-                        setLocalCompletionStatus(value);
-                        // Use the newValue directly instead of localCompletionStatus since state updates are async
-                        const [date] = dates;
-                        const formattedDate = moment(date).format("YYYY-MM-DD");
-                        const isCompleted =
-                          (value as CompletionStatus)[booleanHabit._id]?.[
-                            formattedDate
-                          ] > 0;
-                        if (isCompleted) {
-                          setCurrentCard("counter");
-                          setLocalCompletionStatus({});
+                    <div className="relative">
+                      <BooleanHabitCard
+                        habit={booleanHabit}
+                        dates={dates}
+                        formatDate={(date) =>
+                          date.toLocaleDateString("en-US", { weekday: "short" })
                         }
-                      }}
-                      onTrack={async () => {}}
-                      onUntrack={async () => {}}
-                      jsConfettiRef={jsConfettiRef}
-                      isHomePage={true}
-                      showOptions={false}
-                      glowEffect={true}
-                    />
+                        localCompletionStatus={localCompletionStatus}
+                        setLocalCompletionStatus={(value) => {
+                          setLocalCompletionStatus(value);
+                          const [date] = dates;
+                          const formattedDate =
+                            moment(date).format("YYYY-MM-DD");
+                          const isCompleted =
+                            (value as CompletionStatus)[booleanHabit._id]?.[
+                              formattedDate
+                            ] > 0;
+                          if (isCompleted) {
+                            setCurrentCard("counter");
+                            setLocalCompletionStatus({});
+                          }
+                        }}
+                        onTrack={async () => {}}
+                        onUntrack={async () => {}}
+                        jsConfettiRef={jsConfettiRef}
+                        isHomePage={true}
+                        showOptions={false}
+                        glowEffect={true}
+                      />
+                    </div>
                   )}
                   {currentCard === "counter" && (
                     <CounterHabitCard
@@ -224,7 +245,7 @@ export function Home() {
       </section>
 
       {/* Life Challenges Section */}
-      <section className="py-24">
+      <section className="py-24 mb-24">
         <div className="container mx-auto px-4">
           <div className="space-y-12">
             <div className="text-center">
@@ -336,7 +357,7 @@ export function Home() {
                   href: "/auth",
                   background: (
                     <div
-                      className="absolute inset-0 opacity-10"
+                      className="absolute inset-0 opacity-60"
                       style={{ backgroundColor: HabitColor.RED }}
                     />
                   ),
@@ -351,7 +372,7 @@ export function Home() {
                   href: "/auth",
                   background: (
                     <div
-                      className="absolute inset-0 opacity-10"
+                      className="absolute inset-0 opacity-60"
                       style={{ backgroundColor: HabitColor.BLUE }}
                     />
                   ),
@@ -366,7 +387,7 @@ export function Home() {
                   href: "/auth",
                   background: (
                     <div
-                      className="absolute inset-0 opacity-10"
+                      className="absolute inset-0 opacity-60"
                       style={{ backgroundColor: HabitColor.GREEN }}
                     />
                   ),
@@ -381,7 +402,7 @@ export function Home() {
                   href: "/auth",
                   background: (
                     <div
-                      className="absolute inset-0 opacity-10"
+                      className="absolute inset-0 opacity-60"
                       style={{ backgroundColor: HabitColor.PURPLE }}
                     />
                   ),
