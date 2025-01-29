@@ -18,6 +18,8 @@ import {
   FastForward,
   Tally5,
 } from "lucide-react";
+import FlickeringGrid from "@/components/ui/flickering-grid";
+import { useTheme } from "@/components/theme-provider";
 
 export function Home() {
   const navigate = useNavigate();
@@ -29,6 +31,7 @@ export function Home() {
     Record<string, Record<string, number>>
   >({});
   const [showDescription, setShowDescription] = useState(true);
+  const { theme } = useTheme();
 
   type CompletionStatus = typeof localCompletionStatus;
 
@@ -87,12 +90,22 @@ export function Home() {
   return (
     <div className="relative">
       {/* Hero Section */}
-      <section className="min-h-[calc(100vh-3.5rem)]  flex items-center">
-        <div className="container mx-auto px-4">
+      <section className="min-h-[calc(100vh-3.5rem)] flex items-center relative">
+        <FlickeringGrid
+          className="absolute inset-0 z-0 hidden md:block [mask-image:radial-gradient(1000px_1000px_at_top,white,transparent)]"
+          squareSize={4}
+          gridGap={4}
+          color={theme === "dark" ? "#ffffff" : "#000000"}
+          maxOpacity={0.8}
+          flickerChance={0.05}
+          height={2000}
+          width={2000}
+        />
+        <div className="container mx-auto px-4 relative z-10">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-12 md:items-center">
             {/* Left Column */}
             <div className="flex flex-col justify-center space-y-8 text-center md:text-left">
-              <div>
+              <div className="relative">
                 <HomeStats />
                 <h1 className="text-6xl font-bold mb-4 tracking-tighter">
                   minihabits.
