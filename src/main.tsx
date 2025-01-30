@@ -9,6 +9,14 @@ import { HabitProvider } from './contexts/HabitContext';
 import { Toaster } from './components/ui/toaster.tsx';
 import { TopBar } from './components/top-bar.tsx';
 import { Footer } from './components/footer.tsx';
+import { registerSW } from 'virtual:pwa-register';
+
+registerSW({
+  onOfflineReady() {
+    console.log('offline ready');
+  },
+  immediate: true,
+});
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
