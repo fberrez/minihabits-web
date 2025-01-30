@@ -5,4 +5,5 @@ export interface HomeStats {
     day: number;
     totalCompleted: number;
   };
+  usersCount: number;
 }
