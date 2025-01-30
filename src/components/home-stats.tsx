@@ -40,7 +40,7 @@ export function HomeStats() {
               )}
             >
               {!homeStats?.stats?.totalCompleted ||
-              homeStats?.stats?.totalCompleted < 10
+              homeStats?.stats?.totalCompleted < 100
                 ? `Join ${homeStats?.usersCount} users now!`
                 : homeStats?.stats?.totalCompleted + " habits completed today!"}
             </span>
