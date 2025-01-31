@@ -1,10 +1,15 @@
-import { MessageSquare } from 'lucide-react';
-import { Button } from './ui/button';
+import { MessageSquare } from "lucide-react";
+import { Button } from "./ui/button";
 
-export function FeedbackButton() {
+export function FeedbackButton({
+  label = "Send feedback",
+}: {
+  label?: string;
+}) {
   const handleClick = () => {
-    window.location.href =
-      'mailto:contact@fberrez.co?subject=MiniHabits%20Feedback';
+    window.location.href = `mailto:${
+      import.meta.env.VITE_CONTACT_EMAIL
+    }?subject=MiniHabits%20Feedback`;
   };
 
   return (
@@ -14,7 +19,7 @@ export function FeedbackButton() {
       onClick={handleClick}
       title="Send feedback"
     >
-      <MessageSquare className="mr-2 h-4 w-4" /> Send feedback
+      <MessageSquare className="mr-2 h-4 w-4" /> {label}
     </Button>
   );
 }

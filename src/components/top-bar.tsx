@@ -1,30 +1,31 @@
-import { Menu } from 'lucide-react';
-import { SiGithub, SiReddit } from '@icons-pack/react-simple-icons';
-import { Button } from './ui/button';
+import { Menu } from "lucide-react";
+import { SiGithub, SiReddit } from "@icons-pack/react-simple-icons";
+import { Button } from "./ui/button";
 import {
   Sheet,
   SheetContent,
   SheetHeader,
   SheetTitle,
   SheetTrigger,
-} from './ui/sheet';
-import { useAuth } from '@/contexts/AuthContext';
-import { useHabits } from '@/contexts/HabitContext';
+} from "./ui/sheet";
+import { useAuth } from "@/contexts/AuthContext";
+import { useHabits } from "@/contexts/HabitContext";
 import {
   Card,
   CardContent,
   CardHeader,
   CardTitle,
   CardDescription,
-} from './ui/card';
-import NumberTicker from './ui/number-ticker';
-import { ModeToggle } from './mode-toggle';
-import { FeedbackButton } from './feedback-button';
-import { useState } from 'react';
-import { SignOutButton } from './sign-out-button';
-import { AccountSettingsButton } from './account-settings-button';
-import { Link } from 'react-router-dom';
-import { ArchivedTasksButton } from './archived-tasks-button';
+} from "./ui/card";
+import NumberTicker from "./ui/number-ticker";
+import { ModeToggle } from "./mode-toggle";
+import { FeedbackButton } from "./feedback-button";
+import { useState } from "react";
+import { SignOutButton } from "./sign-out-button";
+import { AccountSettingsButton } from "./account-settings-button";
+import { Link } from "react-router-dom";
+import { ArchivedTasksButton } from "./archived-tasks-button";
+import { PricingButton } from "./pricing-button";
 
 export function TopBar() {
   const { isAuthenticated } = useAuth();
@@ -38,8 +39,8 @@ export function TopBar() {
           <CardTitle className="text-center">Today's Progress</CardTitle>
           <CardDescription className="text-center">
             {isAuthenticated
-              ? 'Habits completed today'
-              : 'Track your daily habits'}
+              ? "Habits completed today"
+              : "Track your daily habits"}
           </CardDescription>
         </CardHeader>
         <CardContent className="flex flex-col items-center">
@@ -68,6 +69,7 @@ export function TopBar() {
             <ArchivedTasksButton onSelect={() => setOpen(false)} />
           </>
         )}
+        <PricingButton onSelect={() => setOpen(false)} />
         <ModeToggle />
         {isAuthenticated && <FeedbackButton />}
         {isAuthenticated && <SignOutButton onSelect={() => setOpen(false)} />}
@@ -97,7 +99,12 @@ export function TopBar() {
                 variant="outline"
                 size="icon"
                 className="rounded-full h-10 w-10"
-                onClick={() => window.open('https://github.com/fberrez/minihabits-web', '_blank')}
+                onClick={() =>
+                  window.open(
+                    "https://github.com/fberrez/minihabits-web",
+                    "_blank"
+                  )
+                }
               >
                 <SiGithub size={20} />
               </Button>
@@ -105,7 +112,9 @@ export function TopBar() {
                 variant="outline"
                 size="icon"
                 className="rounded-full h-10 w-10"
-                onClick={() => window.open('https://reddit.com/r/minihabits', '_blank')}
+                onClick={() =>
+                  window.open("https://reddit.com/r/minihabits", "_blank")
+                }
               >
                 <SiReddit size={20} />
               </Button>
