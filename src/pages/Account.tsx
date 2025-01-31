@@ -29,8 +29,12 @@ import {
   AlertDialogFooter,
   AlertDialogHeader,
   AlertDialogTitle,
+  AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
 import { Skeleton } from "@/components/ui/skeleton";
+import { useSubscription } from "@/contexts/SubscriptionContext";
+import { stripeService } from "@/services/stripe";
+import { SubscriptionStatus, SubscriptionTier } from "@/types/subscription";
 
 interface AccountState {
   showEmailDialog: boolean;
@@ -61,6 +65,10 @@ export default function Account() {
     currentPassword: "",
     newPassword: "",
   });
+  const [subscriptionStatus, setSubscriptionStatus] =
+    useState<SubscriptionStatus | null>(null);
+  const { accessToken } = useAuth();
+  const { getSubscriptionStatus } = useSubscription();
 
   useEffect(() => {
     const fetchUserData = async () => {
@@ -69,6 +77,8 @@ export default function Account() {
           `${import.meta.env.VITE_API_BASE_URL}/users/me`
         );
 
+        const subscriptionStatus = await getSubscriptionStatus();
+        setSubscriptionStatus(subscriptionStatus);
         if (!response.ok) {
           throw new Error("Failed to fetch user data");
         }
@@ -216,6 +226,38 @@ export default function Account() {
       });
     } finally {
       resetState();
+    }
+  };
+
+  const handleCancelSubscription = async () => {
+    if (!accessToken) {
+      toast({
+        title: "Error",
+        description: "Please try signing in again.",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    try {
+      setState((prev) => ({ ...prev, isLoading: true }));
+      await stripeService.cancelSubscription(accessToken);
+      await getSubscriptionStatus(); // Refresh subscription status
+      toast({
+        title: "Success",
+        description: "Your subscription has been cancelled.",
+      });
+    } catch (error) {
+      toast({
+        title: "Error",
+        description:
+          error instanceof Error
+            ? error.message
+            : "Failed to cancel subscription",
+        variant: "destructive",
+      });
+    } finally {
+      setState((prev) => ({ ...prev, isLoading: false }));
     }
   };
 
@@ -415,39 +457,126 @@ export default function Account() {
     </AlertDialog>
   );
 
-  if (state.isLoading || isPageLoading) {
-    return (
-      <div className="flex items-center justify-center">
-        <div className="w-full max-w-5xl p-4">
-          <Card>
-            <CardHeader>
-              <Skeleton className="h-8 w-48 mb-2" />
-              <Skeleton className="h-4 w-72" />
-            </CardHeader>
-            <CardContent className="space-y-4">
-              <div className="space-y-2">
-                <Skeleton className="h-4 w-16" />
-                <div className="flex items-center gap-4">
-                  <Skeleton className="h-10 flex-1" />
-                  <Skeleton className="h-10 w-24" />
+  const renderSubscriptionCard = () => {
+    if (state.isLoading || isPageLoading) {
+      return (
+        <div className="flex items-center justify-center mt-4">
+          <div className="w-full max-w-5xl p-4">
+            <Card>
+              <CardHeader>
+                <Skeleton className="h-8 w-48 mb-2" />
+                <Skeleton className="h-4 w-72" />
+              </CardHeader>
+              <CardContent className="space-y-4">
+                <div className="space-y-2">
+                  <Skeleton className="h-4 w-16" />
+                  <div className="flex items-center gap-4">
+                    <Skeleton className="h-10 flex-1" />
+                    <Skeleton className="h-10 w-24" />
+                  </div>
                 </div>
-              </div>
-              <div className="space-y-2">
-                <Skeleton className="h-4 w-16" />
-                <div className="flex items-center gap-4">
-                  <Skeleton className="h-10 flex-1" />
-                  <Skeleton className="h-10 w-24" />
+                <div className="space-y-2">
+                  <Skeleton className="h-4 w-16" />
+                  <div className="flex items-center gap-4">
+                    <Skeleton className="h-10 flex-1" />
+                    <Skeleton className="h-10 w-24" />
+                  </div>
                 </div>
-              </div>
-              <div className="pt-6">
-                <Skeleton className="h-10 w-32" />
-              </div>
-            </CardContent>
-          </Card>
+                <div className="pt-6">
+                  <Skeleton className="h-10 w-32" />
+                </div>
+              </CardContent>
+            </Card>
+          </div>
         </div>
-      </div>
+      );
+    }
+
+    return (
+      <Card className="mt-4">
+        <CardHeader>
+          <CardTitle>Subscription</CardTitle>
+          <CardDescription>Manage your subscription plan</CardDescription>
+        </CardHeader>
+        <CardContent className="space-y-4">
+          <div className="flex items-center justify-between">
+            <div>
+              <p className="font-medium">Current Plan</p>
+              {subscriptionStatus?.tier !== SubscriptionTier.FREE &&
+                subscriptionStatus?.tier !== SubscriptionTier.LIFETIME && (
+                  <p className="text-sm text-muted-foreground">
+                    {subscriptionStatus?.tier.toLowerCase()}
+                  </p>
+                )}
+            </div>
+            <div className="flex items-center gap-4">
+              {subscriptionStatus?.tier === SubscriptionTier.FREE && (
+                <>
+                  <p className="text-sm text-muted-foreground">
+                    You are on the free plan.
+                  </p>
+                  <Button
+                    onClick={() => navigate("/pricing")}
+                    variant="outline"
+                  >
+                    Upgrade Plan
+                  </Button>
+                </>
+              )}
+              {subscriptionStatus?.tier === SubscriptionTier.LIFETIME && (
+                <p className="text-sm text-muted-foreground">
+                  You are on the lifetime plan.
+                </p>
+              )}
+              {subscriptionStatus?.tier !== SubscriptionTier.FREE &&
+                subscriptionStatus?.tier !== SubscriptionTier.LIFETIME && (
+                  <>
+                    <Button
+                      onClick={() => navigate("/pricing")}
+                      variant="outline"
+                    >
+                      Change Plan
+                    </Button>
+                    <AlertDialog>
+                      <AlertDialogTrigger asChild>
+                        <Button
+                          variant="destructive"
+                          disabled={state.isLoading}
+                        >
+                          {state.isLoading
+                            ? "Cancelling..."
+                            : "Cancel Subscription"}
+                        </Button>
+                      </AlertDialogTrigger>
+                      <AlertDialogContent>
+                        <AlertDialogHeader>
+                          <AlertDialogTitle>Are you sure?</AlertDialogTitle>
+                          <AlertDialogDescription>
+                            Your subscription will be cancelled immediately and
+                            you'll be downgraded to the free plan. You can still
+                            use premium features until the end of your current
+                            billing period.
+                          </AlertDialogDescription>
+                        </AlertDialogHeader>
+                        <AlertDialogFooter>
+                          <AlertDialogCancel>Cancel</AlertDialogCancel>
+                          <AlertDialogAction
+                            onClick={handleCancelSubscription}
+                            className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+                          >
+                            Yes, cancel my subscription
+                          </AlertDialogAction>
+                        </AlertDialogFooter>
+                      </AlertDialogContent>
+                    </AlertDialog>
+                  </>
+                )}
+            </div>
+          </div>
+        </CardContent>
+      </Card>
     );
-  }
+  };
 
   return (
     <div className="flex items-center justify-center">
@@ -523,6 +652,7 @@ export default function Account() {
         {renderEmailDialog()}
         {renderPasswordDialog()}
         {renderDeleteDialog()}
+        {renderSubscriptionCard()}
       </div>
     </div>
   );

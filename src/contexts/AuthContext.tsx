@@ -1,5 +1,13 @@
-import { createContext, useContext, useState, useCallback, ReactNode, useEffect } from 'react';
-import { AuthService } from '../services/auth';
+import {
+  createContext,
+  useContext,
+  useState,
+  useCallback,
+  ReactNode,
+  useEffect,
+} from "react";
+import { AuthService } from "../services/auth";
+import { useNavigate } from "react-router-dom";
 
 interface AuthContextType {
   isAuthenticated: boolean;
@@ -15,25 +23,27 @@ const AuthContext = createContext<AuthContextType | null>(null);
 
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [accessToken, setAccessToken] = useState<string | null>(() => {
-    return localStorage.getItem('accessToken');
+    return localStorage.getItem("accessToken");
   });
   const [refreshToken, setRefreshToken] = useState<string | null>(() => {
-    return localStorage.getItem('refreshToken');
+    return localStorage.getItem("refreshToken");
   });
+
+  const navigate = useNavigate();
 
   useEffect(() => {
     if (accessToken) {
-      localStorage.setItem('accessToken', accessToken);
+      localStorage.setItem("accessToken", accessToken);
     } else {
-      localStorage.removeItem('accessToken');
+      localStorage.removeItem("accessToken");
     }
   }, [accessToken]);
 
   useEffect(() => {
     if (refreshToken) {
-      localStorage.setItem('refreshToken', refreshToken);
+      localStorage.setItem("refreshToken", refreshToken);
     } else {
-      localStorage.removeItem('refreshToken');
+      localStorage.removeItem("refreshToken");
     }
   }, [refreshToken]);
 
@@ -52,44 +62,51 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const signOut = useCallback(() => {
     setAccessToken(null);
     setRefreshToken(null);
-    localStorage.removeItem('accessToken');
-    localStorage.removeItem('refreshToken');
-  }, []);
+    localStorage.removeItem("accessToken");
+    localStorage.removeItem("refreshToken");
+    navigate("/");
+  }, [navigate]);
 
-  const authenticatedFetch = useCallback(async (url: string, options: RequestInit = {}) => {
-    if (!accessToken || !refreshToken) {
-      throw new Error('No authentication tokens available');
-    }
-
-    const authenticatedOptions: RequestInit = {
-      ...options,
-      headers: {
-        ...options.headers,
-        'Authorization': `Bearer ${accessToken}`,
-      },
-    };
-
-    try {
-      const response = await AuthService.fetchWithTokenRefresh(
-        url,
-        authenticatedOptions,
-        refreshToken
-      );
-
-      // If we got a new token from the refresh process, update it
-      const newAccessToken = response.headers.get('X-New-Access-Token');
-      if (newAccessToken) {
-        setAccessToken(newAccessToken);
+  const authenticatedFetch = useCallback(
+    async (url: string, options: RequestInit = {}) => {
+      if (!accessToken || !refreshToken) {
+        throw new Error("No authentication tokens available");
       }
 
-      return response;
-    } catch (error) {
-      if (error instanceof Error && error.message === 'Token refresh failed') {
-        signOut();
+      const authenticatedOptions: RequestInit = {
+        ...options,
+        headers: {
+          ...options.headers,
+          Authorization: `Bearer ${accessToken}`,
+        },
+      };
+
+      try {
+        const response = await AuthService.fetchWithTokenRefresh(
+          url,
+          authenticatedOptions,
+          refreshToken
+        );
+
+        // If we got a new token from the refresh process, update it
+        const newAccessToken = response.headers.get("X-New-Access-Token");
+        if (newAccessToken) {
+          setAccessToken(newAccessToken);
+        }
+
+        return response;
+      } catch (error) {
+        if (
+          error instanceof Error &&
+          error.message === "Token refresh failed"
+        ) {
+          signOut();
+        }
+        throw error;
       }
-      throw error;
-    }
-  }, [accessToken, refreshToken, signOut]);
+    },
+    [accessToken, refreshToken, signOut]
+  );
 
   const value = {
     isAuthenticated: !!accessToken,
@@ -107,7 +124,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 export function useAuth() {
   const context = useContext(AuthContext);
   if (!context) {
-    throw new Error('useAuth must be used within an AuthProvider');
+    throw new Error("useAuth must be used within an AuthProvider");
   }
   return context;
-} 
+}

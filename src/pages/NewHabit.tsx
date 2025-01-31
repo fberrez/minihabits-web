@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useHabits } from "../contexts/HabitContext";
+import { useSubscription } from "../contexts/SubscriptionContext";
 import { Button } from "../components/ui/button";
 import {
   Card,
@@ -41,7 +42,9 @@ export function NewHabit() {
   const [description, setDescription] = useState("");
   const [deadline, setDeadline] = useState<string>("");
   const [isLoading, setIsLoading] = useState(false);
+  const [isCheckingSubscription, setIsCheckingSubscription] = useState(false);
   const { createHabit } = useHabits();
+  const { getSubscriptionStatus } = useSubscription();
   const navigate = useNavigate();
   const { toast } = useToast();
 
@@ -67,9 +70,21 @@ export function NewHabit() {
       return;
     }
 
-    setIsLoading(true);
+    setIsCheckingSubscription(true);
 
     try {
+      const subscriptionStatus = await getSubscriptionStatus();
+      if (!subscriptionStatus.canCreateMore) {
+        toast({
+          title: "Subscription Limit Reached",
+          description: `You've reached your habit limit (${subscriptionStatus.habitsCount}/${subscriptionStatus.maxHabits}). Please upgrade your subscription to create more habits.`,
+          variant: "destructive",
+        });
+        return;
+      }
+
+      setIsLoading(true);
+
       await createHabit(
         name,
         color,
@@ -78,18 +93,23 @@ export function NewHabit() {
         type === HabitType.TASK ? description : undefined,
         type === HabitType.TASK && deadline ? new Date(deadline) : undefined
       );
+
       toast({
         title: "Habit created",
         description: "Your new habit has been created successfully.",
       });
       navigate("/");
-    } catch {
+    } catch (error) {
       toast({
         title: "Error",
-        description: "Failed to create habit. Please try again.",
+        description:
+          error instanceof Error
+            ? error.message
+            : "Failed to create habit. Please try again.",
         variant: "destructive",
       });
     } finally {
+      setIsCheckingSubscription(false);
       setIsLoading(false);
     }
   };
@@ -126,7 +146,7 @@ export function NewHabit() {
                 value={name}
                 onChange={(e) => setName(e.target.value)}
                 placeholder="e.g., Read for 10 minute"
-                disabled={isLoading}
+                disabled={isLoading || isCheckingSubscription}
                 required
               />
               <div className="space-y-2 flex flex-col items-center">
@@ -182,7 +202,7 @@ export function NewHabit() {
                   value={targetCounter}
                   onChange={(e) => setTargetCounter(parseInt(e.target.value))}
                   placeholder="e.g., 8 glasses of water"
-                  disabled={isLoading}
+                  disabled={isLoading || isCheckingSubscription}
                   required
                 />
               </div>
@@ -197,7 +217,7 @@ export function NewHabit() {
                     value={description}
                     onChange={(e) => setDescription(e.target.value)}
                     placeholder="Describe your task..."
-                    disabled={isLoading}
+                    disabled={isLoading || isCheckingSubscription}
                   />
                 </div>
                 <div className="space-y-2">
@@ -207,7 +227,7 @@ export function NewHabit() {
                     type="datetime-local"
                     value={deadline}
                     onChange={(e) => setDeadline(e.target.value)}
-                    disabled={isLoading}
+                    disabled={isLoading || isCheckingSubscription}
                   />
                 </div>
               </>
@@ -216,7 +236,7 @@ export function NewHabit() {
             <ColorPicker
               value={color}
               onChange={(value: HabitColor) => setColor(value)}
-              disabled={isLoading}
+              disabled={isLoading || isCheckingSubscription}
             />
           </form>
         </CardContent>
@@ -225,12 +245,18 @@ export function NewHabit() {
             type="button"
             variant="outline"
             onClick={() => navigate("/")}
-            disabled={isLoading}
+            disabled={isLoading || isCheckingSubscription}
           >
             Cancel
           </Button>
-          <Button type="submit" disabled={isLoading} onClick={handleSubmit}>
-            {isLoading ? "Creating..." : "Create Habit"}
+          <Button
+            type="submit"
+            disabled={isLoading || isCheckingSubscription}
+            onClick={handleSubmit}
+          >
+            {isLoading || isCheckingSubscription
+              ? "Creating..."
+              : "Create Habit"}
           </Button>
         </CardFooter>
       </Card>
