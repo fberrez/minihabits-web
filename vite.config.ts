@@ -12,7 +12,7 @@ export default defineConfig({
         enabled: true,
       },
       workbox: {
-        globPatterns: ["**/*"],
+        globPatterns: ["**/*.{js,jsx,css,html,png,svg,json,webp}"],
       },
       includeAssets: ["**/*"],
       manifest: {
@@ -24,9 +24,14 @@ export default defineConfig({
         start_url: "/",
         icons: [
           {
-            src: "/public/h.webp",
+            src: "public/h-512.png",
             sizes: "512*512",
             type: "image/webp",
+          },
+          {
+            src: "public/h-256.png",
+            sizes: "256*256",
+            type: "image/png",
           },
         ],
       },
