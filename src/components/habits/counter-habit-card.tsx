@@ -17,6 +17,7 @@ import {
 import JSConfetti from "js-confetti";
 import { useNavigate } from "react-router-dom";
 import { cn } from "../../lib/utils";
+import { playSuccessSound } from "../../lib/sound";
 
 interface CounterHabitCardProps {
   habit: Habit;
@@ -207,6 +208,7 @@ export function CounterHabitCard({
                                     jsConfettiRef.current?.addConfetti({
                                       confettiColors: [habit.color],
                                     });
+                                    playSuccessSound();
                                   }
                                   return;
                                 }
@@ -233,6 +235,7 @@ export function CounterHabitCard({
                                   jsConfettiRef.current?.addConfetti({
                                     confettiColors: [habit.color],
                                   });
+                                  playSuccessSound();
                                 }
                               }}
                             >

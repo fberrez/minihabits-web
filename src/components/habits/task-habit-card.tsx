@@ -16,6 +16,7 @@ import {
   DropdownMenuSeparator,
 } from "../ui/dropdown-menu";
 import { useHabits } from "../../contexts/HabitContext";
+import { playSuccessSound } from "../../lib/sound";
 
 interface TaskHabitCardProps {
   habit: Habit;
@@ -76,6 +77,7 @@ export function TaskHabitCard({
         jsConfettiRef.current?.addConfetti({
           confettiColors: [habit.color],
         });
+        playSuccessSound();
         await onTrack(habit._id, today);
 
         if (activateToast) {

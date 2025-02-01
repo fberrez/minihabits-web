@@ -9,6 +9,17 @@ import JSConfetti from "js-confetti";
 import { HabitColor, HabitType } from "@/types/habit";
 import moment from "moment";
 import { AddNewButtons } from "@/components/add-new-buttons";
+import { Card, CardContent } from "@/components/ui/card";
+import { BentoGrid, BentoCard } from "@/components/ui/bento-grid";
+import {
+  ArrowUpRight,
+  CalendarHeart,
+  CalendarIcon,
+  FastForward,
+  Tally5,
+} from "lucide-react";
+import FlickeringGrid from "@/components/ui/flickering-grid";
+import { useTheme } from "@/components/theme-provider";
 
 export function Home() {
   const navigate = useNavigate();
@@ -20,6 +31,7 @@ export function Home() {
     Record<string, Record<string, number>>
   >({});
   const [showDescription, setShowDescription] = useState(true);
+  const { theme } = useTheme();
 
   type CompletionStatus = typeof localCompletionStatus;
 
@@ -76,140 +88,345 @@ export function Home() {
   };
 
   return (
-    <div className="relative flex items-center justify-center px-4 overflow-hidden min-h-[calc(100vh-3.5rem)]">
-      <div className="container mx-auto py-12">
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-12 md:items-center">
-          {/* Left Column */}
-          <div className="flex flex-col justify-center space-y-8 text-center md:text-left">
-            <div>
-              <HomeStats />
-              <h1 className="text-6xl font-bold mb-4 tracking-tighter">
-                minihabits.
-              </h1>
-              <p className="text-lg text-gray-600 max-w-md mx-auto md:mx-0">
-                Track your habits and build lasting habits
-              </p>
+    <div className="relative">
+      {/* Hero Section */}
+      <section className="min-h-[calc(100vh-3.5rem)] flex items-center relative">
+        <FlickeringGrid
+          className="absolute inset-0 z-0 hidden md:block [mask-image:radial-gradient(1000px_1000px_at_top,white,transparent)]"
+          squareSize={4}
+          gridGap={4}
+          color={theme === "dark" ? "#ffffff" : "#000000"}
+          maxOpacity={0.8}
+          flickerChance={0.05}
+          height={2000}
+          width={2000}
+        />
+        <div className="container mx-auto px-4 relative z-10">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-12 md:items-center">
+            {/* Left Column */}
+            <div className="flex flex-col justify-center space-y-8 text-center md:text-left">
+              <div className="relative">
+                <HomeStats />
+                <h1 className="text-6xl font-bold mb-4 tracking-tighter">
+                  minihabits.
+                </h1>
+                <p className="text-lg text-gray-600 max-w-md mx-auto md:mx-0">
+                  Track your habits and build lasting habits
+                </p>
+              </div>
+              <div className="flex flex-col items-center md:items-start">
+                <Button
+                  size="lg"
+                  onClick={() => navigate("/auth")}
+                  className="relative"
+                >
+                  Get Started
+                </Button>
+                <p className="text-sm text-gray-600 mt-4">
+                  Free to use. No credit card required
+                </p>
+              </div>
             </div>
-            <div className="flex flex-col items-center md:items-start">
-              <Button
-                size="lg"
-                onClick={() => navigate("/auth")}
-                className="relative"
-              >
-                Get Started
-              </Button>
-              <p className="text-sm text-gray-600 mt-4">
-                Free to use. No credit card required
-              </p>
-            </div>
-          </div>
 
-          {/* Right Column */}
-          <div className="flex justify-center">
-            <div className="w-full max-w-md transition-all duration-500 ease-in-out">
-              <div className="space-y-4 transition-all duration-500 ease-in-out">
-                {currentCard === "boolean" && (
-                  <BooleanHabitCard
-                    habit={booleanHabit}
-                    dates={dates}
-                    formatDate={(date) =>
-                      date.toLocaleDateString("en-US", { weekday: "short" })
-                    }
-                    localCompletionStatus={localCompletionStatus}
-                    setLocalCompletionStatus={(value) => {
-                      setLocalCompletionStatus(value);
-                      // Use the newValue directly instead of localCompletionStatus since state updates are async
-                      const [date] = dates;
-                      const formattedDate = moment(date).format("YYYY-MM-DD");
-                      const isCompleted =
-                        (value as CompletionStatus)[booleanHabit._id]?.[
-                          formattedDate
-                        ] > 0;
-                      if (isCompleted) {
-                        setCurrentCard("counter");
-                        setLocalCompletionStatus({});
-                      }
-                    }}
-                    onTrack={async () => {}}
-                    onUntrack={async () => {}}
-                    jsConfettiRef={jsConfettiRef}
-                    isHomePage={true}
-                    showOptions={false}
-                    glowEffect={true}
-                  />
-                )}
-                {currentCard === "counter" && (
-                  <CounterHabitCard
-                    habit={counterHabit}
-                    dates={dates}
-                    formatDate={(date) =>
-                      date.toLocaleDateString("en-US", { weekday: "short" })
-                    }
-                    localCompletionStatus={localCompletionStatus}
-                    setLocalCompletionStatus={(value) => {
-                      setLocalCompletionStatus(value);
-                      const [date] = dates;
-                      const formattedDate = moment(date).format("YYYY-MM-DD");
-                      const isCompleted =
-                        (value as CompletionStatus)[counterHabit._id]?.[
-                          formattedDate
-                        ] >= counterHabit.targetCounter;
-                      if (isCompleted) {
-                        setCurrentCard("task");
-                        setLocalCompletionStatus({});
-                      }
-                    }}
-                    onIncrement={async () => {}}
-                    onDecrement={async () => {}}
-                    jsConfettiRef={jsConfettiRef}
-                    isHomePage={true}
-                    showOptions={false}
-                    glowEffect={true}
-                  />
-                )}
-                {currentCard === "task" && (
-                  <>
-                    {localCompletionStatus[taskHabit._id]?.[
-                      moment(dates[0]).format("YYYY-MM-DD")
-                    ] > 0 ? (
-                      <div className="animate-fade-in">
-                        <AddNewButtons
-                          showBothButtons={false}
-                          redirectToAuth={true}
+            {/* Right Column */}
+            <div className="flex justify-center">
+              <div className="w-full max-w-md transition-all duration-500 ease-in-out">
+                <div className="space-y-4 transition-all duration-500 ease-in-out">
+                  {/* Arrow and text */}
+                  <div className="hidden md:flex justify-end mb-2">
+                    <div className="flex items-center gap-1 rounded-full bg-muted px-3 py-1">
+                      <p className="text-sm font-medium">Try it!</p>
+                      <svg
+                        className="w-4 h-4 text-primary transform rotate-90 animated-bounce"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                        stroke="currentColor"
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth={2}
+                          d="M14 5l7 7m0 0l-7 7m7-7H3"
                         />
-                      </div>
-                    ) : (
-                      <TaskHabitCard
-                        habit={taskHabit}
+                      </svg>
+                    </div>
+                  </div>
+                  {currentCard === "boolean" && (
+                    <div className="relative">
+                      <BooleanHabitCard
+                        habit={booleanHabit}
+                        dates={dates}
+                        formatDate={(date) =>
+                          date.toLocaleDateString("en-US", { weekday: "short" })
+                        }
                         localCompletionStatus={localCompletionStatus}
                         setLocalCompletionStatus={(value) => {
-                          const newValue =
-                            typeof value === "function"
-                              ? value(localCompletionStatus)
-                              : value;
-                          setLocalCompletionStatus(newValue);
-                          setShowDescription(false);
+                          setLocalCompletionStatus(value);
+                          const [date] = dates;
+                          const formattedDate =
+                            moment(date).format("YYYY-MM-DD");
+                          const isCompleted =
+                            (value as CompletionStatus)[booleanHabit._id]?.[
+                              formattedDate
+                            ] > 0;
+                          if (isCompleted) {
+                            setCurrentCard("counter");
+                            setLocalCompletionStatus({});
+                          }
                         }}
                         onTrack={async () => {}}
                         onUntrack={async () => {}}
                         jsConfettiRef={jsConfettiRef}
+                        isHomePage={true}
                         showOptions={false}
                         glowEffect={true}
-                        activateToast={false}
                       />
-                    )}
-                  </>
-                )}
-                <p className="text-sm text-muted-foreground mt-2">
-                  {showDescription
-                    ? descriptions[currentCard]
-                    : "Add your first habit now!"}
-                </p>
+                    </div>
+                  )}
+                  {currentCard === "counter" && (
+                    <CounterHabitCard
+                      habit={counterHabit}
+                      dates={dates}
+                      formatDate={(date) =>
+                        date.toLocaleDateString("en-US", { weekday: "short" })
+                      }
+                      localCompletionStatus={localCompletionStatus}
+                      setLocalCompletionStatus={(value) => {
+                        setLocalCompletionStatus(value);
+                        const [date] = dates;
+                        const formattedDate = moment(date).format("YYYY-MM-DD");
+                        const isCompleted =
+                          (value as CompletionStatus)[counterHabit._id]?.[
+                            formattedDate
+                          ] >= counterHabit.targetCounter;
+                        if (isCompleted) {
+                          setCurrentCard("task");
+                          setLocalCompletionStatus({});
+                        }
+                      }}
+                      onIncrement={async () => {}}
+                      onDecrement={async () => {}}
+                      jsConfettiRef={jsConfettiRef}
+                      isHomePage={true}
+                      showOptions={false}
+                      glowEffect={true}
+                    />
+                  )}
+                  {currentCard === "task" && (
+                    <>
+                      {localCompletionStatus[taskHabit._id]?.[
+                        moment(dates[0]).format("YYYY-MM-DD")
+                      ] > 0 ? (
+                        <div className="animate-fade-in">
+                          <AddNewButtons
+                            showBothButtons={false}
+                            redirectToAuth={true}
+                          />
+                        </div>
+                      ) : (
+                        <TaskHabitCard
+                          habit={taskHabit}
+                          localCompletionStatus={localCompletionStatus}
+                          setLocalCompletionStatus={(value) => {
+                            const newValue =
+                              typeof value === "function"
+                                ? value(localCompletionStatus)
+                                : value;
+                            setLocalCompletionStatus(newValue);
+                            setShowDescription(false);
+                          }}
+                          onTrack={async () => {}}
+                          onUntrack={async () => {}}
+                          jsConfettiRef={jsConfettiRef}
+                          showOptions={false}
+                          glowEffect={true}
+                          activateToast={false}
+                        />
+                      )}
+                    </>
+                  )}
+                  <p className="text-sm text-muted-foreground mt-2">
+                    {showDescription
+                      ? descriptions[currentCard]
+                      : "Add your first habit now!"}
+                  </p>
+                </div>
               </div>
             </div>
           </div>
         </div>
-      </div>
+      </section>
+
+      {/* Life Challenges Section */}
+      <section className="py-24 mb-24">
+        <div className="container mx-auto px-4">
+          <div className="space-y-12">
+            <div className="text-center">
+              <h2 className="text-3xl font-bold tracking-tight">
+                Why is it so hard?
+              </h2>
+              <p className="text-muted-foreground mt-2">
+                Understanding the challenges of building a better life
+              </p>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+              <Card className="transition-all duration-300 hover:shadow-lg">
+                <CardContent className="pt-6 text-center">
+                  <div className="text-4xl mb-4">🎯</div>
+                  <h3 className="font-semibold text-xl mb-4">
+                    Lack of Direction
+                  </h3>
+                  <div className="space-y-1">
+                    <p className="text-muted-foreground">
+                      How to identify what truly matters?
+                    </p>
+                    <p className="text-muted-foreground">
+                      Where to focus your energy?
+                    </p>
+                  </div>
+                </CardContent>
+              </Card>
+
+              <Card className="transition-all duration-300 hover:shadow-lg">
+                <CardContent className="pt-6 text-center">
+                  <div className="text-4xl mb-4">⏰</div>
+                  <h3 className="font-semibold text-xl mb-4">Inconsistency</h3>
+                  <div className="space-y-1">
+                    <p className="text-muted-foreground">
+                      Watching productivity videos
+                    </p>
+                    <p className="text-muted-foreground">
+                      Hard to stay focused on your goals
+                    </p>
+                  </div>
+                </CardContent>
+              </Card>
+
+              <Card className="transition-all duration-300 hover:shadow-lg">
+                <CardContent className="pt-6 text-center">
+                  <div className="text-4xl mb-4">🌊</div>
+                  <h3 className="font-semibold text-xl mb-4">Overwhelm</h3>
+                  <div className="space-y-1">
+                    <p className="text-muted-foreground">
+                      Burnout from too many changes
+                    </p>
+                    <p className="text-muted-foreground">
+                      Giving up on your goals
+                    </p>
+                  </div>
+                </CardContent>
+              </Card>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Stats Bento Grid Section */}
+      <section className="py-24">
+        <div className="container mx-auto px-4">
+          <div className="space-y-12">
+            <div className="text-center">
+              <h2 className="text-3xl font-bold tracking-tight">
+                Track Your Life
+              </h2>
+              <p className="text-muted-foreground mt-2">
+                Beautiful visualizations to keep you motivated
+              </p>
+            </div>
+
+            <BentoGrid className="lg:grid-rows-3">
+              {[
+                {
+                  Icon: CalendarIcon,
+                  name: "Monthly Activity",
+                  description: "Your habit completion overview",
+                  className:
+                    "lg:row-start-1 lg:row-end-3 lg:col-start-2 lg:col-end-3",
+                  background: (
+                    <div className="absolute inset-6">
+                      <div className="grid h-full grid-cols-7 gap-2">
+                        {Array.from({ length: 35 }, (_, i) => (
+                          <div
+                            key={i}
+                            className={`aspect-square rounded-sm ${
+                              Math.random() > 0.5 ? "bg-primary/20" : "bg-muted"
+                            }`}
+                          />
+                        ))}
+                      </div>
+                    </div>
+                  ),
+                  cta: "Get your monthly stats",
+                  href: "/auth",
+                },
+                {
+                  Icon: ArrowUpRight,
+                  name: "Current Streak",
+                  description: "7 days and counting",
+                  className:
+                    "lg:col-start-1 lg:col-end-2 lg:row-start-1 lg:row-end-2",
+                  cta: "Improve your current streak",
+                  href: "/auth",
+                  background: (
+                    <div
+                      className="absolute inset-0 opacity-60"
+                      style={{ backgroundColor: HabitColor.RED }}
+                    />
+                  ),
+                },
+                {
+                  Icon: Tally5,
+                  name: "Weekly Progress",
+                  description: "85% completion rate this week",
+                  className:
+                    "lg:col-start-1 lg:col-end-2 lg:row-start-2 lg:row-end-3",
+                  cta: "Get better this week",
+                  href: "/auth",
+                  background: (
+                    <div
+                      className="absolute inset-0 opacity-60"
+                      style={{ backgroundColor: HabitColor.BLUE }}
+                    />
+                  ),
+                },
+                {
+                  Icon: CalendarHeart,
+                  name: "Monthly Stats",
+                  description: "92% completion rate this month",
+                  className:
+                    "lg:col-start-3 lg:col-end-4 lg:row-start-1 lg:row-end-2",
+                  cta: "Get better this month",
+                  href: "/auth",
+                  background: (
+                    <div
+                      className="absolute inset-0 opacity-60"
+                      style={{ backgroundColor: HabitColor.GREEN }}
+                    />
+                  ),
+                },
+                {
+                  Icon: FastForward,
+                  name: "Quick Actions",
+                  description: "Start building better habits today",
+                  className:
+                    "lg:col-start-3 lg:col-end-4 lg:row-start-2 lg:row-end-3",
+                  cta: "Get Started",
+                  href: "/auth",
+                  background: (
+                    <div
+                      className="absolute inset-0 opacity-60"
+                      style={{ backgroundColor: HabitColor.PURPLE }}
+                    />
+                  ),
+                },
+              ].map((feature) => (
+                <BentoCard key={feature.name} {...feature} />
+              ))}
+            </BentoGrid>
+          </div>
+        </div>
+      </section>
     </div>
   );
 }

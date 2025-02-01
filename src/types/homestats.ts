@@ -1,6 +1,9 @@
 export interface HomeStats {
-  year: number;
-  month: number;
-  day: number;
-  totalCompleted: number;
+  stats: {
+    year: number;
+    month: number;
+    day: number;
+    totalCompleted: number;
+  };
+  usersCount: number;
 }

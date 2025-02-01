@@ -17,6 +17,7 @@ import {
 import JSConfetti from "js-confetti";
 import { useNavigate } from "react-router-dom";
 import { cn } from "../../lib/utils";
+import { playSuccessSound } from "../../lib/sound";
 
 interface BooleanHabitCardProps {
   habit: Habit;
@@ -136,9 +137,12 @@ export function BooleanHabitCard({
                                   [formattedDate]: isCompleted ? 0 : 1,
                                 },
                               });
-                              jsConfettiRef.current?.addConfetti({
-                                confettiColors: [habit.color],
-                              });
+                              if (!isCompleted) {
+                                jsConfettiRef.current?.addConfetti({
+                                  confettiColors: [habit.color],
+                                });
+                                playSuccessSound();
+                              }
 
                               return;
                             }
@@ -174,6 +178,7 @@ export function BooleanHabitCard({
                               jsConfettiRef.current?.addConfetti({
                                 confettiColors: [habit.color],
                               });
+                              playSuccessSound();
                             }
                           }}
                         >
