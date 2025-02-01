@@ -11,6 +11,10 @@ import { TopBar } from './components/top-bar.tsx';
 import { Footer } from './components/footer.tsx';
 import { registerSW } from 'virtual:pwa-register';
 
+if ("serviceWorker" in navigator) {
+  registerSW();
+}
+
 registerSW({
   onOfflineReady() {
     console.log('offline ready');

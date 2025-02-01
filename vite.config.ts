@@ -8,15 +8,31 @@ export default defineConfig({
     react(),
     VitePWA({
       registerType: "autoUpdate",
+      injectRegister: "auto",
+      strategies: "generateSW",
       devOptions: {
         enabled: true,
       },
       workbox: {
         globPatterns: ["**/*.{js,jsx,css,html,png,svg,json,webp}"],
+        runtimeCaching: [
+          {
+            urlPattern: /^https:\/\/api\.habits\.mdelarue\.dev/,
+            handler: "NetworkFirst",
+            options: {
+              cacheName: "api-cache",
+              expiration: {
+                maxEntries: 50,
+                maxAgeSeconds: 5 * 60, // 5 minutes
+              },
+            },
+          },
+        ],
       },
-      includeAssets: ["**/*"],
+      includeAssets: ["favicon.ico", "robots.txt", "h-512.png", "h-192.png"],
       manifest: {
         name: "MiniHabits",
+        description: "A simple habit tracker",
         short_name: "MiniHabits",
         theme_color: "#ffffff",
         background_color: "#ffffff",
@@ -24,13 +40,13 @@ export default defineConfig({
         start_url: "/",
         icons: [
           {
-            src: "public/h-512.png",
-            sizes: "512*512",
+            src: "h-512.png",
+            sizes: "512x512",
             type: "image/webp",
           },
           {
-            src: "public/h-256.png",
-            sizes: "256*256",
+            src: "h-192.png",
+            sizes: "192x192",
             type: "image/png",
           },
         ],
