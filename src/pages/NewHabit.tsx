@@ -2,14 +2,7 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useHabits } from "../contexts/HabitContext";
 import { Button } from "../components/ui/button";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-  CardFooter,
-} from "../components/ui/card";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from "../components/ui/card";
 import { Input } from "../components/ui/input";
 import { Label } from "../components/ui/label";
 import { useToast } from "../hooks/use-toast";
@@ -20,12 +13,15 @@ import { Lightbulb } from "lucide-react";
 import { ColorPicker } from "../components/color-picker";
 
 const habitSuggestions = [
-  "Read for 10 minutes",
-  "Meditate for 10 minutes",
+  "Read for 5 minutes",
+  "Meditate for 5 minutes",
   "Do 10 pushups",
   "Write 10 sentences",
-  "Drink 10 glasses of water",
-  "Walk for 10 minutes",
+  "Do not pick up phone before 9am",
+  "Drink a glass of water",
+  "Take a 5-minute walk",
+  "Stretch for 5 minutes",
+  "Plan your day",
 ];
 
 const getRandomColor = () => {
@@ -60,8 +56,7 @@ export function NewHabit() {
     if (type === HabitType.COUNTER && (!targetCounter || targetCounter <= 0)) {
       toast({
         title: "Invalid target counter",
-        description:
-          "Please provide a target counter greater than 0 for counter type habits.",
+        description: "Please provide a target counter greater than 0 for counter type habits.",
         variant: "destructive",
       });
       return;
@@ -76,7 +71,7 @@ export function NewHabit() {
         type,
         type === HabitType.COUNTER ? targetCounter : undefined,
         type === HabitType.TASK ? description : undefined,
-        type === HabitType.TASK && deadline ? new Date(deadline) : undefined
+        type === HabitType.TASK && deadline ? new Date(deadline) : undefined,
       );
       toast({
         title: "Habit created",
@@ -104,21 +99,22 @@ export function NewHabit() {
         <CardHeader>
           <CardTitle>Create a new habit</CardTitle>
           <CardDescription>
-            Start with a tiny habit - something so easy you can't say no. The
-            key is consistency, not intensity.
+            Start with a tiny habit - something so easy you can't say no. The key is consistency, not intensity.
           </CardDescription>
         </CardHeader>
         <CardContent>
           <Alert className="mb-6">
             <Lightbulb className="h-4 w-4" />
             <AlertDescription>
-              <strong>Mini Habits Tip:</strong> Make it so small that it feels
-              ridiculous. You can always do more, but start with the minimum to
-              build consistency.
+              <strong>Mini Habits Tip:</strong> Make it so small that it feels ridiculous. You can always do more, but start with the
+              minimum to build consistency.
             </AlertDescription>
           </Alert>
 
-          <form onSubmit={handleSubmit} className="space-y-6">
+          <form
+            onSubmit={handleSubmit}
+            className="space-y-6"
+          >
             <div className="space-y-4">
               <Label htmlFor="name">Habit name</Label>
               <Input
@@ -130,9 +126,7 @@ export function NewHabit() {
                 required
               />
               <div className="space-y-2 flex flex-col items-center">
-                <Label className="text-sm text-muted-foreground">
-                  Suggestions (click to use):
-                </Label>
+                <Label className="text-sm text-muted-foreground">Suggestions (click to use):</Label>
                 <div className="flex flex-wrap gap-2 justify-center">
                   {habitSuggestions.map((suggestion) => (
                     <Button
@@ -158,15 +152,24 @@ export function NewHabit() {
                 className="grid grid-cols-3 gap-4"
               >
                 <div className="flex items-center space-x-2">
-                  <RadioGroupItem value={HabitType.BOOLEAN} id="boolean" />
+                  <RadioGroupItem
+                    value={HabitType.BOOLEAN}
+                    id="boolean"
+                  />
                   <Label htmlFor="boolean">Daily Check</Label>
                 </div>
                 <div className="flex items-center space-x-2">
-                  <RadioGroupItem value={HabitType.COUNTER} id="counter" />
+                  <RadioGroupItem
+                    value={HabitType.COUNTER}
+                    id="counter"
+                  />
                   <Label htmlFor="counter">Counter</Label>
                 </div>
                 <div className="flex items-center space-x-2">
-                  <RadioGroupItem value={HabitType.TASK} id="task" />
+                  <RadioGroupItem
+                    value={HabitType.TASK}
+                    id="task"
+                  />
                   <Label htmlFor="task">Task</Label>
                 </div>
               </RadioGroup>
@@ -229,7 +232,11 @@ export function NewHabit() {
           >
             Cancel
           </Button>
-          <Button type="submit" disabled={isLoading} onClick={handleSubmit}>
+          <Button
+            type="submit"
+            disabled={isLoading}
+            onClick={handleSubmit}
+          >
             {isLoading ? "Creating..." : "Create Habit"}
           </Button>
         </CardFooter>
