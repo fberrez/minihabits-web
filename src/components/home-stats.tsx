@@ -39,7 +39,10 @@ export function HomeStats() {
                 `inline animate-gradient bg-gradient-to-r from-[#ffaa40] via-[#9c40ff] to-[#ffaa40] bg-[length:var(--bg-size)_100%] bg-clip-text text-transparent`
               )}
             >
-              {homeStats?.totalCompleted} habits completed today
+              {!homeStats?.stats?.totalCompleted ||
+              homeStats?.stats?.totalCompleted < 100
+                ? `Join ${homeStats?.usersCount} users now!`
+                : homeStats?.stats?.totalCompleted + " habits completed today!"}
             </span>
           </AnimatedGradientText>
         </div>
