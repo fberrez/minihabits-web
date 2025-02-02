@@ -4,7 +4,7 @@ import { useNavigate } from "react-router-dom";
 import { BooleanHabitCard } from "@/components/habits/boolean-habit-card";
 import { CounterHabitCard } from "@/components/habits/counter-habit-card";
 import { TaskHabitCard } from "@/components/habits/task-habit-card";
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import JSConfetti from "js-confetti";
 import { HabitColor, HabitType } from "@/types/habit";
 import moment from "moment";
@@ -15,6 +15,7 @@ import {
   ArrowUpRight,
   CalendarHeart,
   CalendarIcon,
+  ChevronDown,
   FastForward,
   Tally5,
 } from "lucide-react";
@@ -32,6 +33,23 @@ export function Home() {
   >({});
   const [showDescription, setShowDescription] = useState(true);
   const { theme } = useTheme();
+  const [showScrollButton, setShowScrollButton] = useState(true);
+  const heroSectionRef = useRef<HTMLElement>(null);
+
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        setShowScrollButton(entry.isIntersecting);
+      },
+      { threshold: 0.1 }
+    );
+
+    if (heroSectionRef.current) {
+      observer.observe(heroSectionRef.current);
+    }
+
+    return () => observer.disconnect();
+  }, []);
 
   type CompletionStatus = typeof localCompletionStatus;
 
@@ -87,16 +105,24 @@ export function Home() {
     task: "Set one-time tasks with deadlines. Ideal for important to-dos and weekly planning.",
   };
 
+  const scrollToNextSection = () => {
+    const nextSection = document.querySelector("section:nth-of-type(2)");
+    nextSection?.scrollIntoView({ behavior: "smooth" });
+  };
+
   return (
     <div className="relative">
       {/* Hero Section */}
-      <section className="min-h-[calc(100vh-3.5rem)] flex items-center relative">
+      <section
+        ref={heroSectionRef}
+        className="min-h-[calc(100vh-3.5rem)] flex items-center relative"
+      >
         <FlickeringGrid
-          className="absolute inset-0 z-0 hidden md:block [mask-image:radial-gradient(1000px_1000px_at_top,white,transparent)]"
-          squareSize={4}
+          className="absolute inset-0 z-0 hidden md:block [mask-image:radial-gradient(1000px_800px_at_top,white,transparent)]"
+          squareSize={12}
           gridGap={4}
           color={theme === "dark" ? "#ffffff" : "#000000"}
-          maxOpacity={0.8}
+          maxOpacity={0.5}
           flickerChance={0.05}
           height={2000}
           width={2000}
@@ -255,6 +281,23 @@ export function Home() {
             </div>
           </div>
         </div>
+
+        {/* Scroll Down Button */}
+        <div
+          className={`hidden md:block absolute bottom-8 left-1/2 transform -translate-x-1/2 z-50 transition-opacity duration-300 ${
+            showScrollButton ? "opacity-100" : "opacity-0 pointer-events-none"
+          }`}
+        >
+          <Button
+            variant="ghost"
+            size="icon"
+            className="rounded-full animate-bounce backdrop-blur-sm bg-background/50 flex flex-col gap-1 h-auto py-2 px-4 w-auto"
+            onClick={scrollToNextSection}
+          >
+            <p className="text-sm font-medium">Scroll Down</p>
+            <ChevronDown className="h-6 w-6" />
+          </Button>
+        </div>
       </section>
 
       {/* Life Challenges Section */}
@@ -263,7 +306,7 @@ export function Home() {
           <div className="space-y-12">
             <div className="text-center">
               <h2 className="text-3xl font-bold tracking-tight">
-                Why is it so hard?
+                Why is it so hard to stick to your habits?
               </h2>
               <p className="text-muted-foreground mt-2">
                 Understanding the challenges of building a better life
