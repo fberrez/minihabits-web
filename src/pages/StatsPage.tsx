@@ -4,13 +4,20 @@ import "cal-heatmap/cal-heatmap.css";
 import CalHeatmapLabel from "cal-heatmap/plugins/CalendarLabel";
 import CalHeatmapTooltip from "cal-heatmap/plugins/Tooltip";
 import { format, isAfter, startOfDay } from "date-fns";
-import { ArrowLeft, Trash2 } from "lucide-react";
+import { AlertCircle, ArrowLeft, Trash2 } from "lucide-react";
 import moment from "moment";
 import { useEffect, useState } from "react";
 import { DayPicker } from "react-day-picker";
 import "react-day-picker/dist/style.css";
 import { useNavigate, useParams } from "react-router-dom";
-import { Area, AreaChart, CartesianGrid, ResponsiveContainer, Tooltip, XAxis } from "recharts";
+import {
+  Area,
+  AreaChart,
+  CartesianGrid,
+  ResponsiveContainer,
+  Tooltip,
+  XAxis,
+} from "recharts";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -23,17 +30,27 @@ import {
   AlertDialogTrigger,
 } from "../components/ui/alert-dialog";
 import { Button } from "../components/ui/button";
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "../components/ui/card";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from "../components/ui/card";
 import NumberTicker from "../components/ui/number-ticker";
 import { useHabits } from "../contexts/HabitContext";
 import "./StatsPage.css";
 import { useToast } from "../hooks/use-toast";
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 
 export function StatsPage() {
   const { habitId } = useParams();
   const { habits, trackHabit, untrackHabit, deleteHabit } = useHabits();
   const navigate = useNavigate();
-  const [localCompletionStatus, setLocalCompletionStatus] = useState<Record<string, number>>({});
+  const [localCompletionStatus, setLocalCompletionStatus] = useState<
+    Record<string, number>
+  >({});
 
   const habit = habits.find((h) => h._id === habitId);
   const [isEditing, setIsEditing] = useState(false);
@@ -76,10 +93,12 @@ export function StatsPage() {
     if (!habit) return;
 
     const cal = new CalHeatmap();
-    const data = Object.entries(habit.completedDates).map(([date, completed]) => ({
-      date,
-      value: habit.type === HabitType.COUNTER ? completed : completed ? 1 : 0,
-    }));
+    const data = Object.entries(habit.completedDates).map(
+      ([date, completed]) => ({
+        date,
+        value: habit.type === HabitType.COUNTER ? completed : completed ? 1 : 0,
+      })
+    );
 
     const getData = () => {
       switch (habit.type) {
@@ -98,7 +117,12 @@ export function StatsPage() {
           return {
             range: getColorRange[habit.color],
             type: "threshold",
-            domain: [0.25 * habit.targetCounter, 0.5 * habit.targetCounter, 0.75 * habit.targetCounter, habit.targetCounter],
+            domain: [
+              0.25 * habit.targetCounter,
+              0.5 * habit.targetCounter,
+              0.75 * habit.targetCounter,
+              habit.targetCounter,
+            ],
           };
         case HabitType.BOOLEAN:
           return {
@@ -110,9 +134,13 @@ export function StatsPage() {
       }
     };
 
-    const getTooltipText = (value: number | null, date: { format: (format: string) => string }) => {
+    const getTooltipText = (
+      value: number | null,
+      date: { format: (format: string) => string }
+    ) => {
       if (habit.type === HabitType.COUNTER) {
-        const status = value !== null ? `${value} / ${habit.targetCounter}` : "No data";
+        const status =
+          value !== null ? `${value} / ${habit.targetCounter}` : "No data";
         return `${status} on ${date.format("LL")}`;
       }
 
@@ -153,7 +181,7 @@ export function StatsPage() {
               // eslint-disable-next-line @typescript-eslint/no-explicit-any
               value: any,
               // eslint-disable-next-line @typescript-eslint/no-explicit-any
-              dayjsDate: any,
+              dayjsDate: any
             ) => getTooltipText(value, dayjsDate),
           },
         ],
@@ -162,11 +190,12 @@ export function StatsPage() {
           {
             width: 30,
             textAlign: "start",
-            text: () => moment.weekdaysShort().map((d, i) => (i % 2 == 0 ? "" : d)),
+            text: () =>
+              moment.weekdaysShort().map((d, i) => (i % 2 == 0 ? "" : d)),
             padding: [25, 0, 0, 0],
           },
         ],
-      ],
+      ]
     );
 
     return () => {
@@ -175,6 +204,20 @@ export function StatsPage() {
   }, [habit?.completedDates, habit]);
 
   if (!habit) return null;
+
+  if (habit?.type !== HabitType.COUNTER && habit?.type !== HabitType.BOOLEAN) {
+    return (
+      <div className="flex justify-center items-center py-8 mx-auto max-w-5xl">
+        <Alert variant="destructive">
+          <AlertCircle className="h-4 w-4" />
+          <AlertTitle>Error</AlertTitle>
+          <AlertDescription>
+            This habit is not a counter or boolean.
+          </AlertDescription>
+        </Alert>
+      </div>
+    );
+  }
 
   const completedDates = Object.keys(localCompletionStatus)
     .filter((date) => localCompletionStatus[date])
@@ -215,7 +258,20 @@ export function StatsPage() {
 
   // Prepare data for the chart
   const getChartData = () => {
-    const months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+    const months = [
+      "Jan",
+      "Feb",
+      "Mar",
+      "Apr",
+      "May",
+      "Jun",
+      "Jul",
+      "Aug",
+      "Sep",
+      "Oct",
+      "Nov",
+      "Dec",
+    ];
     const data = months.map((month) => ({
       month,
       completions: 0,
@@ -240,7 +296,10 @@ export function StatsPage() {
 
     const data = Array.from({ length: daysInMonth }, (_, i) => {
       const day = i + 1;
-      const date = `${currentYear}-${String(currentMonth + 1).padStart(2, "0")}-${String(day).padStart(2, "0")}`;
+      const date = `${currentYear}-${String(currentMonth + 1).padStart(
+        2,
+        "0"
+      )}-${String(day).padStart(2, "0")}`;
       return {
         day: day,
         completed: habit.completedDates[date] ? 1 : 0,
@@ -280,10 +339,7 @@ export function StatsPage() {
         <div className="flex gap-4">
           <AlertDialog>
             <AlertDialogTrigger asChild>
-              <Button
-                variant="destructive"
-                size="icon"
-              >
+              <Button variant="destructive" size="icon">
                 <Trash2 className="size-4" />
               </Button>
             </AlertDialogTrigger>
@@ -291,7 +347,8 @@ export function StatsPage() {
               <AlertDialogHeader>
                 <AlertDialogTitle>Delete Habit</AlertDialogTitle>
                 <AlertDialogDescription>
-                  Are you sure you want to delete "{habit.name}"? This action cannot be undone.
+                  Are you sure you want to delete "{habit.name}"? This action
+                  cannot be undone.
                 </AlertDialogDescription>
               </AlertDialogHeader>
               <AlertDialogFooter>
@@ -308,10 +365,7 @@ export function StatsPage() {
               </AlertDialogFooter>
             </AlertDialogContent>
           </AlertDialog>
-          <Button
-            size="icon"
-            onClick={() => navigate("/")}
-          >
+          <Button size="icon" onClick={() => navigate("/")}>
             <ArrowLeft className="h-4 w-4" />
           </Button>
         </div>
@@ -321,13 +375,12 @@ export function StatsPage() {
         <Card className="w-full">
           <CardHeader>
             <CardTitle>Yearly Heatmap</CardTitle>
-            <CardDescription>Your habit completion throughout the year</CardDescription>
+            <CardDescription>
+              Your habit completion throughout the year
+            </CardDescription>
           </CardHeader>
           <CardContent className="overflow-x-auto">
-            <div
-              id="cal-heatmap"
-              className="w-full flex justify-center"
-            ></div>
+            <div id="cal-heatmap" className="w-full flex justify-center"></div>
           </CardContent>
         </Card>
       </div>
@@ -395,7 +448,9 @@ export function StatsPage() {
         <Card className="flex flex-col items-center justify-center">
           <CardHeader>
             <CardTitle className="text-center">Completion Rate</CardTitle>
-            <CardDescription className="text-center">Last 7 days</CardDescription>
+            <CardDescription className="text-center">
+              Last 7 days
+            </CardDescription>
           </CardHeader>
           <CardContent>
             <div style={{ color: habit.color }}>
@@ -415,7 +470,9 @@ export function StatsPage() {
         <Card className="flex flex-col items-center justify-center">
           <CardHeader>
             <CardTitle className="text-center">Monthly Rate</CardTitle>
-            <CardDescription className="text-center">This month (completed days only)</CardDescription>
+            <CardDescription className="text-center">
+              This month (completed days only)
+            </CardDescription>
           </CardHeader>
           <CardContent>
             <div style={{ color: habit.color }}>
@@ -435,7 +492,9 @@ export function StatsPage() {
         <Card className="flex flex-col items-center justify-center">
           <CardHeader>
             <CardTitle className="text-center">Yearly Rate</CardTitle>
-            <CardDescription className="text-center">This year (completed days only)</CardDescription>
+            <CardDescription className="text-center">
+              This year (completed days only)
+            </CardDescription>
           </CardHeader>
           <CardContent>
             <div style={{ color: habit.color }}>
@@ -457,14 +516,13 @@ export function StatsPage() {
         <Card>
           <CardHeader>
             <CardTitle>Yearly Overview</CardTitle>
-            <CardDescription>Showing daily completions throughout the year</CardDescription>
+            <CardDescription>
+              Showing daily completions throughout the year
+            </CardDescription>
           </CardHeader>
           <CardContent>
             <div className="h-[300px] w-full">
-              <ResponsiveContainer
-                width="100%"
-                height="100%"
-              >
+              <ResponsiveContainer width="100%" height="100%">
                 <AreaChart
                   data={getChartData()}
                   margin={{
@@ -474,10 +532,7 @@ export function StatsPage() {
                     bottom: 0,
                   }}
                 >
-                  <CartesianGrid
-                    vertical={false}
-                    strokeDasharray="3 3"
-                  />
+                  <CartesianGrid vertical={false} strokeDasharray="3 3" />
                   <XAxis
                     dataKey="month"
                     tickLine={false}
@@ -490,8 +545,12 @@ export function StatsPage() {
                         return (
                           <div className="rounded-lg border bg-background p-2 shadow-sm">
                             <div className="grid grid-cols-2 gap-2">
-                              <span className="font-medium">{payload[0].payload.month}</span>
-                              <span className="font-medium">{payload[0].value} completions</span>
+                              <span className="font-medium">
+                                {payload[0].payload.month}
+                              </span>
+                              <span className="font-medium">
+                                {payload[0].value} completions
+                              </span>
                             </div>
                           </div>
                         );
@@ -511,21 +570,23 @@ export function StatsPage() {
             </div>
           </CardContent>
           <CardFooter>
-            <div className="text-sm text-muted-foreground">Showing completion rate for {new Date().getFullYear()}</div>
+            <div className="text-sm text-muted-foreground">
+              Showing completion rate for {new Date().getFullYear()}
+            </div>
           </CardFooter>
         </Card>
 
         <Card>
           <CardHeader>
             <CardTitle>Monthly Overview</CardTitle>
-            <CardDescription>Showing daily completions for {new Date().toLocaleString("default", { month: "long" })}</CardDescription>
+            <CardDescription>
+              Showing daily completions for{" "}
+              {new Date().toLocaleString("default", { month: "long" })}
+            </CardDescription>
           </CardHeader>
           <CardContent>
             <div className="h-[300px] w-full">
-              <ResponsiveContainer
-                width="100%"
-                height="100%"
-              >
+              <ResponsiveContainer width="100%" height="100%">
                 <AreaChart
                   data={getCurrentMonthData()}
                   margin={{
@@ -535,10 +596,7 @@ export function StatsPage() {
                     bottom: 0,
                   }}
                 >
-                  <CartesianGrid
-                    vertical={false}
-                    strokeDasharray="3 3"
-                  />
+                  <CartesianGrid vertical={false} strokeDasharray="3 3" />
                   <XAxis
                     dataKey="day"
                     tickLine={false}
@@ -552,8 +610,14 @@ export function StatsPage() {
                         return (
                           <div className="rounded-lg border bg-background p-2 shadow-sm">
                             <div className="grid grid-cols-2 gap-2">
-                              <span className="font-medium">Day {payload[0].payload.day}</span>
-                              <span className="font-medium">{payload[0].payload.completed ? "Completed" : "Not completed"}</span>
+                              <span className="font-medium">
+                                Day {payload[0].payload.day}
+                              </span>
+                              <span className="font-medium">
+                                {payload[0].payload.completed
+                                  ? "Completed"
+                                  : "Not completed"}
+                              </span>
                             </div>
                           </div>
                         );
