@@ -17,7 +17,7 @@ export default defineConfig({
         globPatterns: ["**/*.{js,jsx,css,html,png,svg,json,webp}"],
         runtimeCaching: [
           {
-            urlPattern: /^https:\/\/api\.habits\.mdelarue\.dev/,
+            urlPattern: /^https:\/\/minihabits-production\.up\.railway\.app/g,
             handler: "NetworkFirst",
             options: {
               cacheName: "api-cache",
