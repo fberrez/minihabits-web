@@ -134,7 +134,7 @@ export function TaskHabitCard({
 
   return (
     <Card
-      className="transition-all hover:shadow-md hover:translate-x-1 hover:-translate-y-1"
+      className="transition-all"
       style={{
         ...style,
         backgroundColor: isCompleted ? `${habit.color}20` : undefined,
