@@ -1,6 +1,6 @@
-import { Card, CardContent } from "./ui/card";
 import { Plus } from "lucide-react";
 import { useNavigate } from "react-router-dom";
+import { Button } from "./ui/button";
 
 interface AddNewButtonsProps {
   showBothButtons?: boolean;
@@ -20,35 +20,20 @@ export function AddNewButtons({
   };
 
   return (
-    <div
-      className={`grid ${
-        showBothButtons ? "grid-cols-1 md:grid-cols-2" : "grid-cols-1"
-      } gap-4 ${className}`}
-    >
-      <Card
-        className="cursor-pointer transition-all hover:shadow-md border-dashed hover:translate-x-1 hover:-translate-y-1"
-        onClick={() => handleClick("/new")}
-      >
-        <CardContent className="p-4">
-          <div className="flex items-center justify-center gap-2 text-muted-foreground">
-            <Plus className="h-5 w-5" />
-            <span className="text-lg">Add new habit</span>
-          </div>
-        </CardContent>
-      </Card>
+    <div className={`flex gap-2 ${className}`}>
+      <Button className="border-dashed" onClick={() => handleClick("/new")}>
+        <Plus className="h-5 w-5 mr-2" />
+        Add new habit
+      </Button>
 
       {showBothButtons && (
-        <Card
-          className="cursor-pointer transition-all hover:shadow-md border-dashed hover:translate-x-1 hover:-translate-y-1"
+        <Button
+          className="border-dashed"
           onClick={() => handleClick("/new-task")}
         >
-          <CardContent className="p-4">
-            <div className="flex items-center justify-center gap-2 text-muted-foreground">
-              <Plus className="h-5 w-5" />
-              <span className="text-lg">Add new task</span>
-            </div>
-          </CardContent>
-        </Card>
+          <Plus className="h-5 w-5 mr-2" />
+          Add new task
+        </Button>
       )}
     </div>
   );
