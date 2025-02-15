@@ -5,7 +5,6 @@ A minimalist habit tracking application built with React that helps users build 
 ## Features
 
 - �� Track daily habits and tasks
-  - One-time tasks with deadlines
   - Task descriptions and color coding
   - Quick task completion with undo option
 - ✨ Celebratory confetti animations for completed habits
@@ -46,14 +45,12 @@ API available at https://github.com/fberrez/minihabits
 src/
 ├── components/ # Reusable UI components
 │ ├── habits/ # Habit-specific components
-│ │ ├── task-habit-card.tsx
 │ │ └── ...
 ├── contexts/ # React context providers
 │ ├── AuthContext.tsx
 │ └── HabitContext.tsx
 ├── pages/ # Main application pages
 │ ├── HabitList.tsx
-│ ├── NewTask.tsx
 │ └── StatsPage.tsx
 └── services/ # API service layer
 └── habits.ts

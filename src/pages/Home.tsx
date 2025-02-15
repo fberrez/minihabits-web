@@ -3,14 +3,13 @@ import { HomeStats } from "@/components/home-stats";
 import { useNavigate } from "react-router-dom";
 import { BooleanHabitCard } from "@/components/habits/boolean-habit-card";
 import { CounterHabitCard } from "@/components/habits/counter-habit-card";
-import { TaskHabitCard } from "@/components/habits/task-habit-card";
 import { useEffect, useRef, useState } from "react";
 import JSConfetti from "js-confetti";
 import { HabitColor, HabitType } from "@/types/habit";
 import moment from "moment";
-import { AddNewButtons } from "@/components/add-new-buttons";
 import { Card, CardContent } from "@/components/ui/card";
 import { BentoGrid, BentoCard } from "@/components/ui/bento-grid";
+import { AddNewButtons } from "@/components/add-new-buttons";
 import {
   ArrowUpRight,
   CalendarHeart,
@@ -25,9 +24,9 @@ import { useTheme } from "@/components/theme-provider";
 export function Home() {
   const navigate = useNavigate();
   const jsConfettiRef = useRef<JSConfetti>(new JSConfetti());
-  const [currentCard, setCurrentCard] = useState<
-    "boolean" | "counter" | "task"
-  >("boolean");
+  const [currentCard, setCurrentCard] = useState<"boolean" | "counter">(
+    "boolean"
+  );
   const [localCompletionStatus, setLocalCompletionStatus] = useState<
     Record<string, Record<string, number>>
   >({});
@@ -84,16 +83,6 @@ export function Home() {
     targetCounter: 3,
   };
 
-  const taskHabit = {
-    ...booleanHabit,
-    _id: "task-sample",
-    name: "Weekly Planning",
-    description: "Plan your week ahead",
-    color: HabitColor.PURPLE,
-    type: HabitType.TASK,
-    deadline: new Date(Date.now() + 24 * 60 * 60 * 1000), // Tomorrow
-  };
-
   // Sample dates for the last 3 days
   const dates = [new Date()];
 
@@ -102,7 +91,6 @@ export function Home() {
       "Start with simple yes/no habits. Perfect for daily routines like meditation or reading.",
     counter:
       "Track habits with specific targets. Great for water intake, steps, or any countable goal.",
-    task: "Set one-time tasks with deadlines. Ideal for important to-dos and weekly planning.",
   };
 
   const scrollToNextSection = () => {
@@ -209,7 +197,12 @@ export function Home() {
                       />
                     </div>
                   )}
-                  {currentCard === "counter" && (
+                  {currentCard === "counter" && !showDescription && (
+                    <div className="animate-fade-in w-full">
+                      <AddNewButtons redirectToAuth={true} />
+                    </div>
+                  )}
+                  {currentCard === "counter" && showDescription && (
                     <CounterHabitCard
                       habit={counterHabit}
                       dates={dates}
@@ -226,7 +219,7 @@ export function Home() {
                             formattedDate
                           ] >= counterHabit.targetCounter;
                         if (isCompleted) {
-                          setCurrentCard("task");
+                          setShowDescription(false);
                           setLocalCompletionStatus({});
                         }
                       }}
@@ -237,39 +230,6 @@ export function Home() {
                       showOptions={false}
                       glowEffect={true}
                     />
-                  )}
-                  {currentCard === "task" && (
-                    <>
-                      {localCompletionStatus[taskHabit._id]?.[
-                        moment(dates[0]).format("YYYY-MM-DD")
-                      ] > 0 ? (
-                        <div className="animate-fade-in">
-                          <AddNewButtons
-                            showBothButtons={false}
-                            redirectToAuth={true}
-                          />
-                        </div>
-                      ) : (
-                        <TaskHabitCard
-                          habit={taskHabit}
-                          localCompletionStatus={localCompletionStatus}
-                          setLocalCompletionStatus={(value) => {
-                            const newValue =
-                              typeof value === "function"
-                                ? value(localCompletionStatus)
-                                : value;
-                            setLocalCompletionStatus(newValue);
-                            setShowDescription(false);
-                          }}
-                          onTrack={async () => {}}
-                          onUntrack={async () => {}}
-                          jsConfettiRef={jsConfettiRef}
-                          showOptions={false}
-                          glowEffect={true}
-                          activateToast={false}
-                        />
-                      )}
-                    </>
                   )}
                   <p className="text-sm text-muted-foreground mt-2">
                     {showDescription

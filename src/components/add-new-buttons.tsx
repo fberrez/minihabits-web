@@ -8,11 +8,7 @@ interface AddNewButtonsProps {
   redirectToAuth?: boolean;
 }
 
-export function AddNewButtons({
-  showBothButtons = true,
-  className = "",
-  redirectToAuth = false,
-}: AddNewButtonsProps) {
+export function AddNewButtons({ redirectToAuth = false }: AddNewButtonsProps) {
   const navigate = useNavigate();
 
   const handleClick = (path: string) => {
@@ -20,21 +16,12 @@ export function AddNewButtons({
   };
 
   return (
-    <div className={`flex gap-2 ${className}`}>
-      <Button className="border-dashed" onClick={() => handleClick("/new")}>
-        <Plus className="h-5 w-5 mr-2" />
-        Add new habit
-      </Button>
-
-      {showBothButtons && (
-        <Button
-          className="border-dashed"
-          onClick={() => handleClick("/new-task")}
-        >
-          <Plus className="h-5 w-5 mr-2" />
-          Add new task
-        </Button>
-      )}
-    </div>
+    <Button
+      className="border-dashed w-full max-w-4xl"
+      onClick={() => handleClick("/new")}
+    >
+      <Plus className="h-5 w-5 mr-2" />
+      Add new habit
+    </Button>
   );
 }

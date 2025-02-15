@@ -104,9 +104,7 @@ export function HabitProvider({ children }: { children: ReactNode }) {
     name: string,
     color?: HabitColor,
     type: HabitType = HabitType.BOOLEAN,
-    targetCounter?: number,
-    description?: string,
-    deadline?: Date | null
+    targetCounter?: number
   ) => {
     if (!isAuthenticated || !accessToken) return;
 
@@ -116,9 +114,7 @@ export function HabitProvider({ children }: { children: ReactNode }) {
         name,
         color,
         type,
-        targetCounter,
-        description,
-        deadline
+        targetCounter
       );
       await refreshHabits(true);
     } catch (err) {
