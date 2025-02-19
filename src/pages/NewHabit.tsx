@@ -58,11 +58,16 @@ export function NewHabit() {
       return;
     }
 
-    if (type === HabitType.COUNTER && (!targetCounter || targetCounter <= 0)) {
+    if (
+      (type === HabitType.COUNTER || type === HabitType.NEGATIVE_COUNTER) &&
+      (!targetCounter || targetCounter <= 0)
+    ) {
       toast({
         title: "Invalid target counter",
         description:
-          "Please provide a target counter greater than 0 for counter type habits.",
+          type === HabitType.COUNTER
+            ? "Please provide a target counter greater than 0 for counter type habits."
+            : "Please provide a limit counter greater than 0 for limit type habits.",
         variant: "destructive",
       });
       return;
@@ -75,7 +80,9 @@ export function NewHabit() {
         name,
         color,
         type,
-        type === HabitType.COUNTER ? targetCounter : undefined
+        type === HabitType.COUNTER || type === HabitType.NEGATIVE_COUNTER
+          ? targetCounter
+          : undefined
       );
       toast({
         title: "Habit created",
@@ -164,19 +171,40 @@ export function NewHabit() {
                   <RadioGroupItem value={HabitType.COUNTER} id="counter" />
                   <Label htmlFor="counter">Counter</Label>
                 </div>
+                <div className="flex items-center space-x-2">
+                  <RadioGroupItem
+                    value={HabitType.NEGATIVE_BOOLEAN}
+                    id="negative_boolean"
+                  />
+                  <Label htmlFor="negative_boolean">Avoid Daily</Label>
+                </div>
+                <div className="flex items-center space-x-2">
+                  <RadioGroupItem
+                    value={HabitType.NEGATIVE_COUNTER}
+                    id="negative_counter"
+                  />
+                  <Label htmlFor="negative_counter">Limit Counter</Label>
+                </div>
               </RadioGroup>
             </div>
 
-            {type === HabitType.COUNTER && (
+            {(type === HabitType.COUNTER ||
+              type === HabitType.NEGATIVE_COUNTER) && (
               <div className="space-y-2">
-                <Label htmlFor="targetCounter">Daily Target</Label>
+                <Label htmlFor="targetCounter">
+                  {type === HabitType.COUNTER ? "Daily Target" : "Daily Limit"}
+                </Label>
                 <Input
                   id="targetCounter"
                   type="number"
                   min="1"
                   value={targetCounter}
                   onChange={(e) => setTargetCounter(parseInt(e.target.value))}
-                  placeholder="e.g., 8 glasses of water"
+                  placeholder={
+                    type === HabitType.COUNTER
+                      ? "e.g., 8 glasses of water"
+                      : "e.g., max 2 hours of social media"
+                  }
                   disabled={isLoading}
                   required
                 />

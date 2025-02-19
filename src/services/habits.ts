@@ -125,8 +125,16 @@ export class HabitService {
     return response.json();
   }
 
-  static async getStats(accessToken: string): Promise<GlobalStats> {
-    const response = await fetch(`${this.BASE_URL}/habits/stats`, {
+  static async getStats(
+    accessToken: string,
+    habitIds?: string[]
+  ): Promise<GlobalStats> {
+    const url = new URL(`${this.BASE_URL}/habits/stats`);
+    if (habitIds && habitIds.length > 0) {
+      url.searchParams.append("ids", habitIds.join(","));
+    }
+
+    const response = await fetch(url.toString(), {
       method: "GET",
       headers: this.getHeaders(accessToken),
     });

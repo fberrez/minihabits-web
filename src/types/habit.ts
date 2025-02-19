@@ -66,6 +66,8 @@ export const getColorRange = {
 export enum HabitType {
   BOOLEAN = "boolean",
   COUNTER = "counter",
+  NEGATIVE_BOOLEAN = "negative_boolean",
+  NEGATIVE_COUNTER = "negative_counter",
 }
 
 export interface Habit {
@@ -86,8 +88,10 @@ export interface Habit {
   deadline?: Date;
 }
 
-export interface HabitStats {
+export interface HabitStat {
   name: string;
+  type: HabitType;
+  targetCounter?: number;
   currentStreak: number;
   longestStreak: number;
   completions: number;
@@ -97,16 +101,14 @@ export interface HabitStats {
 }
 
 export interface GlobalStats {
-  habits: {
-    name: string;
-    completionRate7Days: number;
-    completionRateMonth: number;
-    completionRateYear: number;
-  }[];
-  totalCompletions: number;
   totalHabits: number;
-  averageCompletionRate: number;
+  totalCompletions: number;
   habitsCompletedToday: number;
+  averageStreak: number;
+  completionRate7Days: number;
+  completionRateYear: number;
+  maxStreak: number;
+  habits: HabitStat[];
 }
 
 export interface AuthResponse {

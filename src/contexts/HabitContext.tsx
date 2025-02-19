@@ -4,6 +4,7 @@ import {
   useEffect,
   useState,
   ReactNode,
+  useCallback,
 } from "react";
 import { useAuth } from "./AuthContext";
 import { Habit, GlobalStats, HabitColor, HabitType } from "../types/habit";
@@ -39,6 +40,7 @@ interface HabitContextType {
   incrementHabit: (habitId: string, date: string) => Promise<void>;
   decrementHabit: (habitId: string, date: string) => Promise<void>;
   refreshHabits: () => Promise<void>;
+  getStats: (habitIds?: string[]) => Promise<GlobalStats>;
 }
 
 const HabitContext = createContext<HabitContextType | undefined>(undefined);
@@ -114,7 +116,9 @@ export function HabitProvider({ children }: { children: ReactNode }) {
         name,
         color,
         type,
-        targetCounter
+        type === HabitType.COUNTER || type === HabitType.NEGATIVE_COUNTER
+          ? targetCounter
+          : undefined
       );
       await refreshHabits(true);
     } catch (err) {
@@ -256,6 +260,24 @@ export function HabitProvider({ children }: { children: ReactNode }) {
     }
   };
 
+  const getStats = useCallback(
+    async (habitIds?: string[]) => {
+      if (!isAuthenticated || !accessToken) {
+        throw new Error("Not authenticated");
+      }
+
+      try {
+        const statsData = await HabitService.getStats(accessToken, habitIds);
+        setStats(statsData);
+        return statsData;
+      } catch (err) {
+        setError("Failed to fetch stats");
+        throw err;
+      }
+    },
+    [isAuthenticated, accessToken]
+  );
+
   return (
     <HabitContext.Provider
       value={{
@@ -271,6 +293,7 @@ export function HabitProvider({ children }: { children: ReactNode }) {
         incrementHabit,
         decrementHabit,
         refreshHabits: () => refreshHabits(true),
+        getStats,
       }}
     >
       {children}
