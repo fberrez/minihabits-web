@@ -7,17 +7,21 @@ import {
 } from "@/components/ui/card";
 import "cal-heatmap/cal-heatmap.css";
 import moment from "moment";
+// @ts-expect-error - CalHeatmapLabel is not typed
 import CalHeatmapLabel from "cal-heatmap/plugins/CalendarLabel";
+// @ts-expect-error - CalHeatmapTooltip is not typed
 import CalHeatmapTooltip from "cal-heatmap/plugins/Tooltip";
+// @ts-expect-error - CalHeatmap is not typed
 import CalHeatmap from "cal-heatmap";
 import { useEffect } from "react";
-import { getColorRange, Habit } from "@/types/habit";
+import { Habit } from "@/api/generated";
+import { getColorRange, HabitColor } from "@/api/types/appTypes";
 
-interface HeatmapProps {
+interface CounterHeatmapProps {
   readonly habit: Habit;
 }
 
-export default function CounterHeatmap({ habit }: HeatmapProps) {
+export default function CounterHeatmap({ habit }: CounterHeatmapProps) {
   useEffect(() => {
     if (!habit) return;
 
@@ -59,7 +63,7 @@ export default function CounterHeatmap({ habit }: HeatmapProps) {
         },
         scale: {
           color: {
-            range: getColorRange[habit.color],
+            range: getColorRange[habit.color as HabitColor],
             type: "threshold",
             domain: [
               0.25 * habit.targetCounter,

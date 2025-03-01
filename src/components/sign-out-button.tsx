@@ -1,6 +1,6 @@
-import { useAuth } from '../contexts/AuthContext';
-import { Button } from './ui/button';
-import { LogOut } from 'lucide-react';
+import { useAuth } from "../providers/AuthProvider";
+import { Button } from "./ui/button";
+import { LogOut } from "lucide-react";
 
 export function SignOutButton({ onSelect }: { onSelect: () => void }) {
   const { signOut } = useAuth();

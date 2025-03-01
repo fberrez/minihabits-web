@@ -8,7 +8,7 @@ import {
   SheetTitle,
   SheetTrigger,
 } from "./ui/sheet";
-import { useAuth } from "@/contexts/AuthContext";
+import { useAuth } from "@/providers/AuthProvider";
 import { ModeToggle } from "./mode-toggle";
 import { FeedbackButton } from "./feedback-button";
 import { useState } from "react";

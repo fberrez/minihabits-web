@@ -1,4 +1,5 @@
-import { HabitType, HabitStat } from "@/types/habit";
+import { HabitType } from "@/api/types/appTypes";
+import { HabitStatsOutput } from "@/api/generated";
 import "cal-heatmap/cal-heatmap.css";
 import { AlertCircle, ArrowLeft, Trash2 } from "lucide-react";
 import { useEffect, useState } from "react";
@@ -33,7 +34,7 @@ import {
   CardTitle,
 } from "../components/ui/card";
 import NumberTicker from "../components/ui/number-ticker";
-import { useHabits } from "../contexts/HabitContext";
+import { useHabits } from "../api/hooks/useHabits";
 import "./StatsPage.css";
 import { useToast } from "../hooks/use-toast";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
@@ -48,7 +49,7 @@ export function StatsPage() {
   const habit = habits.find((h) => h._id === habitId);
   const [isEditing, setIsEditing] = useState(false);
   const [habitTitle, setHabitTitle] = useState("");
-  const [habitStats, setHabitStats] = useState<HabitStat | null>(null);
+  const [habitStats, setHabitStats] = useState<HabitStatsOutput | null>(null);
   const [isLoadingStats, setIsLoadingStats] = useState(true);
 
   const { toast } = useToast();
@@ -81,6 +82,7 @@ export function StatsPage() {
     };
 
     fetchHabitStats();
+    // getStats is now memoized with useCallback in the useHabits hook, so it's safe to include in the dependency array
   }, [habitId, getStats, toast]);
 
   const handleEditClick = async () => {
@@ -142,12 +144,9 @@ export function StatsPage() {
   // Use stats from the API if available, otherwise fall back to the habit object
   const currentStreak = habitStats?.currentStreak ?? habit.currentStreak ?? 0;
   const longestStreak = habitStats?.longestStreak ?? habit.longestStreak ?? 0;
-  const completionRate7Days =
-    habitStats?.completionRate7Days ?? habit.completionRate7Days ?? 0;
-  const completionRateMonth =
-    habitStats?.completionRateMonth ?? habit.completionRateMonth ?? 0;
-  const completionRateYear =
-    habitStats?.completionRateYear ?? habit.completionRateYear ?? 0;
+  const completionRate7Days = habitStats?.completionRate7Days ?? 0;
+  const completionRateMonth = habitStats?.completionRateMonth ?? 0;
+  const completionRateYear = habitStats?.completionRateYear ?? 0;
 
   // Prepare data for the chart
   const getChartData = () => {

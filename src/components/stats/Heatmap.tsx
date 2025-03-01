@@ -1,6 +1,7 @@
-import { Habit, HabitType } from "@/types/habit";
+import { HabitType } from "@/api/types/appTypes";
 import CounterHeatmap from "./counter/CounterHeatmap";
 import BooleanHeatmap from "./boolean/BooleanHeatmap";
+import { Habit } from "@/api/generated";
 
 interface HeatmapProps {
   readonly habit: Habit;

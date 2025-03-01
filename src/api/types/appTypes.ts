@@ -1,3 +1,6 @@
+/**
+ * Enum for habit colors
+ */
 export enum HabitColor {
   RED = "#e57373",
   BLUE = "#64b5f6",
@@ -10,7 +13,17 @@ export enum HabitColor {
 }
 
 /**
- * color range for each habit color for cal-heatmap in @StatsPage.tsx
+ * Enum for habit types
+ */
+export enum HabitType {
+  BOOLEAN = "boolean",
+  COUNTER = "counter",
+  NEGATIVE_BOOLEAN = "negative_boolean",
+  NEGATIVE_COUNTER = "negative_counter",
+}
+
+/**
+ * Color range for each habit color for cal-heatmap in @StatsPage.tsx
  */
 export const getColorRange = {
   [HabitColor.RED]: [
@@ -62,61 +75,3 @@ export const getColorRange = {
     "rgba(77, 182, 172, 1)",
   ],
 };
-
-export enum HabitType {
-  BOOLEAN = "boolean",
-  COUNTER = "counter",
-  NEGATIVE_BOOLEAN = "negative_boolean",
-  NEGATIVE_COUNTER = "negative_counter",
-}
-
-export interface Habit {
-  _id: string;
-  name: string;
-  color: HabitColor;
-  type: HabitType;
-  targetCounter: number;
-  createdAt: Date;
-  userId: string;
-  completedDates: { [key: string]: number };
-  currentStreak: number;
-  longestStreak: number;
-  completionRate7Days: number;
-  completionRateMonth: number;
-  completionRateYear: number;
-  description?: string;
-  deadline?: Date;
-}
-
-export interface HabitStat {
-  name: string;
-  type: HabitType;
-  targetCounter?: number;
-  currentStreak: number;
-  longestStreak: number;
-  completions: number;
-  completionRate7Days: number;
-  completionRateYear: number;
-  completionRateMonth: number;
-}
-
-export interface GlobalStats {
-  totalHabits: number;
-  totalCompletions: number;
-  habitsCompletedToday: number;
-  averageStreak: number;
-  completionRate7Days: number;
-  completionRateYear: number;
-  maxStreak: number;
-  habits: HabitStat[];
-}
-
-export interface AuthResponse {
-  accessToken: string;
-  refreshToken: string;
-}
-
-export interface Credentials {
-  email: string;
-  password: string;
-}

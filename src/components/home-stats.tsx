@@ -1,30 +1,16 @@
 import { Loader2 } from "lucide-react";
 import AnimatedGradientText from "./ui/animated-gradient-text";
 import { cn } from "@/lib/utils";
-import { StatsService } from "@/services/stats";
-import { useEffect, useState } from "react";
-import { type HomeStats } from "@/types/homestats";
+import { useStats } from "@/api/hooks/useStats";
 
 export function HomeStats() {
-  const [homeStats, setHomeStats] = useState<HomeStats | null>(null);
-  const [isLoading, setIsLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
+  const { data, isLoading, error } = useStats();
 
-  useEffect(() => {
-    const fetchHomeStats = async () => {
-      try {
-        const response = await StatsService.getHomeStats();
-        setHomeStats(response);
-        setIsLoading(false);
-      } catch {
-        setError("Error fetching home stats");
-        setIsLoading(false);
-      }
-    };
-    fetchHomeStats();
-  }, []);
+  if (error) {
+    return null; // Return nothing if there's an error
+  }
 
-  return !error ? (
+  return (
     <div className="z-10 pb-6 flex items-center justify-center md:justify-start">
       {isLoading ? (
         <div className="flex items-center justify-center md:justify-start">
@@ -39,16 +25,13 @@ export function HomeStats() {
                 `inline animate-gradient bg-gradient-to-r from-[#ffaa40] via-[#9c40ff] to-[#ffaa40] bg-[length:var(--bg-size)_100%] bg-clip-text text-transparent`
               )}
             >
-              {!homeStats?.stats?.totalCompleted ||
-              homeStats?.stats?.totalCompleted < 100
-                ? `Join ${homeStats?.usersCount} users now!`
-                : homeStats?.stats?.totalCompleted + " habits completed today!"}
+              {!data?.stats?.totalCompleted || data?.stats?.totalCompleted < 100
+                ? `Join ${data?.usersCount || 0} users now!`
+                : `${data?.stats?.totalCompleted} habits completed today!`}
             </span>
           </AnimatedGradientText>
         </div>
       )}
     </div>
-  ) : (
-    <></>
   );
 }

@@ -7,17 +7,20 @@ import {
 } from "@/components/ui/card";
 import "cal-heatmap/cal-heatmap.css";
 import moment from "moment";
+// @ts-expect-error - CalHeatmapLabel is not typed
 import CalHeatmapLabel from "cal-heatmap/plugins/CalendarLabel";
+// @ts-expect-error - CalHeatmapTooltip is not typed
 import CalHeatmapTooltip from "cal-heatmap/plugins/Tooltip";
+// @ts-expect-error - CalHeatmap is not typed
 import CalHeatmap from "cal-heatmap";
 import { useEffect } from "react";
-import { Habit } from "@/types/habit";
+import { Habit } from "@/api/generated";
 
-interface HeatmapProps {
+interface BooleanHeatmapProps {
   readonly habit: Habit;
 }
 
-export default function BooleanHeatmap({ habit }: HeatmapProps) {
+export default function BooleanHeatmap({ habit }: BooleanHeatmapProps) {
   useEffect(() => {
     if (!habit) return;
 

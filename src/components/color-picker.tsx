@@ -1,7 +1,8 @@
-import { Check } from 'lucide-react';
-import { HabitColor } from '../types/habit';
-import { Label } from './ui/label';
-import { RadioGroup, RadioGroupItem } from './ui/radio-group';
+import { Check } from "lucide-react";
+
+import { Label } from "./ui/label";
+import { RadioGroup, RadioGroupItem } from "./ui/radio-group";
+import { HabitColor } from "@/api/types/appTypes";
 
 interface ColorPickerProps {
   value: HabitColor;
@@ -24,7 +25,7 @@ export function ColorPicker({ value, onChange, disabled }: ColorPickerProps) {
         className="grid grid-cols-4 gap-4"
         disabled={disabled}
       >
-        {colorOptions.map(option => (
+        {colorOptions.map((option) => (
           <div
             key={option.value}
             className="flex flex-col items-center space-y-2"
@@ -43,7 +44,7 @@ export function ColorPicker({ value, onChange, disabled }: ColorPickerProps) {
               >
                 <div
                   className="absolute inset-0"
-                  style={{ '--color': option.value } as React.CSSProperties}
+                  style={{ "--color": option.value } as React.CSSProperties}
                 />
                 {value === option.value && (
                   <Check className="w-4 h-4 text-white" />

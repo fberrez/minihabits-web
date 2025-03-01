@@ -1,10 +1,10 @@
 import { useRef, useEffect, useState } from "react";
-import { useHabits } from "../contexts/HabitContext";
+import { useHabits } from "../api/hooks/useHabits";
 import { Card, CardContent } from "../components/ui/card";
 import { Skeleton } from "../components/ui/skeleton";
 import { useNavigate } from "react-router-dom";
 import JSConfetti from "js-confetti";
-import { HabitType } from "../types/habit";
+import { HabitType } from "../api/types/appTypes";
 import { BooleanHabitCard } from "../components/habits/boolean-habit-card";
 import { CounterHabitCard } from "../components/habits/counter-habit-card";
 import { NegativeBooleanHabitCard } from "../components/habits/negative-boolean-habit-card";
@@ -15,10 +15,10 @@ export function HabitList() {
   const {
     habits,
     isLoading,
-    trackHabit,
-    untrackHabit,
-    incrementHabit,
-    decrementHabit,
+    trackHabit: trackHabitApi,
+    untrackHabit: untrackHabitApi,
+    incrementHabit: incrementHabitApi,
+    decrementHabit: decrementHabitApi,
     refreshHabits,
   } = useHabits();
   const navigate = useNavigate();
@@ -27,6 +27,29 @@ export function HabitList() {
   const [localCompletionStatus, setLocalCompletionStatus] = useState<
     Record<string, Record<string, number>>
   >({});
+
+  // Create wrapper functions that return void
+  const trackHabit = async (habitId: string, date: string): Promise<void> => {
+    await trackHabitApi(habitId, date);
+  };
+
+  const untrackHabit = async (habitId: string, date: string): Promise<void> => {
+    await untrackHabitApi(habitId, date);
+  };
+
+  const incrementHabit = async (
+    habitId: string,
+    date: string
+  ): Promise<void> => {
+    await incrementHabitApi(habitId, date);
+  };
+
+  const decrementHabit = async (
+    habitId: string,
+    date: string
+  ): Promise<void> => {
+    await decrementHabitApi(habitId, date);
+  };
 
   useEffect(() => {
     jsConfettiRef.current = new JSConfetti();

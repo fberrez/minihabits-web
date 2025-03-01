@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { useHabits } from "../contexts/HabitContext";
+import { useHabits } from "../api/hooks/useHabits";
 import { Button } from "../components/ui/button";
 import {
   Card,
@@ -13,7 +13,7 @@ import {
 import { Input } from "../components/ui/input";
 import { Label } from "../components/ui/label";
 import { useToast } from "../hooks/use-toast";
-import { HabitColor, HabitType } from "../types/habit";
+import { HabitColor, HabitType } from "../api/types/appTypes";
 import { RadioGroup, RadioGroupItem } from "../components/ui/radio-group";
 import { Alert, AlertDescription } from "../components/ui/alert";
 import { Lightbulb } from "lucide-react";

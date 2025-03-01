@@ -1,13 +1,13 @@
-import { Button } from "@/components/ui/button";
+import { Button } from "../components/ui/button";
 import { HomeStats } from "@/components/home-stats";
 import { useNavigate } from "react-router-dom";
 import { BooleanHabitCard } from "@/components/habits/boolean-habit-card";
 import { CounterHabitCard } from "@/components/habits/counter-habit-card";
 import { useEffect, useRef, useState } from "react";
 import JSConfetti from "js-confetti";
-import { HabitColor, HabitType } from "@/types/habit";
+import { HabitColor, HabitType } from "../api/types/appTypes";
 import moment from "moment";
-import { Card, CardContent } from "@/components/ui/card";
+import { Card, CardContent } from "../components/ui/card";
 import { BentoGrid, BentoCard } from "@/components/ui/bento-grid";
 import { AddNewButtons } from "@/components/add-new-buttons";
 import {
@@ -20,6 +20,7 @@ import {
 } from "lucide-react";
 import FlickeringGrid from "@/components/ui/flickering-grid";
 import { useTheme } from "@/components/theme-provider";
+import { Habit } from "@/api/generated";
 
 export function Home() {
   const navigate = useNavigate();
@@ -53,7 +54,7 @@ export function Home() {
   type CompletionStatus = typeof localCompletionStatus;
 
   // Sample habits data for demonstration
-  const booleanHabit = {
+  const booleanHabit: Habit = {
     _id: "boolean-sample",
     name: "Morning Meditation",
     description: "Start your day with 10 minutes of mindfulness",
@@ -61,16 +62,10 @@ export function Home() {
     type: HabitType.BOOLEAN,
     completedDates: {},
     targetCounter: 1,
-    createdAt: new Date(),
+    createdAt: new Date().toISOString(),
     userId: "demo-user",
     currentStreak: 0,
     longestStreak: 0,
-    archived: false,
-    archivedAt: null,
-    lastCompletedAt: null,
-    completionRate7Days: 0,
-    completionRateMonth: 0,
-    completionRateYear: 0,
   };
 
   const counterHabit = {

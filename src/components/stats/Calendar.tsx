@@ -1,11 +1,12 @@
 import { Card, CardContent } from "@/components/ui/card";
 
-import { useHabits } from "@/contexts/HabitContext";
-import { Habit, HabitType } from "@/types/habit";
+import { useHabits } from "@/api/hooks/useHabits";
+import { HabitType } from "@/api/types/appTypes";
 import { isAfter, format } from "date-fns";
 import { startOfDay } from "date-fns";
 import { useState } from "react";
 import { DayPicker } from "react-day-picker";
+import { Habit } from "@/api/generated";
 
 interface CalendarProps {
   readonly habit: Habit;

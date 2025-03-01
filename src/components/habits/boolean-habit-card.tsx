@@ -1,7 +1,6 @@
 import { Button } from "../ui/button";
 import { Card, CardContent } from "../ui/card";
 import { Check, MoreHorizontal } from "lucide-react";
-import { Habit } from "../../types/habit";
 import {
   Tooltip,
   TooltipContent,
@@ -18,6 +17,7 @@ import JSConfetti from "js-confetti";
 import { useNavigate } from "react-router-dom";
 import { cn } from "../../lib/utils";
 import { playSuccessSound } from "../../lib/sound";
+import { Habit } from "@/api/generated";
 
 interface BooleanHabitCardProps {
   habit: Habit;

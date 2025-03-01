@@ -1,4 +1,4 @@
-import { useAuth } from "./contexts/AuthContext";
+import { useAuth } from "./providers/AuthProvider";
 import "./App.css";
 import { Routes, Route, Navigate } from "react-router-dom";
 import { HabitList } from "./pages/HabitList";
