@@ -6,12 +6,11 @@ import {
   useCallback,
 } from "react";
 import { useAuth } from "./AuthContext";
-import { Habit, GlobalStats, HabitColor, HabitType } from "../types/habit";
+import { Habit, HabitColor, HabitType, HabitStat } from "../types/habit";
 import { HabitService } from "../services/habits";
 
 interface HabitContextType {
   habits: Habit[];
-  stats: GlobalStats | null;
   isLoading: boolean;
   error: string | null;
   createHabit: (
@@ -39,7 +38,7 @@ interface HabitContextType {
   incrementHabit: (habitId: string, date: string) => Promise<void>;
   decrementHabit: (habitId: string, date: string) => Promise<void>;
   refreshHabits: () => Promise<void>;
-  getStats: (habitIds?: string[]) => Promise<GlobalStats>;
+  getStats: (habitId: string) => Promise<HabitStat>;
   getHabitById: (habitId: string) => Promise<Habit>;
 }
 
@@ -48,7 +47,6 @@ const HabitContext = createContext<HabitContextType | undefined>(undefined);
 export function HabitProvider({ children }: { children: ReactNode }) {
   const { isAuthenticated, accessToken, authenticatedFetch } = useAuth();
   const [habits, setHabits] = useState<Habit[]>([]);
-  const [stats, setStats] = useState<GlobalStats | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -59,35 +57,19 @@ export function HabitProvider({ children }: { children: ReactNode }) {
       if (showLoading) {
         setIsLoading(true);
       }
-      const [habitsResponse, statsResponse] = await Promise.all([
-        authenticatedFetch(`${import.meta.env.VITE_API_BASE_URL}/habits`),
-        authenticatedFetch(`${import.meta.env.VITE_API_BASE_URL}/habits/stats`),
-      ]);
 
-      if (!habitsResponse.ok || !statsResponse.ok) {
-        throw new Error("Failed to fetch data");
+      const habitsResponse = await authenticatedFetch(
+        `${import.meta.env.VITE_API_BASE_URL}/habits`
+      );
+
+      if (!habitsResponse.ok) {
+        throw new Error("Failed to fetch habits");
       }
 
-      const [habitsData, statsData] = await Promise.all([
-        habitsResponse.json(),
-        statsResponse.json(),
-      ]);
+      const habitsData = await habitsResponse.json();
 
-      // Merge stats data with habits data
-      const mergedHabits = habitsData.map((habit: Habit) => {
-        const habitStats = statsData.habits.find(
-          (h: { name: string }) => h.name === habit.name
-        );
-        return {
-          ...habit,
-          completionRate7Days: habitStats?.completionRate7Days ?? 0,
-          completionRateYear: habitStats?.completionRateYear ?? 0,
-          completionRateMonth: habitStats?.completionRateMonth ?? 0,
-        };
-      });
-
-      setHabits(mergedHabits);
-      setStats(statsData);
+      // Set habits without stats data
+      setHabits(habitsData);
       setError(null);
     } catch {
       setError("Failed to fetch habits");
@@ -274,17 +256,16 @@ export function HabitProvider({ children }: { children: ReactNode }) {
   };
 
   const getStats = useCallback(
-    async (habitIds?: string[]) => {
+    async (habitId: string) => {
       if (!isAuthenticated || !accessToken) {
         throw new Error("Not authenticated");
       }
 
       try {
-        const statsData = await HabitService.getStats(accessToken, habitIds);
-        setStats(statsData);
+        const statsData = await HabitService.getStats(accessToken, habitId);
         return statsData;
       } catch (err) {
-        setError("Failed to fetch stats");
+        setError("Failed to fetch habit stats");
         throw err;
       }
     },
@@ -295,7 +276,6 @@ export function HabitProvider({ children }: { children: ReactNode }) {
     <HabitContext.Provider
       value={{
         habits,
-        stats,
         isLoading,
         error,
         createHabit,

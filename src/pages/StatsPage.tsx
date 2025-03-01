@@ -1,4 +1,4 @@
-import { HabitType } from "@/types/habit";
+import { HabitType, HabitStat } from "@/types/habit";
 import "cal-heatmap/cal-heatmap.css";
 import { AlertCircle, ArrowLeft, Trash2 } from "lucide-react";
 import { useEffect, useState } from "react";
@@ -42,12 +42,14 @@ import Calendar from "@/components/stats/Calendar";
 
 export function StatsPage() {
   const { habitId } = useParams();
-  const { habits, deleteHabit, refreshHabits } = useHabits();
+  const { habits, deleteHabit, refreshHabits, getStats } = useHabits();
   const navigate = useNavigate();
 
   const habit = habits.find((h) => h._id === habitId);
   const [isEditing, setIsEditing] = useState(false);
   const [habitTitle, setHabitTitle] = useState("");
+  const [habitStats, setHabitStats] = useState<HabitStat | null>(null);
+  const [isLoadingStats, setIsLoadingStats] = useState(true);
 
   const { toast } = useToast();
   const updateHabit = useHabits().updateHabit;
@@ -57,6 +59,29 @@ export function StatsPage() {
     refreshHabits();
     // Using empty dependency array to run only once on mount
   }, []);
+
+  useEffect(() => {
+    // Fetch stats for the specific habit when habitId changes
+    const fetchHabitStats = async () => {
+      if (habitId) {
+        try {
+          setIsLoadingStats(true);
+          const stats = await getStats(habitId);
+          setHabitStats(stats);
+        } catch {
+          toast({
+            title: "Error",
+            description: "Failed to fetch habit statistics",
+            variant: "destructive",
+          });
+        } finally {
+          setIsLoadingStats(false);
+        }
+      }
+    };
+
+    fetchHabitStats();
+  }, [habitId, getStats, toast]);
 
   const handleEditClick = async () => {
     setIsEditing(!isEditing);
@@ -90,6 +115,16 @@ export function StatsPage() {
 
   if (!habit) return null;
 
+  if (isLoadingStats) {
+    return (
+      <div className="max-w-5xl mx-auto px-4 py-8 space-y-8">
+        <div className="flex justify-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-primary"></div>
+        </div>
+      </div>
+    );
+  }
+
   if (habit?.type !== HabitType.COUNTER && habit?.type !== HabitType.BOOLEAN) {
     return (
       <div className="flex justify-center items-center py-8 mx-auto max-w-5xl">
@@ -103,6 +138,16 @@ export function StatsPage() {
       </div>
     );
   }
+
+  // Use stats from the API if available, otherwise fall back to the habit object
+  const currentStreak = habitStats?.currentStreak ?? habit.currentStreak ?? 0;
+  const longestStreak = habitStats?.longestStreak ?? habit.longestStreak ?? 0;
+  const completionRate7Days =
+    habitStats?.completionRate7Days ?? habit.completionRate7Days ?? 0;
+  const completionRateMonth =
+    habitStats?.completionRateMonth ?? habit.completionRateMonth ?? 0;
+  const completionRateYear =
+    habitStats?.completionRateYear ?? habit.completionRateYear ?? 0;
 
   // Prepare data for the chart
   const getChartData = () => {
@@ -231,12 +276,12 @@ export function StatsPage() {
           </CardHeader>
           <CardContent>
             <div style={{ color: habit.color }}>
-              {habit.currentStreak === 0 ? (
+              {currentStreak === 0 ? (
                 <p className="text-4xl font-bold">0</p>
               ) : (
                 <NumberTicker
                   className="text-4xl font-bold"
-                  value={habit.currentStreak}
+                  value={currentStreak}
                 />
               )}
             </div>
@@ -250,12 +295,12 @@ export function StatsPage() {
           </CardHeader>
           <CardContent>
             <div style={{ color: habit.color }}>
-              {habit.longestStreak === 0 ? (
+              {longestStreak === 0 ? (
                 <p className="text-4xl font-bold">0</p>
               ) : (
                 <NumberTicker
                   className="text-4xl font-bold"
-                  value={habit.longestStreak}
+                  value={longestStreak}
                 />
               )}
             </div>
@@ -272,12 +317,12 @@ export function StatsPage() {
           </CardHeader>
           <CardContent>
             <div style={{ color: habit.color }}>
-              {habit.completionRate7Days === 0 ? (
+              {completionRate7Days === 0 ? (
                 <p className="text-4xl font-bold">0</p>
               ) : (
                 <NumberTicker
                   className="text-4xl font-bold"
-                  value={Math.round(habit.completionRate7Days)}
+                  value={Math.round(completionRate7Days)}
                 />
               )}
             </div>
@@ -294,12 +339,12 @@ export function StatsPage() {
           </CardHeader>
           <CardContent>
             <div style={{ color: habit.color }}>
-              {habit.completionRateMonth === 0 ? (
+              {completionRateMonth === 0 ? (
                 <p className="text-4xl font-bold">0</p>
               ) : (
                 <NumberTicker
                   className="text-4xl font-bold"
-                  value={Math.round(habit.completionRateMonth)}
+                  value={Math.round(completionRateMonth)}
                 />
               )}
             </div>
@@ -316,12 +361,12 @@ export function StatsPage() {
           </CardHeader>
           <CardContent>
             <div style={{ color: habit.color }}>
-              {habit.completionRateYear === 0 ? (
+              {completionRateYear === 0 ? (
                 <p className="text-4xl font-bold">0</p>
               ) : (
                 <NumberTicker
                   className="text-4xl font-bold"
-                  value={Math.round(habit.completionRateYear)}
+                  value={Math.round(completionRateYear)}
                 />
               )}
             </div>

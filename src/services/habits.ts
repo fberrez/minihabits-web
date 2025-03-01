@@ -1,4 +1,4 @@
-import { Habit, GlobalStats, HabitColor, HabitType } from "../types/habit";
+import { Habit, HabitColor, HabitType, HabitStat } from "../types/habit";
 
 export class HabitService {
   private static BASE_URL = import.meta.env.VITE_API_BASE_URL;
@@ -127,20 +127,15 @@ export class HabitService {
 
   static async getStats(
     accessToken: string,
-    habitIds?: string[]
-  ): Promise<GlobalStats> {
-    const url = new URL(`${this.BASE_URL}/habits/stats`);
-    if (habitIds && habitIds.length > 0) {
-      url.searchParams.append("ids", habitIds.join(","));
-    }
-
-    const response = await fetch(url.toString(), {
+    habitId: string
+  ): Promise<HabitStat> {
+    const response = await fetch(`${this.BASE_URL}/habits/${habitId}/stats`, {
       method: "GET",
       headers: this.getHeaders(accessToken),
     });
 
     if (!response.ok) {
-      throw new Error("Failed to get stats");
+      throw new Error("Failed to get habit stats");
     }
 
     return response.json();
