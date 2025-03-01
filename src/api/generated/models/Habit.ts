@@ -11,7 +11,7 @@ export type Habit = {
     completedDates: Record<string, any>;
     currentStreak: number;
     longestStreak: number;
-    type: 'boolean' | 'counter' | 'negative_boolean' | 'negative_counter';
+    type: 'boolean' | 'counter';
     targetCounter: number;
     description?: string;
     deadline?: string;

@@ -20,7 +20,7 @@ export class UsersService {
             method: 'GET',
             url: '/users/me',
             errors: {
-                401: `Unauthorized`,
+                401: `Unauthorized - Invalid or missing token`,
             },
         });
     }
@@ -40,7 +40,7 @@ export class UsersService {
             body: requestBody,
             mediaType: 'application/json',
             errors: {
-                401: `Unauthorized`,
+                401: `Unauthorized - Invalid or missing token`,
                 409: `Email already exists`,
             },
         });
@@ -61,7 +61,7 @@ export class UsersService {
             body: requestBody,
             mediaType: 'application/json',
             errors: {
-                401: `Unauthorized`,
+                401: `Unauthorized - Invalid or missing token`,
             },
         });
     }
@@ -86,7 +86,7 @@ export class UsersService {
             body: requestBody,
             mediaType: 'application/json',
             errors: {
-                401: `Unauthorized`,
+                401: `Unauthorized - Invalid or missing token`,
             },
         });
     }

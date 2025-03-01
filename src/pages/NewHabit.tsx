@@ -166,20 +166,6 @@ export function NewHabit() {
                   <RadioGroupItem value={HabitType.COUNTER} id="counter" />
                   <Label htmlFor="counter">Counter</Label>
                 </div>
-                {/* <div className="flex items-center space-x-2">
-                  <RadioGroupItem
-                    value={HabitType.NEGATIVE_BOOLEAN}
-                    id="negative_boolean"
-                  />
-                  <Label htmlFor="negative_boolean">Avoid Daily</Label>
-                </div>
-                <div className="flex items-center space-x-2">
-                  <RadioGroupItem
-                    value={HabitType.NEGATIVE_COUNTER}
-                    id="negative_counter"
-                  />
-                  <Label htmlFor="negative_counter">Limit Counter</Label>
-                </div> */}
               </RadioGroup>
             </div>
 

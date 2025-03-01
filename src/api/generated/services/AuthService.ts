@@ -59,7 +59,7 @@ export class AuthService {
             method: 'POST',
             url: '/auth/refresh',
             errors: {
-                401: `Invalid refresh token`,
+                401: `Unauthorized - Invalid or missing token`,
             },
         });
     }

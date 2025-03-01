@@ -6,7 +6,7 @@ export type HabitTypeOutput = {
     /**
      * Type of the habit
      */
-    type: 'boolean' | 'counter' | 'negative_boolean' | 'negative_counter';
+    type: 'boolean' | 'counter';
     /**
      * Label of the habit
      */

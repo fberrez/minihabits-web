@@ -7,8 +7,6 @@ import JSConfetti from "js-confetti";
 import { HabitType } from "../api/types/appTypes";
 import { BooleanHabitCard } from "../components/habits/boolean-habit-card";
 import { CounterHabitCard } from "../components/habits/counter-habit-card";
-import { NegativeBooleanHabitCard } from "../components/habits/negative-boolean-habit-card";
-import { NegativeCounterHabitCard } from "../components/habits/negative-counter-habit-card";
 import { AddNewButtons } from "../components/add-new-buttons";
 
 export function HabitList() {
@@ -150,31 +148,9 @@ export function HabitList() {
                     onUntrack={untrackHabit}
                   />
                 );
-              case HabitType.NEGATIVE_BOOLEAN:
-                return (
-                  <NegativeBooleanHabitCard
-                    key={habit._id}
-                    {...commonProps}
-                    dates={getLast5Days()}
-                    formatDate={formatDate}
-                    onTrack={trackHabit}
-                    onUntrack={untrackHabit}
-                  />
-                );
               case HabitType.COUNTER:
                 return (
                   <CounterHabitCard
-                    key={habit._id}
-                    {...commonProps}
-                    dates={getLast5Days()}
-                    formatDate={formatDate}
-                    onIncrement={incrementHabit}
-                    onDecrement={decrementHabit}
-                  />
-                );
-              case HabitType.NEGATIVE_COUNTER:
-                return (
-                  <NegativeCounterHabitCard
                     key={habit._id}
                     {...commonProps}
                     dates={getLast5Days()}

@@ -26,5 +26,6 @@ export type { UpdatePasswordDto } from './models/UpdatePasswordDto';
 export { AuthService } from './services/AuthService';
 export { HabitsService } from './services/HabitsService';
 export { HealthcheckService } from './services/HealthcheckService';
+export { PublicService } from './services/PublicService';
 export { StatsService } from './services/StatsService';
 export { UsersService } from './services/UsersService';

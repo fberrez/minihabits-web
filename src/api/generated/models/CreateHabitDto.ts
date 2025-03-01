@@ -14,7 +14,7 @@ export type CreateHabitDto = {
     /**
      * Type of the habit
      */
-    type?: 'boolean' | 'counter' | 'negative_boolean' | 'negative_counter';
+    type?: 'boolean' | 'counter';
     /**
      * Target counter value for counter-type habits (required for counter-type habits)
      */

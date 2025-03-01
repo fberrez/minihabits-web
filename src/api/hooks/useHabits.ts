@@ -193,10 +193,7 @@ export function useHabits() {
       name,
       color: validColor,
       type: validType,
-      targetCounter:
-        validType === "counter" || validType === "negative_counter"
-          ? targetCounter
-          : undefined,
+      targetCounter: validType === "counter" ? targetCounter : undefined,
     };
 
     const habit = await createHabitMutation.mutateAsync(habitData);

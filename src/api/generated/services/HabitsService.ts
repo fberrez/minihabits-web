@@ -21,6 +21,9 @@ export class HabitsService {
         return __request(OpenAPI, {
             method: 'GET',
             url: '/habits',
+            errors: {
+                401: `Unauthorized - Invalid or missing token`,
+            },
         });
     }
     /**
@@ -38,6 +41,9 @@ export class HabitsService {
             url: '/habits',
             body: requestBody,
             mediaType: 'application/json',
+            errors: {
+                401: `Unauthorized - Invalid or missing token`,
+            },
         });
     }
     /**
@@ -49,6 +55,9 @@ export class HabitsService {
         return __request(OpenAPI, {
             method: 'GET',
             url: '/habits/types',
+            errors: {
+                401: `Unauthorized - Invalid or missing token`,
+            },
         });
     }
     /**
@@ -70,6 +79,9 @@ export class HabitsService {
             path: {
                 'id': id,
             },
+            errors: {
+                401: `Unauthorized - Invalid or missing token`,
+            },
         });
     }
     /**
@@ -90,6 +102,9 @@ export class HabitsService {
             url: '/habits/{id}',
             path: {
                 'id': id,
+            },
+            errors: {
+                401: `Unauthorized - Invalid or missing token`,
             },
         });
     }
@@ -116,11 +131,14 @@ export class HabitsService {
             },
             body: requestBody,
             mediaType: 'application/json',
+            errors: {
+                401: `Unauthorized - Invalid or missing token`,
+            },
         });
     }
     /**
-     * Get a habit by ID
-     * @returns HabitStatsOutput Habit details
+     * Get habit statistics
+     * @returns HabitStatsOutput Habit statistics
      * @throws ApiError
      */
     public static habitsControllerGetHabitStats({
@@ -136,6 +154,9 @@ export class HabitsService {
             url: '/habits/{id}/stats',
             path: {
                 'id': id,
+            },
+            errors: {
+                401: `Unauthorized - Invalid or missing token`,
             },
         });
     }
@@ -162,6 +183,9 @@ export class HabitsService {
             },
             body: requestBody,
             mediaType: 'application/json',
+            errors: {
+                401: `Unauthorized - Invalid or missing token`,
+            },
         });
     }
     /**
@@ -187,6 +211,9 @@ export class HabitsService {
             },
             body: requestBody,
             mediaType: 'application/json',
+            errors: {
+                401: `Unauthorized - Invalid or missing token`,
+            },
         });
     }
 }
