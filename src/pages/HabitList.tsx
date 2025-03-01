@@ -19,6 +19,7 @@ export function HabitList() {
     untrackHabit,
     incrementHabit,
     decrementHabit,
+    refreshHabits,
   } = useHabits();
   const navigate = useNavigate();
   const jsConfettiRef = useRef<JSConfetti | null>(null);
@@ -36,6 +37,12 @@ export function HabitList() {
 
     window.addEventListener("resize", handleResize);
     return () => window.removeEventListener("resize", handleResize);
+  }, []);
+
+  useEffect(() => {
+    // Fetch habits data when component mounts
+    refreshHabits();
+    // Using empty dependency array to run only once on mount
   }, []);
 
   const getLast5Days = () => {

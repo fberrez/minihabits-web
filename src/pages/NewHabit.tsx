@@ -58,10 +58,7 @@ export function NewHabit() {
       return;
     }
 
-    if (
-      (type === HabitType.COUNTER || type === HabitType.NEGATIVE_COUNTER) &&
-      (!targetCounter || targetCounter <= 0)
-    ) {
+    if (type === HabitType.COUNTER && (!targetCounter || targetCounter <= 0)) {
       toast({
         title: "Invalid target counter",
         description:
@@ -80,9 +77,7 @@ export function NewHabit() {
         name,
         color,
         type,
-        type === HabitType.COUNTER || type === HabitType.NEGATIVE_COUNTER
-          ? targetCounter
-          : undefined
+        type === HabitType.COUNTER ? targetCounter : undefined
       );
       toast({
         title: "Habit created",
@@ -171,7 +166,7 @@ export function NewHabit() {
                   <RadioGroupItem value={HabitType.COUNTER} id="counter" />
                   <Label htmlFor="counter">Counter</Label>
                 </div>
-                <div className="flex items-center space-x-2">
+                {/* <div className="flex items-center space-x-2">
                   <RadioGroupItem
                     value={HabitType.NEGATIVE_BOOLEAN}
                     id="negative_boolean"
@@ -184,12 +179,11 @@ export function NewHabit() {
                     id="negative_counter"
                   />
                   <Label htmlFor="negative_counter">Limit Counter</Label>
-                </div>
+                </div> */}
               </RadioGroup>
             </div>
 
-            {(type === HabitType.COUNTER ||
-              type === HabitType.NEGATIVE_COUNTER) && (
+            {type === HabitType.COUNTER && (
               <div className="space-y-2">
                 <Label htmlFor="targetCounter">
                   {type === HabitType.COUNTER ? "Daily Target" : "Daily Limit"}

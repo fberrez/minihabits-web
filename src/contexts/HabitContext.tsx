@@ -1,7 +1,6 @@
 import {
   createContext,
   useContext,
-  useEffect,
   useState,
   ReactNode,
   useCallback,
@@ -41,6 +40,7 @@ interface HabitContextType {
   decrementHabit: (habitId: string, date: string) => Promise<void>;
   refreshHabits: () => Promise<void>;
   getStats: (habitIds?: string[]) => Promise<GlobalStats>;
+  getHabitById: (habitId: string) => Promise<Habit>;
 }
 
 const HabitContext = createContext<HabitContextType | undefined>(undefined);
@@ -98,9 +98,22 @@ export function HabitProvider({ children }: { children: ReactNode }) {
     }
   };
 
-  useEffect(() => {
-    refreshHabits(true);
-  }, [isAuthenticated]);
+  const getHabitById = async (habitId: string) => {
+    if (!isAuthenticated || !accessToken) return;
+    setIsLoading(true);
+
+    const response = await authenticatedFetch(
+      `${import.meta.env.VITE_API_BASE_URL}/habits/${habitId}`
+    );
+
+    if (!response.ok) {
+      throw new Error("Failed to fetch habit");
+    }
+
+    const habit = await response.json();
+    setIsLoading(false);
+    return habit;
+  };
 
   const createHabit = async (
     name: string,
@@ -294,6 +307,7 @@ export function HabitProvider({ children }: { children: ReactNode }) {
         decrementHabit,
         refreshHabits: () => refreshHabits(true),
         getStats,
+        getHabitById,
       }}
     >
       {children}
