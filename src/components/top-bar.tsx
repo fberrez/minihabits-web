@@ -9,15 +9,6 @@ import {
   SheetTrigger,
 } from "./ui/sheet";
 import { useAuth } from "@/contexts/AuthContext";
-import { useHabits } from "@/contexts/HabitContext";
-import {
-  Card,
-  CardContent,
-  CardHeader,
-  CardTitle,
-  CardDescription,
-} from "./ui/card";
-import NumberTicker from "./ui/number-ticker";
 import { ModeToggle } from "./mode-toggle";
 import { FeedbackButton } from "./feedback-button";
 import { useState } from "react";
@@ -27,39 +18,10 @@ import { Link } from "react-router-dom";
 
 export function TopBar() {
   const { isAuthenticated } = useAuth();
-  const { stats } = useHabits();
   const [open, setOpen] = useState(false);
 
   const menuItems = (
     <div className="flex flex-col gap-4 mt-4">
-      <Card className="flex flex-col items-center justify-center">
-        <CardHeader>
-          <CardTitle className="text-center">Today's Progress</CardTitle>
-          <CardDescription className="text-center">
-            {isAuthenticated
-              ? "Habits completed today"
-              : "Track your daily habits"}
-          </CardDescription>
-        </CardHeader>
-        <CardContent className="flex flex-col items-center">
-          {isAuthenticated ? (
-            <>
-              <div className="text-4xl font-bold">
-                {stats?.habitsCompletedToday === 0 ? (
-                  <p>0</p>
-                ) : (
-                  <NumberTicker value={stats?.habitsCompletedToday || 0} />
-                )}
-              </div>
-              <p className="text-muted-foreground mt-2">habits</p>
-            </>
-          ) : (
-            <div className="text-center text-muted-foreground">
-              Sign in to start tracking your habits
-            </div>
-          )}
-        </CardContent>
-      </Card>
       <div className="flex flex-col gap-2">
         {isAuthenticated && (
           <>
