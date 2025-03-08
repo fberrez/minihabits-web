@@ -1,0 +1,25 @@
+version: '3.8'
+
+services:
+  web:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: minihabits-web
+    ports:
+      - "80:80"
+    environment:
+      - NODE_ENV=production
+      - VITE_API_BASE_URL=https://minihabits-api.fberrez.co
+    restart: unless-stopped
+    # For development, you can use volumes to enable hot reloading
+    # volumes:
+    #   - ./src:/app/src
+    #   - ./public:/app/public
+    #   - ./index.html:/app/index.html
+    #   - ./vite.config.ts:/app/vite.config.ts
+
+networks:
+  default:
+    name: minihabits-network
+    external: false 
