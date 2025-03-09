@@ -72,7 +72,7 @@ jobs:
                 labels:
                   - "traefik.enable=true"
                   - "traefik.docker.network=web"
-                  - "traefik.http.routers.minihabits-web.rule=Host(`minihabits-web.fberrez.co`)"
+                  - "traefik.http.routers.minihabits-web.rule=Host(`minihabits.fberrez.co`)"
                   - "traefik.http.routers.minihabits-web.entrypoints=websecure"
                   - "traefik.http.routers.minihabits-web.tls.certresolver=myresolver"
                   - "traefik.http.services.minihabits-web.loadbalancer.server.port=80"
