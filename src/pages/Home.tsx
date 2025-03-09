@@ -477,7 +477,7 @@ export function Home() {
           squareSize={12}
           gridGap={4}
           color={theme === "dark" ? "#ffffff" : "#000000"}
-          maxOpacity={0.5}
+          maxOpacity={0.2}
           flickerChance={0.05}
           height={2000}
           width={2000}
