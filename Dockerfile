@@ -10,10 +10,29 @@ COPY pnpm-lock.yaml package.json ./
 # Install ALL dependencies (including devDependencies)
 RUN pnpm install --frozen-lockfile
 COPY . .
-# Build the application
+
+# Define build arguments for environment variables
+ARG VITE_API_BASE_URL
+ARG VITE_CONTACT_EMAIL
+ARG VITE_STRIPE_PRICE_MONTHLY_ID
+ARG VITE_STRIPE_PRICE_YEARLY_ID
+ARG VITE_STRIPE_PRICE_LIFETIME_ID
+
+# Set environment variables for the build process
+ENV NODE_ENV=production
+ENV VITE_API_BASE_URL=${VITE_API_BASE_URL}
+ENV VITE_CONTACT_EMAIL=${VITE_CONTACT_EMAIL}
+ENV VITE_STRIPE_PRICE_MONTHLY_ID=${VITE_STRIPE_PRICE_MONTHLY_ID}
+ENV VITE_STRIPE_PRICE_YEARLY_ID=${VITE_STRIPE_PRICE_YEARLY_ID}
+ENV VITE_STRIPE_PRICE_LIFETIME_ID=${VITE_STRIPE_PRICE_LIFETIME_ID}
+
+# Build the application with environment variables
 RUN pnpm run build
 
 FROM node:20-alpine AS prod
+
+ENV NODE_ENV=production
+
 WORKDIR /app
 # Copy the built files
 COPY --from=build /app/dist ./dist
