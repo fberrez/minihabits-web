@@ -23,7 +23,7 @@ function App() {
         <Route path="/account" element={<Account />} />
         <Route path="*" element={<Navigate to="/" replace />} />
         <Route path="/privacy" element={<PrivacyPolicy />} />
-        <Route path="/terms" element={<TermsOfUse />} />
+        <Route path="/terms-of-use" element={<TermsOfUse />} />
       </Routes>
     );
   }

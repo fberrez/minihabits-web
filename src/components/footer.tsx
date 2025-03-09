@@ -1,4 +1,4 @@
-import { Link } from 'react-router-dom';
+import { Link } from "react-router-dom";
 
 export function Footer() {
   return (
@@ -8,7 +8,7 @@ export function Footer() {
           <Link to="/privacy" className="hover:underline">
             Privacy Policy
           </Link>
-          <Link to="/terms" className="hover:underline">
+          <Link to="/terms-of-use" className="hover:underline">
             Terms of Use
           </Link>
         </div>

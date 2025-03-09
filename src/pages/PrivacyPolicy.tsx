@@ -1,11 +1,11 @@
-import { FeedbackButton } from '@/components/feedback-button';
+import { FeedbackButton } from "@/components/feedback-button";
 import {
   Card,
   CardContent,
   CardDescription,
   CardHeader,
   CardTitle,
-} from '@/components/ui/card';
+} from "@/components/ui/card";
 
 export default function PrivacyPolicy() {
   return (
@@ -15,7 +15,7 @@ export default function PrivacyPolicy() {
           <Card className="text-left">
             <CardHeader>
               <CardTitle>Privacy Policy</CardTitle>
-              <CardDescription>Last updated: January 21, 2025</CardDescription>
+              <CardDescription>Last updated: March 9, 2025</CardDescription>
             </CardHeader>
             <CardContent className="space-y-6">
               <section>
@@ -54,7 +54,8 @@ export default function PrivacyPolicy() {
                   <li>To provide and maintain our service</li>
                   <li>
                     To communicate with you about your account (welcome emails,
-                    password resets, email changes, account deletion)
+                    password resets, email changes, account deletion,
+                    newsletter)
                   </li>
                   <li>
                     To analyze usage patterns and improve our service through
@@ -68,10 +69,10 @@ export default function PrivacyPolicy() {
                   Data Storage and Security
                 </h2>
                 <p>
-                  Your data is stored on secure servers located in the United
-                  States through our hosting provider, Railway. We implement
-                  appropriate security measures to protect your personal
-                  information.
+                  Your data is stored on secure servers located in the European
+                  Union through our hosting provider, OVH and MongoDB Atlas. We
+                  implement appropriate security measures to protect your
+                  personal information.
                 </p>
               </section>
 

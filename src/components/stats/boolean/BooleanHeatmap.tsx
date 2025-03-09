@@ -15,12 +15,14 @@ import CalHeatmapTooltip from "cal-heatmap/plugins/Tooltip";
 import CalHeatmap from "cal-heatmap";
 import { useEffect } from "react";
 import { Habit } from "@/api/generated";
+import { useTheme } from "@/components/theme-provider";
 
 interface BooleanHeatmapProps {
   readonly habit: Habit;
 }
 
 export default function BooleanHeatmap({ habit }: BooleanHeatmapProps) {
+  const { theme } = useTheme();
   useEffect(() => {
     if (!habit) return;
 
@@ -61,7 +63,7 @@ export default function BooleanHeatmap({ habit }: BooleanHeatmapProps) {
         },
         scale: {
           color: {
-            range: ["gray", habit.color],
+            range: [theme === "dark" ? "#161b22" : "#EDEDED", habit.color],
             interpolate: "hsl",
             type: "linear",
             domain: [0, 1],

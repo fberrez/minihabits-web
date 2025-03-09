@@ -140,6 +140,7 @@ export function BooleanHabitCard({
                               if (!isCompleted) {
                                 jsConfettiRef.current?.addConfetti({
                                   confettiColors: [habit.color],
+                                  confettiNumber: 200,
                                 });
                                 playSuccessSound();
                               }
@@ -177,6 +178,7 @@ export function BooleanHabitCard({
                               });
                               jsConfettiRef.current?.addConfetti({
                                 confettiColors: [habit.color],
+                                confettiNumber: 200,
                               });
                               playSuccessSound();
                             }

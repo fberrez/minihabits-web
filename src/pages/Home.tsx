@@ -8,19 +8,17 @@ import JSConfetti from "js-confetti";
 import { HabitColor, HabitType } from "../api/types/appTypes";
 import moment from "moment";
 import { Card, CardContent } from "../components/ui/card";
-import { BentoGrid, BentoCard } from "@/components/ui/bento-grid";
 import { AddNewButtons } from "@/components/add-new-buttons";
-import {
-  ArrowUpRight,
-  CalendarHeart,
-  CalendarIcon,
-  ChevronDown,
-  FastForward,
-  Tally5,
-} from "lucide-react";
+import { ChevronDown, Lock, Shield, CirclePlus } from "lucide-react";
 import FlickeringGrid from "@/components/ui/flickering-grid";
 import { useTheme } from "@/components/theme-provider";
 import { Habit } from "@/api/generated";
+import BooleanHeatmap from "@/components/stats/boolean/BooleanHeatmap";
+import {
+  CompletionRateCard,
+  CurrentStreakCard,
+  LongestStreakCard,
+} from "@/components/stats";
 
 export function Home() {
   const navigate = useNavigate();
@@ -54,7 +52,11 @@ export function Home() {
   type CompletionStatus = typeof localCompletionStatus;
 
   // Sample habits data for demonstration
-  const booleanHabit: Habit = {
+  const booleanHabit: Habit & {
+    completionRate7Days?: number;
+    completionRateMonth?: number;
+    completionRateYear?: number;
+  } = {
     _id: "boolean-sample",
     name: "Morning Meditation",
     description: "Start your day with 10 minutes of mindfulness",
@@ -64,9 +66,22 @@ export function Home() {
     targetCounter: 1,
     createdAt: new Date().toISOString(),
     userId: "demo-user",
-    currentStreak: 0,
-    longestStreak: 0,
+    currentStreak: 14,
+    longestStreak: 20,
+    completionRate7Days: 100,
+    completionRateMonth: 100,
+    completionRateYear: 100,
   };
+
+  // Generate completed dates for the last 30 days
+  const today = new Date();
+  for (let i = 1; i <= 30; i++) {
+    const date = new Date(today);
+    date.setDate(date.getDate() - i);
+    const dateStr = date.toISOString().split("T")[0];
+    // Randomly mark some days as completed
+    booleanHabit.completedDates[dateStr] = Math.random() < 0.7;
+  }
 
   const counterHabit = {
     ...booleanHabit,
@@ -320,10 +335,10 @@ export function Home() {
         </div>
       </section>
 
-      {/* Stats Bento Grid Section */}
-      <section className="py-24">
+      {/* Stats and Habit Tracking Section */}
+      <section className="py-24 mb-24">
         <div className="container mx-auto px-4">
-          <div className="space-y-12">
+          <div className="space-y-6">
             <div className="text-center">
               <h2 className="text-3xl font-bold tracking-tight">
                 Track Your Life
@@ -333,95 +348,112 @@ export function Home() {
               </p>
             </div>
 
-            <BentoGrid className="lg:grid-rows-3">
-              {[
-                {
-                  Icon: CalendarIcon,
-                  name: "Monthly Activity",
-                  description: "Your habit completion overview",
-                  className:
-                    "lg:row-start-1 lg:row-end-3 lg:col-start-2 lg:col-end-3",
-                  background: (
-                    <div className="absolute inset-6">
-                      <div className="grid h-full grid-cols-7 gap-2">
-                        {Array.from({ length: 35 }, (_, i) => (
-                          <div
-                            key={i}
-                            className={`aspect-square rounded-sm ${
-                              Math.random() > 0.5 ? "bg-primary/20" : "bg-muted"
-                            }`}
-                          />
-                        ))}
-                      </div>
-                    </div>
-                  ),
-                  cta: "Get your monthly stats",
-                  href: "/auth",
-                },
-                {
-                  Icon: ArrowUpRight,
-                  name: "Current Streak",
-                  description: "7 days and counting",
-                  className:
-                    "lg:col-start-1 lg:col-end-2 lg:row-start-1 lg:row-end-2",
-                  cta: "Improve your current streak",
-                  href: "/auth",
-                  background: (
-                    <div
-                      className="absolute inset-0 opacity-60"
-                      style={{ backgroundColor: HabitColor.RED }}
-                    />
-                  ),
-                },
-                {
-                  Icon: Tally5,
-                  name: "Weekly Progress",
-                  description: "85% completion rate this week",
-                  className:
-                    "lg:col-start-1 lg:col-end-2 lg:row-start-2 lg:row-end-3",
-                  cta: "Get better this week",
-                  href: "/auth",
-                  background: (
-                    <div
-                      className="absolute inset-0 opacity-60"
-                      style={{ backgroundColor: HabitColor.BLUE }}
-                    />
-                  ),
-                },
-                {
-                  Icon: CalendarHeart,
-                  name: "Monthly Stats",
-                  description: "92% completion rate this month",
-                  className:
-                    "lg:col-start-3 lg:col-end-4 lg:row-start-1 lg:row-end-2",
-                  cta: "Get better this month",
-                  href: "/auth",
-                  background: (
-                    <div
-                      className="absolute inset-0 opacity-60"
-                      style={{ backgroundColor: HabitColor.GREEN }}
-                    />
-                  ),
-                },
-                {
-                  Icon: FastForward,
-                  name: "Quick Actions",
-                  description: "Start building better habits today",
-                  className:
-                    "lg:col-start-3 lg:col-end-4 lg:row-start-2 lg:row-end-3",
-                  cta: "Get Started",
-                  href: "/auth",
-                  background: (
-                    <div
-                      className="absolute inset-0 opacity-60"
-                      style={{ backgroundColor: HabitColor.PURPLE }}
-                    />
-                  ),
-                },
-              ].map((feature) => (
-                <BentoCard key={feature.name} {...feature} />
-              ))}
-            </BentoGrid>
+            {/* Yearly Heatmap */}
+            <div className="grid grid-cols-1 gap-6">
+              <BooleanHeatmap habit={booleanHabit} />
+            </div>
+
+            {/* Streak and Completion Rate Cards */}
+            <div className="grid grid-cols-1 md:grid-cols-1 lg:grid-cols-3 gap-6">
+              <CurrentStreakCard
+                habit={booleanHabit}
+                currentStreak={booleanHabit.currentStreak}
+              />
+
+              <LongestStreakCard
+                habit={booleanHabit}
+                longestStreak={booleanHabit.longestStreak}
+              />
+
+              <CompletionRateCard
+                habit={booleanHabit}
+                completionRate={booleanHabit.completionRate7Days || 100}
+                title="Completion Rate"
+                description="Last 7 days"
+              />
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-6">
+              <CompletionRateCard
+                habit={booleanHabit}
+                completionRate={booleanHabit.completionRateMonth || 100}
+                title="Monthly Rate"
+                description="This month (completed days only)"
+              />
+
+              <CompletionRateCard
+                habit={booleanHabit}
+                completionRate={booleanHabit.completionRateYear || 100}
+                title="Yearly Rate"
+                description="This year (completed days only)"
+              />
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Data Security Section */}
+      <section className="py-24 mb-24 bg-gradient-to-r ">
+        <div className="container mx-auto px-4">
+          <div className="max-w-5xl mx-auto flex flex-col md:flex-row items-center gap-10">
+            <div className="text-left space-y-5 flex-1">
+              <h2 className="text-3xl font-bold tracking-tight text-blue-800 dark:text-blue-300">
+                Your Data is Safe with Us
+              </h2>
+              <p className="text-muted-foreground text-lg">
+                All your habit data is securely stored in European data centers,
+                complying with GDPR and the highest privacy standards.
+              </p>
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 pt-2">
+                <div className="flex items-center gap-3 bg-white dark:bg-blue-950/40 p-3 rounded-lg shadow-sm">
+                  <Shield className="h-5 w-5 text-blue-600 dark:text-blue-400" />
+                  <span className="font-medium">EU-based servers</span>
+                </div>
+                <div className="flex items-center gap-3 bg-white dark:bg-blue-950/40 p-3 rounded-lg shadow-sm">
+                  <CirclePlus className="h-5 w-5 text-blue-600 dark:text-blue-400" />
+                  <span className="font-medium">GDPR compliant</span>
+                </div>
+                <div className="flex items-center gap-3 bg-white dark:bg-blue-950/40 p-3 rounded-lg shadow-sm">
+                  <Lock className="h-5 w-5 text-blue-600 dark:text-blue-400" />
+                  <span className="font-medium">Secure storage</span>
+                </div>
+              </div>
+            </div>
+            <div className="flex-shrink-0 w-40 md:w-48">
+              <img
+                src="https://upload.wikimedia.org/wikipedia/commons/b/b7/Flag_of_Europe.svg"
+                alt="European Union Flag"
+                className="w-full h-auto drop-shadow-md"
+              />
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Call to Action Section */}
+      <section className="py-24">
+        <div className="container mx-auto px-4">
+          <div className="max-w-4xl mx-auto text-center space-y-8">
+            <h2 className="text-4xl font-bold tracking-tight">
+              Start Building Better Habits Today
+            </h2>
+            <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
+              Join thousands of users who have transformed their lives with
+              small, consistent changes. Your journey to a better you starts
+              with a single habit.
+            </p>
+            <div className="flex flex-col sm:flex-row justify-center gap-4 pt-4">
+              <Button
+                size="lg"
+                className="text-lg px-8"
+                onClick={() => navigate("/auth")}
+              >
+                Get Started for Free
+              </Button>
+            </div>
+            <div className="pt-8 text-sm text-muted-foreground">
+              No credit card required • 100% free forever
+            </div>
           </div>
         </div>
       </section>

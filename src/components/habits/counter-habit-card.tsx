@@ -207,6 +207,7 @@ export function CounterHabitCard({
                                   if (newValue == habit.targetCounter) {
                                     jsConfettiRef.current?.addConfetti({
                                       confettiColors: [habit.color],
+                                      confettiNumber: 200,
                                     });
                                     playSuccessSound();
                                   }
@@ -234,6 +235,7 @@ export function CounterHabitCard({
                                 if (newValue >= habit.targetCounter) {
                                   jsConfettiRef.current?.addConfetti({
                                     confettiColors: [habit.color],
+                                    confettiNumber: 200,
                                   });
                                   playSuccessSound();
                                 }
