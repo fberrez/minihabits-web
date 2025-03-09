@@ -14,7 +14,7 @@ export default defineConfig({
         enabled: true,
       },
       workbox: {
-        globPatterns: ["**/*.{js,jsx,css,html,png,svg,json,webp}"],
+        globPatterns: ["**/*.{js,jsx,css,html,png,svg,json,webp,mp3}"],
         runtimeCaching: [
           {
             urlPattern: /^https:\/\/minihabits-production\.up\.railway\.app/g,
@@ -29,7 +29,13 @@ export default defineConfig({
           },
         ],
       },
-      includeAssets: ["favicon.ico", "robots.txt", "h-512.png", "h-192.png"],
+      includeAssets: [
+        "favicon.ico",
+        "robots.txt",
+        "h-512.png",
+        "h-192.png",
+        "success.mp3",
+      ],
       manifest: {
         name: "MiniHabits",
         description: "A simple habit tracker",
@@ -56,6 +62,14 @@ export default defineConfig({
   resolve: {
     alias: {
       "@": path.resolve(__dirname, "./src"),
+    },
+  },
+  build: {
+    assetsInlineLimit: 0, // Disable inlining assets to ensure MP3 files are properly copied
+    rollupOptions: {
+      output: {
+        manualChunks: undefined,
+      },
     },
   },
 });
