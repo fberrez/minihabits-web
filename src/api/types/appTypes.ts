@@ -20,6 +20,17 @@ export enum HabitType {
   COUNTER = "counter",
 }
 
+import { Habit } from "@/api/generated";
+
+/**
+ * Extended Habit type with additional properties used in the frontend
+ */
+export interface ExtendedHabit extends Habit {
+  completionRate7Days?: number;
+  completionRateMonth?: number;
+  completionRateYear?: number;
+}
+
 /**
  * Color range for each habit color for cal-heatmap in @StatsPage.tsx
  */

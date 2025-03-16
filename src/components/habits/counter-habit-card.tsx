@@ -18,9 +18,10 @@ import { useNavigate } from "react-router-dom";
 import { cn } from "../../lib/utils";
 import { playSuccessSound } from "../../lib/sound";
 import { Habit } from "@/api/generated";
+import { ExtendedHabit } from "@/api/types/appTypes";
 
 interface CounterHabitCardProps {
-  habit: Habit;
+  habit: Habit | ExtendedHabit;
   dates: Date[];
   formatDate: (date: Date) => string;
   localCompletionStatus: Record<string, Record<string, number>>;
@@ -90,11 +91,6 @@ export function CounterHabitCard({
                     </DropdownMenuItem>
                   </DropdownMenuContent>
                 </DropdownMenu>
-              )}
-            </div>
-            <div className="flex items-center gap-2 text-sm text-muted-foreground">
-              {habit.description && (
-                <p className="truncate">{habit.description}</p>
               )}
             </div>
           </div>

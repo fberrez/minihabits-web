@@ -5,14 +5,13 @@ import { BooleanHabitCard } from "@/components/habits/boolean-habit-card";
 import { CounterHabitCard } from "@/components/habits/counter-habit-card";
 import { useEffect, useRef, useState } from "react";
 import JSConfetti from "js-confetti";
-import { HabitColor, HabitType } from "../api/types/appTypes";
+import { HabitColor, HabitType, ExtendedHabit } from "../api/types/appTypes";
 import moment from "moment";
 import { Card, CardContent } from "../components/ui/card";
 import { AddNewButtons } from "@/components/add-new-buttons";
 import { ChevronDown, Lock, Shield, CirclePlus } from "lucide-react";
 import FlickeringGrid from "@/components/ui/flickering-grid";
 import { useTheme } from "@/components/theme-provider";
-import { Habit } from "@/api/generated";
 import {
   CompletionRateCard,
   CurrentStreakCard,
@@ -52,14 +51,9 @@ export function Home() {
   type CompletionStatus = typeof localCompletionStatus;
 
   // Sample habits data for demonstration
-  const booleanHabit: Habit & {
-    completionRate7Days?: number;
-    completionRateMonth?: number;
-    completionRateYear?: number;
-  } = {
+  const booleanHabit: ExtendedHabit = {
     _id: "boolean-sample",
     name: "Morning Meditation",
-    description: "Start your day with 10 minutes of mindfulness",
     color: HabitColor.BLUE,
     type: HabitType.BOOLEAN,
     completedDates: {},
@@ -73,11 +67,10 @@ export function Home() {
     completionRateYear: 100,
   };
 
-  const counterHabit = {
+  const counterHabit: ExtendedHabit = {
     ...booleanHabit,
     _id: "counter-sample",
     name: "Daily Water Intake",
-    description: "Drink 3 glasses of water daily",
     color: HabitColor.BLUE,
     type: HabitType.COUNTER,
     targetCounter: 10,

@@ -177,11 +177,7 @@ export function useHabits() {
     name: string,
     color?: string,
     type: string = "boolean",
-    targetCounter?: number,
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    _description?: string,
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    _deadline?: Date | null
+    targetCounter?: number
   ) => {
     // Validate color is a valid HabitColor
     const validColor = (color as HabitColor) || undefined;
@@ -205,9 +201,6 @@ export function useHabits() {
     data: {
       name?: string;
       color?: string;
-      // These properties are kept for API compatibility but not used in the current API
-      deadline?: Date | null;
-      description?: string;
       targetCounter?: number;
       type?: string;
     }
