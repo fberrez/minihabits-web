@@ -795,7 +795,7 @@ export function Home() {
               Start Building Better Habits Today
             </h2>
             <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
-              Join thousands of users who have transformed their lives with
+              Join hundreds of users who have transformed their lives with
               small, consistent changes. Your journey to a better you starts
               with a single habit.
             </p>
