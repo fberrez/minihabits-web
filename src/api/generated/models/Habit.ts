@@ -13,7 +13,5 @@ export type Habit = {
     longestStreak: number;
     type: 'boolean' | 'counter';
     targetCounter: number;
-    description?: string;
-    deadline?: string;
 };
 

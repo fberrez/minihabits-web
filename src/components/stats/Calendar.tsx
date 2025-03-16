@@ -4,7 +4,7 @@ import { useHabits } from "@/api/hooks/useHabits";
 import { HabitType } from "@/api/types/appTypes";
 import { isAfter, format } from "date-fns";
 import { startOfDay } from "date-fns";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { DayPicker } from "react-day-picker";
 import { Habit } from "@/api/generated";
 
@@ -13,17 +13,22 @@ interface CalendarProps {
 }
 
 export default function Calendar({ habit }: CalendarProps) {
-  const { trackHabit, untrackHabit } = useHabits();
+  const { trackHabit, untrackHabit, refreshHabits } = useHabits();
 
   const [localCompletionStatus, setLocalCompletionStatus] = useState(
     habit.completedDates
   );
 
-  const completedDates = Object.keys(localCompletionStatus).map(
-    (date) => new Date(date)
-  );
+  // Update local state when habit changes
+  useEffect(() => {
+    setLocalCompletionStatus(habit.completedDates);
+  }, [habit.completedDates]);
 
-  const handleDayClick = (day: Date) => {
+  const completedDates = Object.entries(localCompletionStatus)
+    .filter(([, value]) => value > 0)
+    .map(([date]) => new Date(date));
+
+  const handleDayClick = async (day: Date) => {
     if (habit.type === HabitType.COUNTER) {
       return null;
     }
@@ -33,28 +38,31 @@ export default function Calendar({ habit }: CalendarProps) {
     }
 
     const formattedDate = format(day, "yyyy-MM-dd");
-    const isCompleted = localCompletionStatus[formattedDate];
+    const isCompleted = localCompletionStatus[formattedDate] > 0;
+
+    // Optimistically update UI
     setLocalCompletionStatus((prev) => ({
       ...prev,
       [formattedDate]: isCompleted ? 0 : 1,
     }));
 
-    if (isCompleted) {
-      untrackHabit(habit._id, formattedDate).catch(() => {
-        setLocalCompletionStatus((prev) => ({
-          ...prev,
-          [formattedDate]: 1,
-        }));
-      });
-    } else {
-      trackHabit(habit._id, formattedDate).catch(() => {
-        setLocalCompletionStatus((prev) => ({
-          ...prev,
-          [formattedDate]: 0,
-        }));
-      });
+    try {
+      if (isCompleted) {
+        await untrackHabit(habit._id, formattedDate);
+      } else {
+        await trackHabit(habit._id, formattedDate);
+      }
+      // Refresh habits data to get the updated completedDates
+      await refreshHabits();
+    } catch {
+      // Revert local state on error
+      setLocalCompletionStatus((prev) => ({
+        ...prev,
+        [formattedDate]: isCompleted ? 1 : 0,
+      }));
     }
   };
+
   return (
     <Card className="col-span-1 md:col-span-1">
       <CardContent className="flex justify-center items-center">

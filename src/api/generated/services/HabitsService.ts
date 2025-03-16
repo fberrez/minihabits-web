@@ -204,8 +204,8 @@ export class HabitsService {
         requestBody: TrackHabitDto,
     }): CancelablePromise<Habit> {
         return __request(OpenAPI, {
-            method: 'DELETE',
-            url: '/habits/{id}/track',
+            method: 'POST',
+            url: '/habits/{id}/untrack',
             path: {
                 'id': id,
             },
