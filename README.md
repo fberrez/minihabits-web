@@ -1,4 +1,12 @@
-# minihabits
+# minihabits (DEPRECATED)
+
+> **⚠️ This repository is deprecated.**
+>
+> The minihabits frontend has moved to the [monorepo at github.com/fberrez/minihabits](https://github.com/fberrez/minihabits).
+>
+> Please use the monorepo for all future development, issues, and contributions.
+
+---
 
 A minimalist habit tracking application built with React that helps users build and maintain daily habits through simple, visual tracking.
 
@@ -29,37 +37,3 @@ A minimalist habit tracking application built with React that helps users build 
 - **Animations**: js-confetti
 
 ## Getting Started
-
-```bash
-git clone https://github.com/fberrez/minihabits-web.git
-cd minihabits
-pnpm install
-pnpm run dev
-```
-
-API available at https://github.com/fberrez/minihabits
-
-## Project Structure
-
-```
-src/
-├── components/ # Reusable UI components
-│ ├── habits/ # Habit-specific components
-│ │ └── ...
-├── contexts/ # React context providers
-│ ├── AuthContext.tsx
-│ └── HabitContext.tsx
-├── pages/ # Main application pages
-│ ├── HabitList.tsx
-│ └── StatsPage.tsx
-└── services/ # API service layer
-└── habits.ts
-```
-
-## Contributing
-
-Contributions are welcome! Please feel free to submit a Pull Request.
-
-## License
-
-This project is licensed under the MIT License - see the LICENSE file for details.
